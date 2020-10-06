@@ -17,15 +17,17 @@ yarn-error.log*
 
 /*/logs
 
+yarn.lock
+
 # Moi
-/public/bassets
+/frontend/public/bassets
+/*/secondary
+
 
 # Testing/Debugging
 /tmp
 **/*moim*.js
 **/moim*/*
-/test
-
 
 # OS X
 .DS_Store*
@@ -46,4 +48,3 @@ node_modules
 package-lock.json
 *.log
 *.gz
-
