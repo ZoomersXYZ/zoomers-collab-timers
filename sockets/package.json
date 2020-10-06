@@ -1,0 +1,44 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "firebase": "^7.6.1",
+    "lodash.isequal": "^4.5.0",
+    "socket.io": "^2.3.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-one-variable-per-var": "^0.0.3",
+    "nodemon": "^2.0.2"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "debug": "NODE_ENV=development DEBUG=* nodemon src/server.js",
+    "debugWSAll": "NODE_ENV=development DEBUG=engine,socket.io* nodemon src/server.js",
+    "debugWS": "NODE_ENV=development DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* nodemon src/server.js",
+    "server": "NODE_ENV=development nodemon src/server.js"
+  },
+  "name": "collaborative-multiple-timers-websockets-server",
+  "version": "1.0.0",
+  "description": "Backend WebSockets server for 'Collaborative Multiple Timers' front-end web app",
+  "main": "src/server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inoicouldalwaysturn2u/collaborative-multiple-timers-websockets-server"
+  },
+  "keywords": [
+    "websockets",
+    "express",
+    "react",
+    "collaborative",
+    "timer",
+    "productivity",
+    "timers"
+  ],
+  "author": "Saadh Shehzad",
+  "license": "ISC"
+}

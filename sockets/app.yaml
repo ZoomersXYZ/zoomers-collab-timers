@@ -1,0 +1,2 @@
+network:
+  session_affinity: true
