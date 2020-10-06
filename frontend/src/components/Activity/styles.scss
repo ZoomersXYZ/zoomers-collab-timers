@@ -1,0 +1,36 @@
+div.log {
+  margin: 0 0.5em;
+  font-size: 1.25rem;
+  display: flex;
+    
+  div {
+    flex: 0 0 3.5%;
+    margin: 0.13em 0;
+
+    img.avatar__image {
+      border-radius: 9999em;
+      box-shadow: #fff 0 0 0 1px;
+      color: #435287;
+      height: 1.8rem;
+      width: 1.8rem;
+    }
+  }
+
+  div.text-content {
+    flex: 0.55;
+  }
+
+  span.timer-emphasis {
+    color: #c3c3c3;
+    font-weight: 500;
+  }
+
+  span.group-emphasis {
+    color: #c3c3c3;
+    font-weight: 500;
+  }
+
+  span.lowercaseFns {
+    text-transform: lowercase;
+  }
+}

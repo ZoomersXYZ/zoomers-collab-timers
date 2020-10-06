@@ -1,0 +1,20 @@
+div.control__fo-child {
+  form {
+    input.timer-text-field {
+      text-align: center;
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+
+      color: #ededf4;
+      font-size: 3em;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

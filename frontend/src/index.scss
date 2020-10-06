@@ -1,0 +1,58 @@
+@import './ancillary/styles/settings';
+@import './ancillary/styles/base';
+
+body {
+  background-color: #7072f0;
+  // background-color: #f4eff5;
+  font-size: 18px;
+
+  color: #3fa0e7;
+}
+
+.casual-button {
+  cursor: pointer;
+
+  background-color: #5153c1;
+  // background-color: #f4eff5;
+  color: #FFFFFF;
+  color: #3fa0e7;
+  text-align: center;
+  font-size: 1.1em;
+  padding: 10px 20px;
+
+  margin: 3px 5px;
+  
+  border: none;
+  
+  -webkit-border-radius: 15;
+  -moz-border-radius: 15;
+  border-radius: 15px;
+}
+
+.casual-textfield {
+  font-size: 1.2em;
+  padding: 10px;
+  background-color: #ededf4;
+  // color: #5a5b9e;
+  color: #FFFFFF;
+
+  margin: 3px 10px;
+
+  border: none;
+
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+}
+
+.icon-pad-left {
+  padding-left: .5em;
+}
+
+.icon-pad-right {
+  padding-right: .5em;
+}
+
+a.lighter-links {
+  color: #d2d2d8;
+}

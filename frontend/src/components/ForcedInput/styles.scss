@@ -1,0 +1,68 @@
+div.forced-user-intro {  
+  background-color: rgba( 107,109,226,.9 );
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  top: 0;  
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 1em;
+
+  @media only screen and ( min-width: 800px ) {
+    div.the-modal {
+      max-width: 480px;
+    }
+  }
+
+  div.the-modal {
+    background-color: #6565d5;
+    border-radius: 25px;
+    align-self: center;
+    width: 100%;
+    padding: 2.5em;
+    box-shadow: #442e5b 0 0 200px;
+    
+    div.inner-form {
+      margin: 0 auto;
+      max-width: 300px;
+    }
+
+    .intro-header {
+      text-align: center;
+      font-size: 2em;
+      margin: 0 0 0.4em 0;
+    }
+
+    .intro-text {
+      font-size: 0.75em;
+      font-style: italic;
+      p {
+        margin: 0.25em 0.5em;
+      }
+    }
+
+    .intro-input {
+      display: block;
+      margin: 0.5em 0;
+      padding: 0.75em;
+      font-size: 1.4em;
+      box-shadow: #4a4b9e 0 0 0.5em;
+    }
+
+    .intro-button {
+      display: block;
+      background-color: #4a4db2;
+      font-size: 1.4em;
+      padding: 0.75em 1em;
+      margin: 0.7em auto 0 auto;
+      box-shadow: #4a4b9e 0 0 0.5em;
+    }
+  }
+
+  form.the-modal {
+    padding: 1em;
+  }
+}

@@ -1,0 +1,43 @@
+#parent-activity-log {
+  #activity-log-header {
+    display: flex;
+
+    h3 {
+      margin: 0 0 .25em 0;
+    }
+
+    div.log-collapse button.casual-button {
+      padding: .4em .6em;
+      margin: 0 1em;
+      font-size: .7em;
+      font-weight: 600;
+      color: #f4eff5;
+      background-color: #3c98db;
+    }
+  }
+}
+
+#parent-activity-log.timer {
+  #activity-log-header {
+    display: flex;
+
+    h3 {
+      // margin: 0 0 0.25em 0;
+      font-size: 1em;
+      font-weight: 450      
+    }
+
+    div.log-collapse button.casual-button {
+      padding: .3em .5em;
+      margin: 0 .75em;
+      font-size: .6em;
+      font-weight: 525;
+      // color: #f4eff5;
+      // background-color: #3c98db;
+    }
+  }
+}
+
+.ReactCollapse--collapse {
+  transition: height 900ms;
+}

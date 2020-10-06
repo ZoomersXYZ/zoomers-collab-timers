@@ -1,0 +1,117 @@
+%as-text {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.delete-msg, .success-msg {
+  padding: 2px 7px;
+  color: #97b8e4;
+  font-style: oblique;
+  font-size: 12px;
+}
+
+.left-buffer {
+  padding-left: 5px;
+}
+
+button.as-text, .as-text {
+  @extend %as-text;
+  margin: 0;
+  padding: 0;
+}
+
+button.as-text-addon, .as-text-addon {
+  @extend %as-text;
+}
+
+button.as-link {
+  text-decoration: underline;
+}
+
+// colors
+.color-serious {
+  // color: #f5f0d8;
+  color: #3fa0e7;
+}
+
+.color-blue {
+  color: #97b8e4;
+}
+
+// Specific to Rooms and session (work/break)
+.break {
+  .casual-button {
+    background-color: #23c578;
+    color: #e7e7e7;
+  }
+  
+  svg.svg_bag__roompop {
+    circle {
+      fill: #22bb72;
+      stroke: #3fa0e7;
+      // stroke: #42a6f0;
+    }
+
+    div.pause-button-parent .casual-button {
+      background-color: #22bb72;
+      color: #e7e7e7;
+    }
+  }
+  
+  svg.control__svg {
+    circle {
+      fill: #23c578;
+      stroke: #3fa0e7;
+      // stroke: #42a6f0;
+    }
+    
+    form input.timer-text-field {
+      color: #d3d3d3;
+    }
+  }
+}
+
+// Specific to Rooms
+p.room__not-available {
+ margin-top: 0.25em; 
+}
+
+i.bigger-icon {
+  font-size: 2.5em;
+}
+
+button.cap-it-up {  
+  text-transform: capitalize;
+  align-items: center;
+}
+
+// Buttons
+div.pause-button-parent, div.session-button-parent {
+  flex: 0.5;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  div.button-content {
+    display: flex;
+
+    div.button-content-left {
+      flex: 0 0 20%;
+    }
+
+    div.button-content-right {
+      flex: 0.65;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  p.no-gap {
+    margin: 0;
+    padding: 0.4rem 0;
+  }
+}

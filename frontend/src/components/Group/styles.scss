@@ -1,0 +1,27 @@
+h2 {
+  margin-top: 0em;
+}
+
+h3.group__pre-listing {
+    font-size: 0.95em;
+    font-style: italic;
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+ul.group__listing {
+  margin-top: 0;
+  margin-bottom: 2em;
+  padding-left: 1em;
+  list-style-type: square;
+
+  li {
+    font-size: 0.95em;
+    float: left;
+    padding-right: 2.25em;
+  }
+}
+
+div.add {
+  clear:both;
+}

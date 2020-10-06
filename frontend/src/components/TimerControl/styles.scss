@@ -1,0 +1,107 @@
+@import './../Room/styles';
+
+div.control__root {
+
+  div.intro-text {
+    display: flex;
+
+    margin: 0 0 0.5em 0;
+    padding: 0;
+    h4 {
+      flex: 0 0 15%;
+
+      margin: 0.75rem 0 0 2rem;
+      font-style: oblique;
+      color: #e0dce1;
+      font-size: 1.1em;
+  
+      i.bigger-icon {
+        font-size: 1.5em;
+      }
+      i.icon-pad-left {
+        padding-left: .1em;
+      }
+    }
+
+    p.room__timer-oops {
+      margin: 0.5em 0 0 0;
+      
+      // padding-top: 0.001em;
+
+      flex: 0.45;
+
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      button {
+        font-size: 0.75em;
+        font-style: oblique;
+        text-decoration-line: none;
+
+        span.button-content {
+          i.bigger-icon {
+            font-size: 1.5em;
+          }
+          i.icon-pad-left {
+            padding-left: .2em;
+          }
+        }
+      }
+    }
+    
+  }
+
+  div.button-content {
+    display: flex;
+
+    div.button-content-left {
+      flex: 0 0 20%;
+    }
+
+    div.button-content-right {
+      flex: 0.65;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+
+  div.control__parent {
+    margin-top: 0.5rem;
+    display: flex;
+
+    div.control__div {
+      flex: 0 0 20%;
+    }  
+  }
+}
+
+div.session-oops-parent {
+  margin-left: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p.session-oops {
+    font-size: 0.75em;
+    font-style: oblique;  
+  }
+}
+
+p.room__not-available button {
+  font-size: 1.4rem;
+  font-style: oblique;
+  text-decoration-line: none;
+
+  span.button-content {
+    i.bigger-icon {
+      font-size: 1.5em;
+    }
+    i.icon-pad-left {
+      padding-left: .2em;
+    }
+  }
+}

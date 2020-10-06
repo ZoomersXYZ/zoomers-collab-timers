@@ -1,0 +1,45 @@
+// Text
+.text__roompop {
+  // fill: #fff;
+  fill: rgba( 255,255,255,.9 );
+  text-anchor: middle;
+  letter-spacing: 0.015em;
+  font-weight: 400;
+
+  opacity: 0.85;
+}
+.text__bolden {
+  font-weight: bold;
+}
+
+//  SVG, Circle
+@mixin circlekeyframe( $property ) {
+  @-webkit-keyframes #{ $property } {
+    @content;
+  }
+  @-moz-keyframes #{ $property } {
+    @content;
+  }
+  @-ms-keyframes #{ $property } {
+    @content;
+  }
+  @keyframes #{ $property } {
+    @content;
+  }
+}
+
+@include circlekeyframe( circle__pulse ) {
+  0% {
+    transform: rotate( 0deg );
+  }
+  100% {
+    transform: rotate( 360deg );
+  }
+}
+
+.circle__bag, .svg__roompop {
+  position: absolute;
+}
+.svg__final {
+  position: relative;
+}

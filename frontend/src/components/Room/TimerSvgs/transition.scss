@@ -1,0 +1,40 @@
+$short-time-span: 1s;
+$longer-time-span: 3s;
+$scale-medium: 1.25;
+$zero: 0;
+$one: 1;
+
+%circle-transition {
+  transition: opacity $short-time-span, transform $short-time-span;
+}
+
+// Other 3 svg CSSTransition
+.poppop-enter {
+  opacity: 0.7;
+  transform: scale( $scale-medium );
+  @extend %circle-transition;
+}
+.poppop-enter-active {
+  opacity: 0.85;
+  transform: scale( $scale-medium );
+  @extend %circle-transition;
+}
+.poppop-enter-done {
+  opacity: 0.85;
+  transform: scale( $scale-medium );
+}
+.poppop-exit {
+  opacity: $one;
+  transform: scale( $one );
+  @extend %circle-transition;
+}
+
+// Animation CSSTransition
+.animation-specific-enter {
+  opacity: $zero;
+  transition: opacity 250ms;
+}
+.animation-specific-exit {
+  opacity: $one;
+  transition: opacity $longer-time-span;
+}

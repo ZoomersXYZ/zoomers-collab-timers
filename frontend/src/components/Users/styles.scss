@@ -1,0 +1,13 @@
+div#parent-socket-users {
+  h3 {
+    font-size: 0.85em;
+    font-style: italic;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  div#socket-users {  
+    display: flex;
+    margin-top: 1em;
+  }
+}

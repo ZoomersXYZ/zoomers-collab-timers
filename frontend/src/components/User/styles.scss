@@ -1,0 +1,23 @@
+div.socket-user {
+  margin: 0 0.5em;
+
+  div.avatar {
+    display: inline-block;
+    
+    img.avatar__image {
+      // border-radius: 50%;
+      border-radius: 9999em;
+      box-shadow: #fff 0 0 0 1px;
+      color: #435287;
+      height: 3em;
+      width: 3em;
+    }
+
+    .name {
+      color: #c3c3c3;
+      font-size: 0.75em;
+      font-weight: 650;
+      text-align: center;
+    }
+  }
+}
