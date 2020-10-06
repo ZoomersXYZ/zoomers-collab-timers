@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  // font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  // color: $dark-grey;
+  font-family: 'Poppins', sans-serif;
+  // font-family: Helvetica, Arial, sans-serif;
+  // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    // "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    // sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-size: $m-size;
+  // line-height: 1.6;
+
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.is-active {
+  font-weight: bold;
+}
+
+/* Mobile -- 480 or 576 */
+@media only screen and ( min-width: 480px) {
+
+}
+
+/* Tablet */
+@media only screen and ( min-width: 768px ) {
+
+}
+
+/* Desktop */
+@media only screen and ( min-width: 992px ) {
+
+}
+
+/* Largest */
+@media only screen and ( min-width: 1200px ) {
+
+}
