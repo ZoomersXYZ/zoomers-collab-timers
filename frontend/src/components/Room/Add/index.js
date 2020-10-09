@@ -17,7 +17,7 @@ const addToFirestore = ( doc, data ) => {
   };
   // @TODO does set return true or something truthy if it's 
   ref.set( hashie ).then( () => hashie.new = true ).catch( err => console.error( err ) );
-  console.log( 'hashie', hashie );
+  console.log( 'add to firestore', hashie );
   return hashie;
 };
 

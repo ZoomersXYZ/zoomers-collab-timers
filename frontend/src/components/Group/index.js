@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Libraries
-import { formatRelative } from 'date-fns';
+import { formatRelative, sub } from 'date-fns';
+
+import db from './../../config/firebase';
 
 // Own components
 import ForcedInput from './../ForcedInput';
@@ -24,8 +26,12 @@ import { getData, getLocal, setLocal } from './utilities';
 
 // Main component
 const RoomsGroup = ( { name } ) => {
-  const socket = io( process.env.REACT_APP_SOCKET + window.location.pathname );
-  // const socket = io( window.location.pathname );
+  const urlPath = window.location.pathname;
+  const lastDirectory = urlPath.split( '/' ).pop();
+
+  const socket = io( process.env.REACT_APP_SOCKET + urlPath );
+
+  // const socket = io( urlPath );
 
   // Regularly/User changing state
   const [ rooms, setRooms ] = useState( [] );
@@ -40,8 +46,49 @@ const RoomsGroup = ( { name } ) => {
   ////
 
   const [ showForced, setForced ] = useState( false );
+
   useEffect( () => {
-    const ownSocketInitial = ( name ) => {    
+    // Core
+    const d = new Date();
+    const oneDayAgo = sub( d, {
+      days: 7 
+    } ).getTime();
+    console.log( 'oneDayAgo', oneDayAgo );
+    const ref = db.collection( 'groups' )
+      .doc( lastDirectory ).collection( 'log' );
+    const stream = ref
+      // .where( 'timestamp', '>', oneDayAgo ) 
+      // .orderBy( 'timestamp', 'desc' ) 
+      .onSnapshot( 
+        doc => {
+          // doc.docChanges().forEach( ( change ) => {
+          //   if ( change.type === 'added' ) {
+          //     console.log( 'New city: ', change.doc.data() );
+          //     // console.log( 'New city: ', change.doc.data() );
+          //   } else if ( change.type === 'modified' ) {
+          //     console.log( 'Modified city: ', change.doc.data() );
+          //   }
+          // } );
+          // setLoading( false );
+          const arr = [];
+          console.log( 'size', doc.size );
+          doc.forEach( solo => {            
+            // console.log( 'sol', solo.data() );
+            arr.push( solo.data() ) 
+          } );
+          setLog( arr );
+          console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
+        },
+        err => {
+          console.log( err );
+          // setErr( err );
+        } 
+      );
+      return () => stream();
+  }, [] );
+
+  useEffect( () => {
+    const ownSocketInitial = ( name ) => {
       const CONNECT = 'connect';
       const DISCONNECT = 'disconnect';
       const ERROR = 'error';
@@ -101,7 +148,6 @@ const RoomsGroup = ( { name } ) => {
 
       const onConnect = () => {
         handleNewUser();
-
       };
 
       const onError = err => {
@@ -117,7 +163,7 @@ const RoomsGroup = ( { name } ) => {
           return;
         };
         // else the socket will automatically try to reconnect
-      };      
+      };
 
       socket.on( CONNECT, onConnect );
       socket.on( DISCONNECT, onDisconnect );
