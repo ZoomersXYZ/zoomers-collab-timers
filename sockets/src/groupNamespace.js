@@ -37,7 +37,7 @@ const group = socket => {
 
   const pullLogFromDb = async () => {
     let data = [];
-    db.collection( 'groups' ).doc( nspName ).collection( 'log' ).orderBy( 'timestamp', 'desc' ).limit( 30 ).get().then( snap => {
+    db.collection( 'groups' ).doc( nspName ).collection( 'log' ).orderBy( 'timestamp', 'desc' ).limit( 10 ).get().then( snap => {
       snap.forEach( doc => data.push( doc.data() ) );
     }, reason => {
       l.gen.error( '#error pullLogFromDb() async -> db.collection post then -- -> rejection' + reason );
@@ -45,10 +45,8 @@ const group = socket => {
     return data;
   };
 
-  const pushLogToDb = ( aLog ) => {
-    log.map( aLog => ref.doc().set( { ...aLog } ) );
-    log = [];
-  };
+  const pushLogToDb = ( aLog ) => 
+    ref.doc().set( { ...aLog } );
 
     const satisfyDuplicateIsh = ( arrival, hashieTimestamp, restOfHashie ) => {
       const { timestamp: arrivalTimestamp, ...restOfArrival } = arrival;
@@ -91,13 +89,11 @@ const group = socket => {
       timestamp: new Date().getTime() 
     };
 
-    const reversedCached = seshie.logCached.reverse();
+    const reversedCached = seshie.loggy.reverse();
     // don't log
     if ( duplicateIsh( reversedCached, hashie ) ) return;;
 
-    seshie.logQueued.push( hashie );
-    seshie.logCached.push( hashie );
-    seshie.logFull.push( hashie );
+    seshie.loggy.push( hashie );
 
     ref.doc().set( { ...hashie } );
   };
@@ -117,9 +113,6 @@ const group = socket => {
   sassy = socket.client.server.sass = socket.client.server.sass || {};
 
   seshie.group = seshie.group || newNamespace.name.substring( 7 );
-  
-  seshie.logQueued = seshie.logQueued || [];
-  seshie.logCached = seshie.logCached || [];
 
   ////
   // Shiz
@@ -127,26 +120,23 @@ const group = socket => {
 
   const getGroupLog = async () => {
     try {
-      seshie.logFull = seshie.logFull || await pullLogFromDb();
+      seshie.loggy = seshie.loggy || await pullLogFromDb();
     } catch( err ) {
       l.gen.error( '#error getLog() async -> catch -- -> await rejection, ' + `--- ${ err } ---` );
-      seshie.logFull = [];
+      seshie.loggy = [];
     };
 
-    const cutFullLog = seshie.logFull.filter( arrival => arrival.group === nspName ).slice( 0, 30 );
+    const cutFullLog = seshie.loggy.filter( arrival => arrival.group === nspName ).slice( 0, 10 );
     const reversedCut = cutFullLog.reverse();
-    seshie.logQueued = seshie.logQueued || [];
-    seshie.logCached = seshie.logCached || [];
     
     const sendingOut = [ 
       ...new Set( 
-        [ ...reversedCut, ...seshie.logCached ] 
+        [ ...reversedCut, ...seshie.loggy ] 
       ) 
     ];
 
     socket.emit( 'activity log', sendingOut );
   };
-  // getGroupLog();
 
   let addedUser = false;
   const addUser = ( handle, emailAcct ) => {
