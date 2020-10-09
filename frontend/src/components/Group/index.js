@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Libraries
+// import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { formatRelative, sub } from 'date-fns';
 
 import db from './../../config/firebase';
