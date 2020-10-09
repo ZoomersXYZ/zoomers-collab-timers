@@ -12,9 +12,6 @@ numUsers = 0;
 users = [];
 nsUsers = [];
 
-lastPushTime = new Date().getTime();
-lastGetLog = new Date().getTime();
-
 confirmIdPong = false;
 
 seshieParent = {};
@@ -34,8 +31,9 @@ const group = socket => {
   // Utility functions
   ////
 
-  const activityEmit = ( event, msg = null ) => newNamespace.emit( event, msg );
-  const groupEmit = activityEmit;
+
+  ref = db.collection( 'groups' ).doc( nspName ).collection( 'log' );
+  const groupEmit = ( event, msg = null ) => newNamespace.emit( event, msg );
 
   const pullLogFromDb = async () => {
     let data = [];
@@ -47,8 +45,7 @@ const group = socket => {
     return data;
   };
 
-  const pushLogToDb = ( log ) => {
-    const ref = db.collection( 'groups' ).doc( nspName ).collection( 'log' );
+  const pushLogToDb = ( aLog ) => {
     log.map( aLog => ref.doc().set( { ...aLog } ) );
     log = [];
   };
@@ -102,8 +99,7 @@ const group = socket => {
     seshie.logCached.push( hashie );
     seshie.logFull.push( hashie );
 
-    const event = 'activity updated';
-    activityEmit( event, hashie );
+    ref.doc().set( { ...hashie } );
   };
   
   const pongId = () => {
@@ -209,14 +205,6 @@ const group = socket => {
 
   const disconnecting = () => {
     logIt( null, `left room` );
-    // over 15 min // ( ( new Date().getTime() - lastPushTime ) / 1000 / 60 ) > 15;
-    // 30s
-    const timeToWait = Math.floor( ( new Date().getTime() - lastPushTime ) / 1000 ) > 30;
-    if ( timeToWait ) {
-      pushLogToDb( seshie.logQueued );
-      seshie.logQueued = [];
-      lastPushTime = new Date().getTime();
-    };
   };
 
   // Misc
