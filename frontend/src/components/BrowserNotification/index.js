@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import Push from "push.js";
-import shortid from "shortid";
+import { nanoid } from "nanoid";
 
 const BrowserNotification = ( props ) => {
   const { run, title, body, icon, tag, timeout, requireInteraction } = props;
@@ -71,7 +71,7 @@ BrowserNotification.defaultProps = {
   title: "Yoo", 
   body: null, 
   icon: null, 
-  tag: shortid.generate(), 
+  tag: nanoid(), 
   timeout: null, 
   requireInteraction: null 
 };
