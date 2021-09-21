@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 // Libraries
 // import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { formatRelative, sub } from 'date-fns';
+import { collection, onSnapshot } from "firebase/firestore";
 
 import db from './../../config/firebase';
 
@@ -55,37 +56,41 @@ const RoomsGroup = ( { name } ) => {
       days: 7 
     } ).getTime();
     console.log( 'oneDayAgo', oneDayAgo );
-    const ref = db.collection( 'groups' )
-      .doc( lastDirectory ).collection( 'log' );
-    const stream = ref
+
+    const ref = collection( db, 'groups', lastDirectory, 'log' );
+      
+    // const stream = ref
       // .where( 'timestamp', '>', oneDayAgo ) 
       // .orderBy( 'timestamp', 'desc' ) 
-      .onSnapshot( 
-        doc => {
-          // doc.docChanges().forEach( ( change ) => {
-          //   if ( change.type === 'added' ) {
-          //     console.log( 'New city: ', change.doc.data() );
-          //     // console.log( 'New city: ', change.doc.data() );
-          //   } else if ( change.type === 'modified' ) {
-          //     console.log( 'Modified city: ', change.doc.data() );
-          //   }
-          // } );
-          // setLoading( false );
-          const arr = [];
-          console.log( 'size', doc.size );
-          doc.forEach( solo => {            
-            // console.log( 'sol', solo.data() );
-            arr.push( solo.data() ) 
-          } );
-          setLog( arr );
-          console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
-        },
-        err => {
-          console.log( err );
-          // setErr( err );
-        } 
-      );
-      return () => stream();
+    // .onSnapshot( 
+      // doc => {
+        // doc.docChanges().forEach( ( change ) => {
+        //   if ( change.type === 'added' ) {
+        //     console.log( 'New city: ', change.doc.data() );
+        //     // console.log( 'New city: ', change.doc.data() );
+        //   } else if ( change.type === 'modified' ) {
+        //     console.log( 'Modified city: ', change.doc.data() );
+        //   }
+        // } );
+        // setLoading( false );
+    const stream = onSnapshot( 
+      ref, 
+      doc => {
+        const arr = [];
+        console.log( 'size', doc.size );
+        doc.forEach( solo => { 
+          // console.log( 'sol', solo.data() );
+          arr.push( solo.data() ) 
+        } );
+        setLog( arr );
+        console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
+      },
+      err => {
+        console.log( err );
+        // setErr( err );
+      } 
+    );
+    return () => stream();
   }, [] );
 
   useEffect( () => {

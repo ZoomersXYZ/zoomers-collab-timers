@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
 import { Field, Form, ErrorMessage, withFormik } from 'formik';
+import { doc, setDoc } from "firebase/firestore";
 
 import db from './../../../config/firebase';
 import './../styles.scss'
 import { resetErrors } from './../../helpers.js';
 
-const addToFirestore = ( doc, data ) => {
-  const ref = db.collection( 'groups' ).doc( doc ).collection( 'rooms' ).doc( data );
+const addToFirestore = async ( docName, data ) => {
+  const docRef = doc( db, 'groups', docName, 'rooms', data );
   const hashie = { 
     name: data, 
     timers: [], 
@@ -16,7 +16,13 @@ const addToFirestore = ( doc, data ) => {
     lastUsed: new Date().getTime() 
   };
   // @TODO does set return true or something truthy if it's 
-  ref.set( hashie ).then( () => hashie.new = true ).catch( err => console.error( err ) );
+  await setDoc( hashie )
+    .then( () => 
+    hashie.new = true 
+    ).catch( err => 
+      console.error( err ) 
+    );
+
   console.log( 'add to firestore', hashie );
   return hashie;
 };
@@ -73,10 +79,10 @@ const SwoleAddingRoomForm = withFormik( {
       newRoom: '', 
   } ), 
 
-  handleSubmit: ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
+  handleSubmit: async ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
     const { doc, setRooms } = props;
     const { newRoom } = values;
-    const result = addToFirestore( doc, newRoom );
+    const result = await addToFirestore( doc, newRoom );
 
     if ( result !== null && result.hasOwnProperty( 'new' ) ) {
       setTimeout( () =>

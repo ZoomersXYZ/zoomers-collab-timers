@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -14,8 +14,8 @@ const firebaseConfig = {
 };
 
 
-firebase.initializeApp( firebaseConfig );
-const db = firebase.firestore();
+initializeApp( firebaseConfig );
+const db = getFirestore();
 
 // firebase.firestore().enablePersistence()
 //   .catch( function( err ) {
@@ -31,4 +31,4 @@ const db = firebase.firestore();
 //   } );
 // Subsequent queries will use persistence, if it was enabled successfully
 
-export { firebase, db as default };
+export default db;

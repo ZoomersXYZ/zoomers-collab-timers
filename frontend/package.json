@@ -2,9 +2,9 @@
   "name": "proj-h_collab-timers",
   "dependencies": {
     "cra-append-sw": "^2.7.0",
-    "firebase": "^7.15.1",
     "date-fns": "^2.24.0",
     "debug": "^4.3.2",
+    "firebase": "^9.0.2",
     "formik": "^2.2.9",
     "sass": "^1.41.1",
     "push.js": "^1.0.12",
