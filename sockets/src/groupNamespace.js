@@ -349,7 +349,7 @@ const group = socket => {
     logIt( inRoom, `skipped to ${ session } mode` );
     sassy[ inRoom ].session = session;
 
-    deleteCollection( db, nspName );
+    // deleteCollection( db, nspName );
   };
 
   const wrappingUp = ( inRoom, msg, activity ) => {

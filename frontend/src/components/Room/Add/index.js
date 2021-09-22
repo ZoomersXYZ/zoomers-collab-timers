@@ -16,7 +16,7 @@ const addToFirestore = async ( docName, data ) => {
     lastUsed: new Date().getTime() 
   };
   // @TODO does set return true or something truthy if it's 
-  await setDoc( hashie )
+  await setDoc( docRef, hashie )
     .then( () => 
     hashie.new = true 
     ).catch( err => 
