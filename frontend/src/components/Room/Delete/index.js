@@ -11,13 +11,19 @@ import l from './../../../config/winston';
 
 const deleteFromFirestore = async ( docName, data ) => {
   const docRef = doc( db, 'groups', docName, 'rooms', data );
-  
-  await deleteDoc( docRef )
-    .then( () => {
-      l.gen.info( 'Room \'doc\' successfully deleted!' );
-  } ).catch( error => {
-      l.gen.error( 'Error removing document: ', error );
-  } );
+
+  try {
+    await deleteDoc( docRef );
+    l.gen.info( 'Room successfully deleted: ', data );
+  } catch ( err ) {
+    l.gen.error( 'Error removing document: ', err );
+  };
+  // deleteDoc( docRef )
+  //   .then( () => {
+  //     l.gen.info( 'Room successfully deleted: ', data );
+  // } ).catch( error => {
+  //     l.gen.error( 'Error removing document: ', error );
+  // } );
 
   // const ref = db.collection( 'groups' ).doc( doc ).collection( 'rooms' ).doc( data );
   // ref.delete().then( () => {

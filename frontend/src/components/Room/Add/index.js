@@ -16,12 +16,19 @@ const addToFirestore = async ( docName, data ) => {
     lastUsed: new Date().getTime() 
   };
   // @TODO does set return true or something truthy if it's 
-  await setDoc( docRef, hashie )
-    .then( () => 
-    hashie.new = true 
-    ).catch( err => 
-      console.error( err ) 
-    );
+  
+  try {
+    await setDoc( docRef, hashie );
+    hashie.new = true;
+  } catch ( err ) {
+    console.error( err );
+  };
+  // setDoc( docRef, hashie )
+  //   .then( () => 
+  //   hashie.new = true 
+  //   ).catch( err => 
+  //     console.error( err ) 
+  //   );
 
   console.log( 'add to firestore', hashie );
   return hashie;
