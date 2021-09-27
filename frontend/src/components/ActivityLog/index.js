@@ -12,10 +12,11 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
   useEffect( () => {
     if ( timer ) {
       // console.log( 'timer log', log );
-      setLog( log.filter( primer => primer.timer === timer ) );
+      const slicedLog = log.filter( primer => primer.timer === timer );
+      setLog( slicedLog.slice( -10 ) );
       setSlice( -5 );
     } else {
-      setLog( log );
+      setLog( log.slice( -20 ) );
     };
   }, [ log, timer ] );
 

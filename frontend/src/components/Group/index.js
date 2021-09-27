@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 // Libraries
 // import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { daysToWeeks, formatRelative, sub } from 'date-fns';
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { formatRelative, sub } from 'date-fns';
+import { collection, onSnapshot, limit, query, where, orderBy } from "firebase/firestore";
 
 import db from './../../config/firebase';
 
@@ -73,7 +73,7 @@ const RoomsGroup = ( { name } ) => {
         // setLoading( false );
 
     const rootRef = collection( db, 'groups', lastDirectory, 'log' );
-    const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ) );
+    const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ), orderBy( 'timestamp', 'desc' ), limit( 50 ) );
 
     const stream = onSnapshot( 
       ref, 
@@ -93,6 +93,7 @@ const RoomsGroup = ( { name } ) => {
           data.formattedTime = formatRelative( data.timestamp, current );
           arr.push( data );
         } );
+        arr.reverse();
         setLog( arr );
 
         // arr.forEach( yo => { 
