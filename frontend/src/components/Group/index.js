@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 // Libraries
 // import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { formatRelative, sub } from 'date-fns';
-import { collection, onSnapshot } from "firebase/firestore";
+import { daysToWeeks, formatRelative, sub } from 'date-fns';
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 
 import db from './../../config/firebase';
 
@@ -55,9 +55,7 @@ const RoomsGroup = ( { name } ) => {
     const oneDayAgo = sub( d, {
       days: 7 
     } ).getTime();
-    console.log( 'oneDayAgo', oneDayAgo );
-
-    const ref = collection( db, 'groups', lastDirectory, 'log' );
+    // console.log( 'oneDayAgo', oneDayAgo );
       
     // const stream = ref
       // .where( 'timestamp', '>', oneDayAgo ) 
@@ -73,17 +71,37 @@ const RoomsGroup = ( { name } ) => {
         //   }
         // } );
         // setLoading( false );
+
+    const rootRef = collection( db, 'groups', lastDirectory, 'log' );
+    const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ) );
+
     const stream = onSnapshot( 
       ref, 
       doc => {
         const arr = [];
-        console.log( 'size', doc.size );
+        const current = new Date();
+        // console.log( 'size', doc.size );
         doc.forEach( solo => { 
           // console.log( 'sol', solo.data() );
-          arr.push( solo.data() ) 
+          // const yo = solo.data();
+          // if ( yo.username !== 'Sad' && yo.username !== 'Saddy' ) {
+            // const newnew = { ...yo, ts: new Date( yo.timestamp ) };
+            // console.log( newnew );
+            // arr.push( newnew );
+          // };
+          const data = solo.data();
+          data.formattedTime = formatRelative( data.timestamp, current );
+          arr.push( data );
         } );
         setLog( arr );
-        console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
+
+        // arr.forEach( yo => { 
+        //   if ( yo.username !== 'Sad' && yo.username !== 'Saddy' ) {
+        //     const newnew = { ...yo, ts: new Date( yo.timestamp ) };
+        //     console.log( newnew );
+        //   };
+        // } );
+        // console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
       },
       err => {
         console.log( err );
@@ -91,6 +109,7 @@ const RoomsGroup = ( { name } ) => {
       } 
     );
     return () => stream();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
   useEffect( () => {
@@ -135,7 +154,7 @@ const RoomsGroup = ( { name } ) => {
         } );
       };
 
-      socket.on( ACTIVITY_LOG, activityLog );
+      // socket.on( ACTIVITY_LOG, activityLog );
       socket.on( ACTIVITY_UPDATED, activityUpdated );
 
 
