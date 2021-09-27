@@ -32,7 +32,7 @@ CommonBrowserNotification.defaultProps = {
   title: "Z Collab Timer Notification", 
   body: null, 
   icon: '/logo-1.png', 
-  timeout: 2000, 
+  timeout: 4000, 
   requireInteraction: null 
 };
 

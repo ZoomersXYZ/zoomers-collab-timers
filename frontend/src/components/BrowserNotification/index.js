@@ -44,7 +44,7 @@ const BrowserNotification = ( props ) => {
 
   return (
     <div>
-      { run === prevRun && run > 0 &&
+      { ( run === prevRun || run - 1 === prevRun ) && run > 0 &&
       <audio id="sound" preload="auto" autoPlay={ true }>
         <source src="/notification-sound.mp3" type="audio/mpeg" />
         <source src="/notification-sound.ogg" type="audio/ogg" />
