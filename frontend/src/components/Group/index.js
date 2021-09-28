@@ -177,11 +177,13 @@ const RoomsGroup = ( { name } ) => {
       };
 
       const onError = err => {
+        console.error( ERROR, err );
         l.gen.error( ERROR, err );
       };
 
       const onDisconnect = reason => {
-        l.gen.error( 'reason', reason );
+        l.gen.error( 'l reason', reason );
+        console.error( 'reason', reason );
         if ( reason === 'io server disconnect' ) {
           // the disconnection was initiated by the server, you need to reconnect manually
           socket.connect();
@@ -210,8 +212,8 @@ const RoomsGroup = ( { name } ) => {
     fetchData( name );
     ownSocketInitial( name );
 
-
     return () => {
+      console.log( 'returning to disconnect' );
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
