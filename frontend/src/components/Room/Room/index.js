@@ -80,7 +80,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     };
     const timerFinished = () => {
       // Browser notification
-      setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?' } );
+      setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?', sound: 1 } );
       setNotify( prevState => prevState + 1 );
 
       timerStopped();

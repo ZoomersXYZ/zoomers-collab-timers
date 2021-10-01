@@ -76,7 +76,7 @@ const SwoleSubmitTimeForm = withFormik( {
     setTimeout( props.onHandleShowing, 1500 );
     socket.emit( 'start timer', aptRoom, values.newTimer );
 
-    setNotifyInfo( { title: `${ aptRoom } timer finished`, body: 'Timer up. What\'s next?' } );
+    setNotifyInfo( { title: `${ aptRoom } timer has begun`, body: 'Let\'s go!' } );
     setNotify( prevState => prevState + 1 );
   }, 
 
