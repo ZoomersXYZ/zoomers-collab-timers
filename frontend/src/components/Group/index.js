@@ -55,22 +55,6 @@ const RoomsGroup = ( { name } ) => {
     const oneDayAgo = sub( d, {
       days: 7 
     } ).getTime();
-    // console.log( 'oneDayAgo', oneDayAgo );
-      
-    // const stream = ref
-      // .where( 'timestamp', '>', oneDayAgo ) 
-      // .orderBy( 'timestamp', 'desc' ) 
-    // .onSnapshot( 
-      // doc => {
-        // doc.docChanges().forEach( ( change ) => {
-        //   if ( change.type === 'added' ) {
-        //     console.log( 'New city: ', change.doc.data() );
-        //     // console.log( 'New city: ', change.doc.data() );
-        //   } else if ( change.type === 'modified' ) {
-        //     console.log( 'Modified city: ', change.doc.data() );
-        //   }
-        // } );
-        // setLoading( false );
 
     const rootRef = collection( db, 'groups', lastDirectory, 'log' );
     const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ), orderBy( 'timestamp', 'desc' ), limit( 50 ) );
@@ -80,30 +64,14 @@ const RoomsGroup = ( { name } ) => {
       doc => {
         const arr = [];
         const current = new Date();
-        // console.log( 'size', doc.size );
         doc.forEach( solo => { 
-          // console.log( 'sol', solo.data() );
-          // const yo = solo.data();
-          // if ( yo.username !== 'Sad' && yo.username !== 'Saddy' ) {
-            // const newnew = { ...yo, ts: new Date( yo.timestamp ) };
-            // console.log( newnew );
-            // arr.push( newnew );
-          // };
           const data = solo.data();
           data.formattedTime = formatRelative( data.timestamp, current );
           arr.push( data );
         } );
         arr.reverse();
         setLog( arr );
-
-        // arr.forEach( yo => { 
-        //   if ( yo.username !== 'Sad' && yo.username !== 'Saddy' ) {
-        //     const newnew = { ...yo, ts: new Date( yo.timestamp ) };
-        //     console.log( newnew );
-        //   };
-        // } );
-        // console.log( 'hi', arr.length > 1 && JSON.stringify( arr[ 0 ] ) );
-      },
+      }, 
       err => {
         console.log( err );
         // setErr( err );
@@ -134,31 +102,6 @@ const RoomsGroup = ( { name } ) => {
         socket.on( CONFIRM_INITIAL_PING, confirmInitialPing );
       };
 
-      // Activity
-      
-      const ACTIVITY_LOG = 'activity log';
-      const ACTIVITY_UPDATED = 'activity updated';
-
-      const activityLog = ( e ) => {
-        // @TODO test if the variable makes a difference
-        const current = new Date();
-        e.forEach( primer => primer.formattedTime = formatRelative( primer.timestamp, current ) );
-        setLog( e );
-      };
-
-      const activityUpdated = ( e ) => {
-        e.formattedTime = formatRelative( e.timestamp, new Date() );
-        setLog( prevState => {
-          const newNew = [ ...prevState ];
-          newNew.push( e );
-          return newNew;
-        } );
-      };
-
-      // socket.on( ACTIVITY_LOG, activityLog );
-      socket.on( ACTIVITY_UPDATED, activityUpdated );
-
-
       // Users
 
       const listUsers = ( e ) => {
@@ -168,7 +111,7 @@ const RoomsGroup = ( { name } ) => {
       const userLeft = ( e ) => {
         setUsers( e.nsUsers );
       };
-      
+
 
       // Based
 
@@ -234,7 +177,6 @@ const RoomsGroup = ( { name } ) => {
     setForced( false );
     return true;
   };
-
   
   ////
   // useEffects primarily. Meant for child components.
