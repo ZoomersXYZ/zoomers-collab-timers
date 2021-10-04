@@ -361,7 +361,42 @@ const group = socket => {
     sassy[ inRoom ].timerFlag = false;
 
     emitRoom( msg, { room: inRoom } );
+
+    if ( sassy[ inRoom ].repeating == true ) { 
+      if ( sassy[ inRoom ].repeat.endTime < new Date().getTime() ) {
+        logIt( inRoom, `repeating done after ${ sassy[ inRoom ].repeat.length } hours` );
+        sassy[ inRoom ].repeat = {};
+        sassy[ inRoom ].repeating = false;
+      } else {
+        newSesh = sassy[ inRoom ].session === 'work' ? 'break' : 'work';
+        skipSession( inRoom );
+        NewSeshTimeInMinutes = sassy[ inRoom ].repeat[ newSesh ];
+        startTimer( inRoom, NewSeshTimeInMinutes );
+      };
+    };
     logIt( inRoom, activity );
+  };
+
+  const repeatingOn = ( inRoom, workTime, breakTime, length ) => {
+    const theTime = new Date().getTime();
+    sassy[ inRoom ].repeat = { 
+      on: true, 
+      endTime: theTime + ( length * 60 * 60 * 1000 ), 
+      work: workTime, 
+      break: breakTime 
+    };
+
+    if ( sassy[ inRoom ].session === 'break' ) {
+      emitRoom( 'session skipped', { room: sassy[ inRoom ].roomie, session: sassy[ inRoom ].session } );
+    };
+    startTimer( inRoom, workTime );
+    logIt( inRoom, 'repeating on' );
+  };
+
+  const repeatingOff = ( inRoom ) => {
+    sassy[ inRoom ].repeat = {};
+    sassy[ inRoom ].repeating = false;
+    logIt( inRoom, 'repeating off' );
   };
 
   const stopTimer = ( inRoom ) => wrappingUp( inRoom, 'timer stopped', 'force stopped' );
@@ -441,7 +476,8 @@ const group = socket => {
       ongoingInterval: null, 
       goneByInterval: null, 
       roomie, 
-      group: nspName // DD 
+      group: nspName, // DD
+      repeat: { on: false } 
     };
     if ( isEmpty( sassy[ roomie ] ) ) sassy[ roomie ] = hashieWashie;
     onRoomConnect( sassy[ roomie ] );
