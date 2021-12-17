@@ -70,28 +70,33 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
       setCurr( setupCurr( e ) );
     };
 
-    const timerPaused = ( room ) => {      
+    const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
+      console.log( 'timerPause happening', aptRoom );
       setPauseTerm( 'unpause' );
     };
 
-    const timerResumed = () => {
+    const timerResumed = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      console.log( 'timerResumed happening', aptRoom );
       setPauseTerm( 'pause' );
     };    
 
-    const timerStopped = () => {
+    const timerStopped = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
       setCurr( setupCurr( { 
         current: null, 
         currentFormatted: null, 
         totalDuration: null 
       } ) );
     };
-    const timerFinished = () => {
+    const timerFinished = ( room ) => {      
+      if ( filterOutRoom( room ) ) { return; };
       // Browser notification
       setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?', sound: 1 } );
       setNotify( prevState => prevState + 1 );
 
-      timerStopped();
+      timerStopped( room );
     };
 
     if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
@@ -142,7 +147,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const handleStoplightHover = () => {
     stoplightInterval = setInterval( () => {
       setStoplight( prevState => prevState === 'stop' ? 'go' : 'stop' );
-    }, 500 );
+    }, 750 );
   };
   const handleStoplightOut = () => {
     clearInterval( stoplightInterval );
@@ -152,7 +157,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const handleHourglassHover = () => {
     hourglassInterval = setInterval( () => {
       setHourglass( prevState => prevState === 'start' ? 'end' : 'start' );
-    }, 500 );
+    }, 750 );
   };
   const handleHourglassOut = () => {
     clearInterval( hourglassInterval );
