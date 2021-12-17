@@ -36,6 +36,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     paused: false, 
     pausedAt: 0, 
     ongoingTime: 0  
+  } );  
   const [ session, setSession ] = useState( { 
     term: 'work', 
     icon: 'briefcase', 
@@ -44,6 +45,12 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     scheme: '', 
     oppScheme: 'break' 
   } );
+  const [ repeating, setRepeating ] = useState( { 
+    on: false, 
+    length: 0, 
+    endTime: 0, 
+    work: 32, 
+    break: 8 
   } );
 
   const [ stoplight, setStoplight ] = useState( 'stop' );
@@ -55,6 +62,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const TIMER_STOPPED = 'timer stopped';
   const TIMER_FINISHED = 'timer finished';
   const TIMER_CREATED = 'timer created';
+
+  const REPEATING_ON = 'repeating on';
+  const REPEATING_OFF = 'repeating off';
 
   const ROOM_ENTERED = 'room entered';
   const LEAVE_DOWN = 'leave down';
@@ -87,6 +97,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
 
     const timerStopped = ( room ) => {
       if ( filterOutRoom( room ) ) { return; };
+      setShowTimer( false );
+      console.log( 'showtimer off' );
+
       setCurr( setupCurr( { 
         current: null, 
         currentFormatted: null, 
@@ -102,6 +115,29 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
       timerStopped( room );
     };
 
+    const repeatingTimerOn = ( e ) => {
+      const { length, endTime, work_time, break_time, room } = e;
+      if ( filterOutRoom( room ) ) { return; };
+      setRepeating( { 
+        on: true, 
+        length, 
+        endTime, 
+        work: work_time, 
+        break: break_time 
+      } );
+    };
+
+    const repeatingTimerOff = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      setRepeating( { 
+        on: false, 
+        length: 0, 
+        endTime: 0, 
+        work: 32, 
+        break: 8 
+      } );
+    };
+
     if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
       emitRoom( TIMER_CREATED );
       // socket.emit( TIMER_CREATED );
@@ -112,6 +148,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     socket.on( TIMER_RESUMED, timerResumed );
     socket.on( TIMER_STOPPED, timerStopped );
     socket.on( TIMER_FINISHED, timerFinished );
+
+    socket.on( REPEATING_ON, repeatingTimerOn );
+    socket.on( REPEATING_OFF, repeatingTimerOff );
   };
 
   const setupCurr = ( e ) => {

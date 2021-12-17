@@ -29,18 +29,30 @@ const TimerControl = ( {
   };
 
   const [ showControl, setShowControl ] = useState( false );
+  const [ showNormOrRepeat, setNormOrRepeat ] = useState( false );
   const onHandleShowing = ( e ) => setShowControl( prevState => !prevState );
+  const onHandleNormOrRepeat = ( e ) => setNormOrRepeat( prevState => !prevState );
 
-  const TIMER_STARTED = 'timer_started';
+  const onHandleShowingNorm = ( e ) => {
+    setShowControl( prevState => !prevState );
+    setNormOrRepeat( true );
+  };
+  const onHandleShowingRepeat = ( e ) => {
+    setShowControl( prevState => !prevState );
+    setNormOrRepeat( false );
+  };
+
+  const TIMER_STARTED = 'timer started';
   const SESSION_SKIPPED = 'session skipped';
   const SKIP_SESSION = 'skip session';
   const META_UPDATED = 'meta_updated';
 
   useEffect( () => {
     const timerStarted = ( room ) => {
-      console.log( 'timerStarted() room', room );
       if ( filterOutRoom( room ) ) { return; };
-      setShowControl( false );
+      console.log( 'timerStarted() room', room );
+      // setShowControl( false );
+      setShowTimer( true );
     };
 
     const skipSession = ( { room, session } ) => {
@@ -103,22 +115,44 @@ const TimerControl = ( {
     socket.emit( SKIP_SESSION, aptRoom );
   };
 
+  const repeatingInput = ( el, index ) => el.children[ index ].getElementsByTagName( 'input' )[ 0 ].value;
+
+  const handleRepeatingSubmit = ( e ) => {
+    let parent = e.target;
+    while ( !parent.className.includes( 'control__parent' ) ) {
+      parent = parent.parentElement;
+    };
+    const workTime = repeatingInput( parent, 0 );
+    const breakTime = repeatingInput( parent, 1 );
+    const length = repeatingInput( parent, 2 );
+    
+    socket.emit( 'repeating timer on', aptRoom, workTime, breakTime, length );
+  };
+
   return (
     <div className={ `${ className }__root` }>
-    { showControl && 
+    { showControl && showNormOrRepeat && 
       <>
+
         <div className="intro-text">
           <h4>
             Add Timer
           </h4>
           <p className="room__timer-oops">
-            <button className="as-text-addon as-link color-serious smaller-middle-upper-text" onClick={ onHandleShowing }>
-              <span className="button-content">Cancel starting a new timer.<i className="icon-pad-left far fa-stopwatch"></i></span>
+            <button 
+              className="as-text-addon as-link color-serious smaller-middle-upper-text" 
+              onClick={ onHandleShowing }
+            >
+              <span className="button-content">
+                Cancel starting a new timer.
+                <i className="icon-pad-left far fa-stopwatch"></i>
+              </span>
             </button>
           </p>
         </div>
+
         <div className={ `${ className }__parent` }>
-          <div className={ `${ className }__div ${ session.scheme }` }>
+          <div className={ `${ className }__div ${ session.scheme ? session.scheme : 'def' }` }>
             <Circle 
               className={ className } 
               width={ width } 
@@ -140,8 +174,9 @@ const TimerControl = ( {
             { formErr && <div id="feedback">{ formErr }</div> }
             { formStatus && <div className="success-msg">{ formStatus }</div> }
           </div>
+
           { !time && !duration && 
-            <div className={ `session-button-parent ${ session.oppScheme }` }>
+            <div className={ `session-button-parent ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
               <button 
                 className="casual-button link-underline-fade cap-it-up" 
                 onClick={ handleSessionTimer }
@@ -159,25 +194,133 @@ const TimerControl = ( {
               </button>
             </div>
           }
+
           { ( !isNaN( time ) && time > 0 ) && ( !isNaN( duration ) && duration > 0 ) && 
-            <div className={ `session-oops-parent ${ session.oppScheme }` }>
+            <div className={ `session-oops-parent ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
               <p className="session-oops">
                 Stop the timer if you would <br /> like to switch to { session.opp === 'break' ? 'a break' : "workin'" }.
               </p>
             </div>
-          }
+          }          
         </div>
       </>
     }
+
+    { showControl && !showNormOrRepeat && 
+      <>
+
+        <div className="intro-text">
+          <h4>
+            Begin Repeating Timers
+          </h4>
+          <p className="room__timer-oops">
+            <button 
+              className="as-text-addon as-link color-serious smaller-middle-upper-text" 
+              onClick={ onHandleShowing }
+            >
+              <span className="button-content">
+                Cancel starting new repeating timers.
+                <i className="icon-pad-left far fa-stopwatch"></i>
+              </span>
+            </button>
+          </p>
+        </div>
+
+        <div className={ `${ className }__parent repeating` }>
+
+          <div className={ `${ className }__div ${ session.scheme ? session.scheme : 'def' }` }>
+            <Circle 
+              className={ className } 
+              width={ width } 
+              height={ height } 
+              onDoubleClick={ null } 
+            >
+              <input name="workTimer" className="timer-text-field" defaultValue="32" />
+            </Circle>
+          </div>
+
+          <div className={ `${ className }__div ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
+            <Circle 
+              className={ className } 
+              width={ width } 
+              height={ height } 
+              onDoubleClick={ false } 
+            >
+              <input name="breakTimer" className="timer-text-field" defaultValue="8" />
+            </Circle>
+          </div>
+
+          <div className="hours-button-parent hours">
+            <button 
+              className="casual-button link-underline-fade cap-it-up" 
+            >
+              <div className="button-content nice-input-in-circles">
+                <div className="button-content-left repeatLength">
+                  <input name="repeatLength" className="timer-text-field less-space" defaultValue="5" />
+                  <span>In Hours</span>
+                </div>
+                <div className="button-content-right">
+                  <i className={ 'bigger-icon far fa-stopwatch' }></i>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          { !time && !duration && 
+            <div className="submit">
+              <button 
+                className="casual-button link-underline-fade cap-it-up" 
+                onClick={ handleRepeatingSubmit } 
+              >
+                <div className="button-content">
+                  <div className="button-content-left vertical-middle">
+                  </div>
+                  <div className="button-content-right">
+                    <i className={ `bigger-icon icon-pad-left far fa-${ session.oppIcon }` }></i>
+                  </div>
+                </div>
+              </button>
+            </div>
+          }
+
+          { ( !isNaN( time ) && time > 0 ) && ( !isNaN( duration ) && duration > 0 ) && 
+            <div className={ `session-oops-parent ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
+              <p className="session-oops">
+                Stop the repeating if you would <br /> like to switch to { session.opp === 'break' ? 'a break' : "workin'" }.
+              </p>
+            </div>
+          }
+
+        </div>
+      </>
+    }
+
     { !showControl && 
-      <p className="room__not-available">
-        <button 
-          className="as-text-addon as-link color-serious smaller-middle-upper-text link-underline-fade" 
-          onClick={ onHandleShowing } 
-        >
-          <span className="button-content">Click here to start a new timer.<i className="icon-pad-left far fa-stopwatch"></i></span>
-        </button>
-      </p>
+      <div className="room__not-available">
+        <div>
+          <button 
+            className="as-text-addon as-link color-serious smaller-middle-upper-text link-underline-fade" 
+            onClick={ onHandleShowingNorm } 
+          >
+            <span className="button-content">
+              Click to begin a new timer.
+              <i className="icon-pad-left far fa-stopwatch"></i>
+            </span>
+          </button>
+        </div>
+
+        <div>
+          <button 
+            className="as-text-addon as-link color-serious smaller-middle-upper-text link-underline-fade" 
+            onClick={ onHandleShowingRepeat } 
+          >
+            <span className="button-content">
+              Click to begin a repeating timer.
+              <i className="icon-pad-left far fa-stopwatch"></i>
+            </span>
+          </button>
+        </div>
+      </div>
     }
     </div>
   ); 
