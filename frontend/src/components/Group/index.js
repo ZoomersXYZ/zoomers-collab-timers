@@ -252,11 +252,10 @@ const RoomsGroup = ( { name } ) => {
         group={ name } 
       />
 
-      <div>
+      <>
         { rooms && Array.isArray( rooms ) && rooms.length > 0 && 
-          <>
+          <div id="all-timers">
           { rooms.map( arrival => 
-            <div key={ `roomsgroup-div-${ arrival.name }` }>
               <Room 
                 key={ `room-${ arrival.name }` } 
                 roomie={ arrival } 
@@ -265,14 +264,13 @@ const RoomsGroup = ( { name } ) => {
                 group={ name } 
 
                 log={ log } 
-                userEnabled={ userEnabled }                 
+                userEnabled={ userEnabled }         
               />
-            </div>
             )
           }
-          </>
+          </div>
         }
-      </div>      
+      </>      
     </>
   );
 };
