@@ -33,8 +33,15 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     paused: false, 
     pausedAt: 0, 
     ongoingTime: 0  
+  const [ session, setSession ] = useState( { 
+    term: 'work', 
+    icon: 'briefcase', 
+    opp: 'break', 
+    oppIcon: 'coffee', 
+    scheme: '', 
+    oppScheme: 'break' 
   } );
-  const [ session, setSession ] = useState( { term: 'work', icon: 'briefcase', opp: 'break', oppIcon: 'coffee', scheme: '', oppScheme: 'break' } );
+  } );
 
   const [ stoplight, setStoplight ] = useState( 'stop' );
   const [ hourglass, setHourglass ] = useState( 'start' );

@@ -8,7 +8,20 @@ import { isEmpty } from './../../ancillary/helpers/general';
 
 import './styles.scss';
 
-const TimerControl = ( { socket, aptRoom, session, setSession, time, duration, width, height, className, setNotify, setNotifyInfo } ) => {
+const TimerControl = ( { 
+  socket, 
+  aptRoom, 
+  session, 
+  setSession, 
+  time, 
+  duration, 
+  width, 
+  height, 
+  className, 
+  setNotify, 
+  setNotifyInfo, 
+  setShowTimer 
+} ) => {
   const theRef = useRef( null );
 
   const filterOutRoom = ( room ) => {
@@ -34,9 +47,23 @@ const TimerControl = ( { socket, aptRoom, session, setSession, time, duration, w
       if ( filterOutRoom( room ) ) { return; };
       
       setSession( session === 'work' ? 
-        { term: 'work', icon: 'briefcase', opp: 'break', oppIcon: 'coffee', scheme: '', oppScheme: 'break' } 
+        { 
+          term: 'work', 
+          icon: 'briefcase', 
+          opp: 'break', 
+          oppIcon: 'coffee', 
+          scheme: '', 
+          oppScheme: 'break' 
+        } 
         : 
-        { term: 'break', icon: 'coffee', opp: 'work', oppIcon: 'briefcase', scheme: 'break', oppScheme: '' } 
+        { 
+          term: 'break', 
+          icon: 'coffee', 
+          opp: 'work', 
+          oppIcon: 'briefcase', 
+          scheme: 'break', 
+          oppScheme: '' 
+        } 
       )
     };
 
