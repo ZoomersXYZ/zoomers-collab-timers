@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { CSSTransition } from 'react-transition-group';
 
 import Svg from './../TimerSvgs';
 import TimerControl from './../../TimerControl';
@@ -21,6 +22,8 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     if ( aptRoom !== room ) { return true; };
   };
 
+  // States
+  const [ showTimer, setShowTimer ] = useState( false );
   // Push notifications
   const [ notify, setNotify ] = useState( 0 );
   const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
@@ -187,7 +190,14 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         timer={ name } 
       />
 
-      { ( !isNaN( current ) && current > 0 ) && ( !isNaN( totalDuration ) && totalDuration > 0 ) && 
+      <CSSTransition 
+        in={ showTimer } 
+        timeout={ 2500 } 
+        classNames="coretimer" 
+        // mountOnEnter
+        unmountOnExit
+        // appear={ true } 
+      >
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 
             className={ className } 
@@ -225,6 +235,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
               onMouseEnter={ handleStoplightHover } 
               onMouseLeave={ handleStoplightOut } 
             >
+              {}
               <div className="button-content">
                 <div className="button-content-left">
                   <p className="no-gap">Stop</p>
@@ -237,7 +248,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
             </button>
           </div>
         </div>
-      }
+      </CSSTransition>
 
       <TimerControl 
         aptRoom={ name }
@@ -248,9 +259,13 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         height={ height / 2 } 
         session={ session } 
         setSession={ setSession } 
+
+
         
         setNotify={ setNotify } 
         setNotifyInfo={ setNotifyInfo } 
+
+        setShowTimer={ setShowTimer } 
       />      
     </div>
   ); 
