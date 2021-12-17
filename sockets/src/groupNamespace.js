@@ -290,7 +290,8 @@ const group = socket => {
   ////
 
   const startTimer = ( inRoom, timeInMinutes ) => {
-    sassy[ inRoom ].duration = timeInMinutes * 60;
+    // sassy[ inRoom ].duration = timeInMinutes * 60;
+    sassy[ inRoom ].duration = timeInMinutes;
     sassy[ inRoom ].secondsLeft = sassy[ inRoom ].duration;
     sassy[ inRoom ].timerFlag = true;
     sassy[ inRoom ].time = new Date().getTime();
@@ -362,11 +363,11 @@ const group = socket => {
 
     emitRoom( msg, { room: inRoom } );
 
-    if ( sassy[ inRoom ].repeating == true ) { 
+    if ( sassy[ inRoom ].repeat.on == true ) {   
       if ( sassy[ inRoom ].repeat.endTime < new Date().getTime() ) {
         logIt( inRoom, `repeating done after ${ sassy[ inRoom ].repeat.length } hours` );
-        sassy[ inRoom ].repeat = {};
-        sassy[ inRoom ].repeating = false;
+        sassy[ inRoom ].repeat = { on: false };
+        // sassy[ inRoom ].repeating = false;
       } else {
         newSesh = sassy[ inRoom ].session === 'work' ? 'break' : 'work';
         skipSession( inRoom );
@@ -381,21 +382,25 @@ const group = socket => {
     const theTime = new Date().getTime();
     sassy[ inRoom ].repeat = { 
       on: true, 
+      length,  
       endTime: theTime + ( length * 60 * 60 * 1000 ), 
-      work: workTime, 
-      break: breakTime 
+      work_time: workTime, 
+      break_time: breakTime 
     };
+    
+    emitRoom( 'repeating on', { room: inRoom, ...sassy[ inRoom ].repeat } );
+    logIt( inRoom, 'repeating on' );    
 
     if ( sassy[ inRoom ].session === 'break' ) {
       emitRoom( 'session skipped', { room: sassy[ inRoom ].roomie, session: sassy[ inRoom ].session } );
     };
     startTimer( inRoom, workTime );
-    logIt( inRoom, 'repeating on' );
   };
 
   const repeatingOff = ( inRoom ) => {
-    sassy[ inRoom ].repeat = {};
-    sassy[ inRoom ].repeating = false;
+    sassy[ inRoom ].repeat = { on: false };
+    // sassy[ inRoom ].repeating = false;
+    emitRoom( 'repeating off', { room: inRoom } );
     logIt( inRoom, 'repeating off' );
   };
 
@@ -492,6 +497,10 @@ const group = socket => {
   socket.on( 'pause', pauseTimer );
   socket.on( 'unpause', resumeTimer );
   socket.on( 'skip session', skipSession );
+
+  socket.on( 'repeating timer on', repeatingOn );
+  socket.on( 'repeating timer off', repeatingOff );
+
   
   // if ( !isEmpty( sassy ) ) { l.struct.info( '- end -' ); };
 };
