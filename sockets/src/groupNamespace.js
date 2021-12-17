@@ -27,12 +27,25 @@ const group = socket => {
   newNamespace = socket.nsp;
   nspName = newNamespace.name.substring( 7 );
 
+  ref = db.collection( 'groups' ).doc( nspName ).collection( 'log' );
+
+  ////
+  // Initialization
+  ////
+
+  seshieParent = socket.client.server.sesh = socket.client.server.sesh || {};
+  seshie = socket.client.server.sesh[ nspName ] = socket.client.server.sesh[ nspName ] || {};
+
+  sassy = socket.client.server.sass = socket.client.server.sass || {};
+
+  seshie.group = seshie.group || newNamespace.name.substring( 7 );
+  seshie.username = null;
+  seshie.email = null;
+  seshie.loggy = [];
+
   ////
   // Utility functions
-  ////
-
-
-  ref = db.collection( 'groups' ).doc( nspName ).collection( 'log' );
+  ////  
   const groupEmit = ( event, msg = null ) => newNamespace.emit( event, msg );
 
   const pullLogFromDb = async () => {
@@ -100,19 +113,9 @@ const group = socket => {
   
   const pongId = () => {
     confirmIdPong = true;
+    l.struct.info( 'pongId' );
     getGroupLog();
   };
-
-  ////
-  // Initialization
-  ////
-
-  seshieParent = socket.client.server.sesh = socket.client.server.sesh || {};
-  seshie = socket.client.server.sesh[ nspName ] = socket.client.server.sesh[ nspName ] || {};
-
-  sassy = socket.client.server.sass = socket.client.server.sass || {};
-
-  seshie.group = seshie.group || newNamespace.name.substring( 7 );
 
   ////
   // Shiz
@@ -138,6 +141,7 @@ const group = socket => {
     socket.emit( 'activity log', sendingOut );
   };
 
+  // one exception not being placed at beginning. Doesn't matter where it is placed.
   let addedUser = false;
   const addUser = ( handle, emailAcct ) => {
     if ( addedUser ) return;
