@@ -81,10 +81,12 @@ const TimerControl = ( {
   const [ formStatus, setFormStatus ] = useState( null );
   const handleFormStatus = ( arg ) => {
     if ( !isEmpty( arg ) ) {
-      setFormStatus( arg.success );
+      setFormStatus( arg );
+      setTimeout( setFormStatus( null ), 1500 );
     } else {
       setFormStatus( arg );
-    }
+    };
+    setTimeout( onHandleShowing, 1500 );
   };
 
   const [ formErr, setFormErr ] = useState( null );
