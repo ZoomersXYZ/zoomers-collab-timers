@@ -11,7 +11,6 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
   const [ toSlice, setSlice ] = useState( -8 );
   useEffect( () => {
     if ( timer ) {
-      // console.log( 'timer log', log );
       const slicedLog = log.filter( primer => primer.timer === timer );
       setLog( slicedLog.slice( -10 ) );
       setSlice( -5 );
@@ -25,7 +24,7 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
   return (
     <>
     { userEnabled && 
-    <div id="parent-activity-log" className={ `${ timer ? 'timer' : null }` }>
+    <div id="parent-activity-log" className={ `${ timer ? 'timer' : 'main-overall' }` }>
       <div id="activity-log-header">
         <h3>
           Activity Log
@@ -64,6 +63,8 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
           />
         ) }
       </div>
+      
+      <div className="barrier" />
     </div>
     }
     </>
