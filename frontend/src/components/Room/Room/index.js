@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { CSSTransition } from 'react-transition-group';
 
 import Svg from './../TimerSvgs';
 import TimerControl from './../../TimerControl';
@@ -12,9 +13,6 @@ let stoplightInterval = null;
 let hourglassInterval = null;
 
 const Room = ( { socket, group, roomie, log, userEnabled, width, height, className } ) => { 
-  // Push notifications
-  const [ notify, setNotify ] = useState( 0 );
-  const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
   // const { name, timers, createdAt, lastUsed } = roomie;
   const { name } = roomie;
   const aptRoom = name;
@@ -24,6 +22,12 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     if ( aptRoom !== room ) { return true; };
   };
 
+  // States
+  const [ showTimer, setShowTimer ] = useState( false );
+  // Push notifications
+  const [ notify, setNotify ] = useState( 0 );
+  const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
+
   const [ curr, setCurr ] = useState( { 
     current: 0, 
     currentFormatted: '00:00', 
@@ -32,8 +36,22 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     paused: false, 
     pausedAt: 0, 
     ongoingTime: 0  
+  } );  
+  const [ session, setSession ] = useState( { 
+    term: 'work', 
+    icon: 'briefcase', 
+    opp: 'break', 
+    oppIcon: 'coffee', 
+    scheme: '', 
+    oppScheme: 'break' 
   } );
-  const [ session, setSession ] = useState( { term: 'work', icon: 'briefcase', opp: 'break', oppIcon: 'coffee', scheme: '', oppScheme: 'break' } );
+  const [ repeating, setRepeating ] = useState( { 
+    on: false, 
+    length: 0, 
+    endTime: 0, 
+    work: 32, 
+    break: 8 
+  } );
 
   const [ stoplight, setStoplight ] = useState( 'stop' );
   const [ hourglass, setHourglass ] = useState( 'start' );
@@ -44,6 +62,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const TIMER_STOPPED = 'timer stopped';
   const TIMER_FINISHED = 'timer finished';
   const TIMER_CREATED = 'timer created';
+
+  const REPEATING_ON = 'repeating on';
+  const REPEATING_OFF = 'repeating off';
 
   const ROOM_ENTERED = 'room entered';
   const LEAVE_DOWN = 'leave down';
@@ -62,28 +83,59 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
       setCurr( setupCurr( e ) );
     };
 
-    const timerPaused = ( room ) => {      
+    const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
+      console.log( 'timerPause happening', aptRoom );
       setPauseTerm( 'unpause' );
     };
 
-    const timerResumed = () => {
+    const timerResumed = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      console.log( 'timerResumed happening', aptRoom );
       setPauseTerm( 'pause' );
     };    
 
-    const timerStopped = () => {
+    const timerStopped = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      setShowTimer( false );
+      console.log( 'showtimer off' );
+
       setCurr( setupCurr( { 
         current: null, 
         currentFormatted: null, 
         totalDuration: null 
-      } ) );      
+      } ) );
     };
-    const timerFinished = () => {
+    const timerFinished = ( room ) => {      
+      if ( filterOutRoom( room ) ) { return; };
       // Browser notification
       setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?', sound: 1 } );
       setNotify( prevState => prevState + 1 );
 
-      timerStopped();
+      timerStopped( room );
+    };
+
+    const repeatingTimerOn = ( e ) => {
+      const { length, endTime, work_time, break_time, room } = e;
+      if ( filterOutRoom( room ) ) { return; };
+      setRepeating( { 
+        on: true, 
+        length, 
+        endTime, 
+        work: work_time, 
+        break: break_time 
+      } );
+    };
+
+    const repeatingTimerOff = ( room ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      setRepeating( { 
+        on: false, 
+        length: 0, 
+        endTime: 0, 
+        work: 32, 
+        break: 8 
+      } );
     };
 
     if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
@@ -96,6 +148,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     socket.on( TIMER_RESUMED, timerResumed );
     socket.on( TIMER_STOPPED, timerStopped );
     socket.on( TIMER_FINISHED, timerFinished );
+
+    socket.on( REPEATING_ON, repeatingTimerOn );
+    socket.on( REPEATING_OFF, repeatingTimerOff );
   };
 
   const setupCurr = ( e ) => {
@@ -134,7 +189,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const handleStoplightHover = () => {
     stoplightInterval = setInterval( () => {
       setStoplight( prevState => prevState === 'stop' ? 'go' : 'stop' );
-    }, 500 );
+    }, 750 );
   };
   const handleStoplightOut = () => {
     clearInterval( stoplightInterval );
@@ -144,7 +199,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const handleHourglassHover = () => {
     hourglassInterval = setInterval( () => {
       setHourglass( prevState => prevState === 'start' ? 'end' : 'start' );
-    }, 500 );
+    }, 750 );
   };
   const handleHourglassOut = () => {
     clearInterval( hourglassInterval );
@@ -160,8 +215,8 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
       </h2>
 
       <BrowserNotification 
-        label={ roomie } 
-        type="room" 
+        label={ aptRoom } 
+        type="notifications" 
         group={ group } 
         run={ notify } 
         title={ notifyInfo.title } 
@@ -174,7 +229,14 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         timer={ name } 
       />
 
-      { ( !isNaN( current ) && current > 0 ) && ( !isNaN( totalDuration ) && totalDuration > 0 ) && 
+      <CSSTransition 
+        in={ showTimer } 
+        timeout={ 2500 } 
+        classNames="coretimer" 
+        // mountOnEnter
+        unmountOnExit
+        // appear={ true } 
+      >
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 
             className={ className } 
@@ -212,6 +274,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
               onMouseEnter={ handleStoplightHover } 
               onMouseLeave={ handleStoplightOut } 
             >
+              {}
               <div className="button-content">
                 <div className="button-content-left">
                   <p className="no-gap">Stop</p>
@@ -224,7 +287,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
             </button>
           </div>
         </div>
-      }
+      </CSSTransition>
 
       <TimerControl 
         aptRoom={ name }
@@ -235,9 +298,13 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         height={ height / 2 } 
         session={ session } 
         setSession={ setSession } 
+
+
         
         setNotify={ setNotify } 
         setNotifyInfo={ setNotifyInfo } 
+
+        setShowTimer={ setShowTimer } 
       />      
     </div>
   ); 

@@ -1,12 +1,12 @@
 @import './../Room/styles';
 
 div.control__root {
-
   div.intro-text {
     display: flex;
 
     margin: 0 0 0.5em 0;
     padding: 0;
+
     h4 {
       flex: 0 0 15%;
 
@@ -24,8 +24,7 @@ div.control__root {
     }
 
     p.room__timer-oops {
-      margin: 0.5em 0 0 0;
-      
+      margin: 0.5em 0 0 0;  
       // padding-top: 0.001em;
 
       flex: 0.45;
@@ -49,7 +48,6 @@ div.control__root {
         }
       }
     }
-    
   }
 
   div.button-content {
@@ -68,14 +66,33 @@ div.control__root {
     }
   }
 
-
   div.control__parent {
+    // border: 1px red solid;
     margin-top: 0.5rem;
     display: flex;
+    // flex-wrap: wrap;
+    // flex-direction: row;
+    padding: 15px;
+
+    margin-right: 25%;
+
+    > div {
+      // border: 1px blue solid;
+      // flex: 1 1 auto;
+      flex: 1;
+      text-align: center;
+      margin: 15px;
+    }
 
     div.control__div {
-      flex: 0 0 20%;
-    }  
+      // flex: 0 0 20%;
+    } 
+
+    // div.hours-button-parents {
+    // }
+
+    // div.submit {
+    // }
   }
 }
 
@@ -91,7 +108,7 @@ div.session-oops-parent {
   }
 }
 
-p.room__not-available button {
+div.room__not-available button {
   font-size: 1.4rem;
   font-style: oblique;
   text-decoration-line: none;
@@ -104,4 +121,45 @@ p.room__not-available button {
       padding-left: .2em;
     }
   }
+}
+
+// div.opposite-controls {
+//   margin: 0 auto;
+//   display: flex;
+//   flex-direction: column;
+//   grid-gap: 2rem;
+//   text-align: center;
+// }
+
+// div.opposite-controls div {
+//   padding: 1rem;
+//   width: 100%;
+//   margin: 0 auto;
+// }
+
+// @media (min-width: 600px) {
+//   div.opposite-controls {
+//     flex-direction: row-reverse;
+//   }
+// }
+
+.repeatLength {
+  font-style: oblique;
+}
+
+.vertical-middle::before {
+    display: block;
+    content: "";
+    height: 50%;
+}
+
+.vertical-middle::after {
+    vertical-align: top;
+    font-weight: bold;
+    line-height: 0;
+    content: "Submit";
+}
+
+input.less-space {
+  padding: 0px 1px;
 }

@@ -22,8 +22,8 @@ const SubmitTime = props => {
   const { 
     theRef, 
     handleSubmit, 
-    handleStatus, 
-    handleErrors  
+    handleErrors, 
+    resetForm
   } = props;
 
   let setErrTimeout = null;
@@ -35,11 +35,21 @@ const SubmitTime = props => {
 
   useEffect( () => { 
     return () => {
+      if ( status && status.hasOwnProperty( 'success' ) && status.success === 'Successfully added new timer' ) {
+        resetForm();
+      };
       if ( setErrTimeout ) clearTimeout( setErrTimeout );
       if ( handleErrTimeout ) clearTimeout( handleErrTimeout );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
+
+  useEffect( () => { 
+    if ( props.status && props.status.hasOwnProperty( 'success' ) && props.status.success === 'Successfully added new timer' ) {
+      resetForm();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ props.status ] );
 
   const resetErrors = ( setErrors, handleErrors, timeOut = 2500 ) => {
     setErrTimeout = setTimeout( () => setErrors( {} ), timeOut );
@@ -56,9 +66,6 @@ const SubmitTime = props => {
     </Form>
       { touched && touched.newTimer && errors.newTimer && handleErrors( errors ) } 
       { touched && touched.newTimer && errors.newTimer && resetErrors( setErrors, handleErrors ) } 
-      
-      { status && status.success && handleStatus( status ) } 
-      { !status && handleStatus( status ) } 
     </>
   );
 }
@@ -66,14 +73,17 @@ const SubmitTime = props => {
 // let flagStarted = false;
 const SwoleSubmitTimeForm = withFormik( {
   mapPropsToValues: () => ( {
-      newTimer: 50, 
+      newTimer: 5, 
   } ), 
   validationSchema, 
   handleSubmit: ( values, { setStatus, resetForm, props } ) => {
     const { aptRoom, socket, setNotify, setNotifyInfo } = props;
     setStatus( { success: 'Successfully added new timer' } );
-    setTimeout( resetForm, 1400 );
-    setTimeout( props.onHandleShowing, 1500 );
+    props.handleStatus( 'Successfully added new timer' );
+    // setTimeout( resetForm, 1400 );
+    // resetForm();
+    // setTimeout( props.onHandleShowing, 1500 );
+    // props.onHandleShowing();
     socket.emit( 'start timer', aptRoom, values.newTimer );
 
     setNotifyInfo( { title: `${ aptRoom } timer has begun`, body: 'Let\'s go!' } );

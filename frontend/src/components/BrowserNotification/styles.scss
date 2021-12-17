@@ -52,3 +52,41 @@ input:checked + .slider:before {
   -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
+
+// div.log-collapse {
+//   position: relative;
+// }
+
+.smaller-button {
+  cursor: pointer;
+
+  background-color: #5153c1;
+  // background-color: #f4eff5;
+  color: #FFFFFF;
+  color: #3fa0e7;
+  text-align: center;
+  font-size: 1em;
+  padding: 5px 10px;
+
+  margin: 3px 5px;
+  
+  border: none;
+  
+  -webkit-border-radius: 7.5;
+  -moz-border-radius: 7.5;
+  border-radius: 7.5px;
+}
+
+// div.notifications-list {
+//   position: absolute;
+// }
+
+div.notification-toggle {
+  input:checked {
+    background-color: #2196F3;
+  }
+
+  input:focus {
+    box-shadow: 0 0 1px #2196F3;
+  }
+}

@@ -65,9 +65,25 @@ button.as-link {
       stroke: #3fa0e7;
       // stroke: #42a6f0;
     }
-    
-    form input.timer-text-field {
-      color: #d3d3d3;
+  }
+}
+
+div.control__fo-child, div.nice-input-in-circles {
+  input.timer-text-field {
+    text-align: center;
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+
+    // color: #ededf4;
+    color: #d3d3d3;
+    font-size: 3em;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+
+    &:focus {
+      outline: none;
     }
   }
 }
@@ -93,12 +109,23 @@ div.pause-button-parent, div.session-button-parent {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
+  p.no-gap {
+    margin: 0;
+    padding: 0.4rem 0;
+  }
+}
+
+div.pause-button-parent, div.session-button-parent {
   div.button-content {
     display: flex;
+    flex: 1;
 
     div.button-content-left {
       flex: 0 0 20%;
+
+      justify-content: center;
+      align-items: center;
     }
 
     div.button-content-right {
@@ -109,9 +136,48 @@ div.pause-button-parent, div.session-button-parent {
       align-items: center;
     }
   }
+}
 
-  p.no-gap {
-    margin: 0;
-    padding: 0.4rem 0;
+div.submit-button-parent {
+  div.button-content {
+    display: flex;
+    flex: 1;
+
+    div.button-content-left {
+      flex: 0 0 20%;
+
+      justify-content: center;
+      align-items: center;
+    }
+
+    div.button-content-right {
+      flex: 0.65;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+div.hours-button-parent {
+  div.button-content {
+    display: flex;
+    flex: 1;
+
+    div.button-content-left {
+      flex: 0 0 60%;
+
+      justify-content: center;
+      align-items: center;
+    }
+
+    div.button-content-right {
+      flex: 0.65;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }

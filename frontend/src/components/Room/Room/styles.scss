@@ -16,3 +16,52 @@ div.svgs_parent__roompop {
   margin-bottom: 0.25rem;
   text-decoration-line: underline;
 }
+
+// 
+// CSSTransition
+// 
+
+$short-time-span: 1s;
+$longer-time-span: 3s;
+$scale-medium: 1.2;
+$zero: 0;
+$one: 1;
+
+%coretimer-transition {
+  transition: opacity $short-time-span;
+}
+
+// CSSTransition
+.coretimer-enter {
+  opacity: 0.7;
+  @extend %coretimer-transition;
+}
+.coretimer-enter-active {
+  opacity: 0.85;
+  @extend %coretimer-transition;
+}
+.coretimer-enter-done {
+  opacity: 0.85;
+}
+.coretimer-exit {
+  opacity: $one;
+  @extend %coretimer-transition;
+}
+
+// .coretimer-enter {
+//   opacity: 0;
+//   transform: scale(0.9);
+// }
+// .coretimer-enter-active {
+//   opacity: 1;
+//   transform: translateX(0);
+//   transition: opacity 300ms, transform 300ms;
+// }
+// .coretimer-exit {
+//   opacity: 1;
+// }
+// .coretimer-exit-active {
+//   opacity: 0;
+//   transform: scale(0.9);
+//   transition: opacity 300ms, transform 300ms;
+// }
