@@ -5,11 +5,11 @@ import G from './../../Svg/GSvg';
 import './styles.scss';
 
 const Circle = ( props ) => {
-  const { className, width, height, children, theRef } = props;
+  const { className, width, height, children, theRef, onDoubleClick } = props;
 
   const [ refCurr, setRefCurr ] = useState( null );
   useEffect( () => {
-    setRefCurr( theRef.current );
+    if ( theRef ) setRefCurr( theRef.current );
   }, [ theRef ] );
 
   // Calculations for circles
@@ -27,7 +27,7 @@ const Circle = ( props ) => {
       width={ width } 
       height={ height } 
       xmlns="http://www.w3.org/2000/svg" 
-      onDoubleClick={ refCurr && refCurr.submitForm } 
+      onDoubleClick={ onDoubleClick || ( refCurr && refCurr.submitForm ) } 
     >
       <circle 
         cx={ cx } 
