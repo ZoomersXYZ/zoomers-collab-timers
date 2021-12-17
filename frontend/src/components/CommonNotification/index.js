@@ -3,8 +3,11 @@ import PropTypes from "prop-types";
 
 import BrowserNotification from './../BrowserNotification';
 
-const CommonBrowserNotification = ( { run, title, body, icon, tag, timeout, requireInteraction, sound, vol } ) => (
+const CommonBrowserNotification = ( { group, label, type, run, title, body, icon, tag, timeout, requireInteraction, sound, vol } ) => (
   <BrowserNotification 
+    group={ group } 
+    label={ label } 
+    type={ type } 
     run={ run } 
     title={ title } 
     body={ body } 
@@ -19,6 +22,10 @@ const CommonBrowserNotification = ( { run, title, body, icon, tag, timeout, requ
 
 CommonBrowserNotification.propTypes = {
   run: PropTypes.number.isRequired, 
+
+  group: PropTypes.string, 
+  label: PropTypes.string, 
+  type: PropTypes.string, 
 
   title: PropTypes.string.isRequired, 
   body: PropTypes.string, 
@@ -35,6 +42,10 @@ CommonBrowserNotification.propTypes = {
 
 CommonBrowserNotification.defaultProps = { 
   run: 0, 
+
+  group: 'default group', 
+  label: 'default timer', 
+  type: 'room', 
 
   title: "Z Collab Timer", 
   body: null, 

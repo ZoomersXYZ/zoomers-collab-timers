@@ -12,9 +12,6 @@ let stoplightInterval = null;
 let hourglassInterval = null;
 
 const Room = ( { socket, group, roomie, log, userEnabled, width, height, className } ) => { 
-  // Push notifications
-  const [ notify, setNotify ] = useState( 0 );
-  const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
   // const { name, timers, createdAt, lastUsed } = roomie;
   const { name } = roomie;
   const aptRoom = name;
@@ -23,6 +20,10 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const filterOutRoom = ( room ) => {
     if ( aptRoom !== room ) { return true; };
   };
+
+  // Push notifications
+  const [ notify, setNotify ] = useState( 0 );
+  const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
 
   const [ curr, setCurr ] = useState( { 
     current: 0, 
@@ -76,7 +77,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         current: null, 
         currentFormatted: null, 
         totalDuration: null 
-      } ) );      
+      } ) );
     };
     const timerFinished = () => {
       // Browser notification
@@ -160,8 +161,8 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
       </h2>
 
       <BrowserNotification 
-        label={ roomie } 
-        type="room" 
+        label={ aptRoom } 
+        type="notifications" 
         group={ group } 
         run={ notify } 
         title={ notifyInfo.title } 
