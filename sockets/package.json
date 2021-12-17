@@ -1,19 +1,19 @@
 {
   "dependencies": {
     "cors": "^2.8.5",
-    "debug": "^4.1.1",
+    "debug": "^4.3.2",
     "express": "^4.17.1",
     "firebase": "^7.6.1",
     "lodash.isequal": "^4.5.0",
-    "socket.io": "^2.3.0",
-    "winston": "^3.2.1"
+    "socket.io": "^4.2.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-node": "^11.0.0",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-one-variable-per-var": "^0.0.3",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.12"
   },
   "scripts": {
     "start": "node src/server.js",

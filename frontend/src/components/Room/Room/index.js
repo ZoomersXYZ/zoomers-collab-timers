@@ -80,7 +80,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     };
     const timerFinished = () => {
       // Browser notification
-      setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?' } );
+      setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?', sound: 1 } );
       setNotify( prevState => prevState + 1 );
 
       timerStopped();
@@ -155,15 +155,19 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
 
   return (
     <div className="content">
-      <BrowserNotification 
-        run={ notify } 
-        title={ notifyInfo.title } 
-        body={ notifyInfo.body } 
-      />
       <h2 className="theh">
         { name } 
       </h2>
 
+      <BrowserNotification 
+        label={ roomie } 
+        type="room" 
+        group={ group } 
+        run={ notify } 
+        title={ notifyInfo.title } 
+        body={ notifyInfo.body } 
+      />
+      
       <ActivityLog 
         log={ log } 
         userEnabled={ userEnabled } 

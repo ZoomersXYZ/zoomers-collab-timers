@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Libraries
-import { formatRelative } from 'date-fns';
+// import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { formatRelative, sub } from 'date-fns';
+import { collection, onSnapshot, limit, query, where, orderBy } from "firebase/firestore";
+
+import db from './../../config/firebase';
 
 // Own components
 import ForcedInput from './../ForcedInput';
@@ -24,8 +28,12 @@ import { getData, getLocal, setLocal } from './utilities';
 
 // Main component
 const RoomsGroup = ( { name } ) => {
-  const socket = io( process.env.REACT_APP_SOCKET + window.location.pathname );
-  // const socket = io( window.location.pathname );
+  const urlPath = window.location.pathname;
+  const lastDirectory = urlPath.split( '/' ).pop();
+
+  const socket = io( process.env.REACT_APP_SOCKET + urlPath );
+
+  // const socket = io( urlPath );
 
   // Regularly/User changing state
   const [ rooms, setRooms ] = useState( [] );
@@ -40,8 +48,41 @@ const RoomsGroup = ( { name } ) => {
   ////
 
   const [ showForced, setForced ] = useState( false );
+
   useEffect( () => {
-    const ownSocketInitial = ( name ) => {    
+    // Core
+    const d = new Date();
+    const oneDayAgo = sub( d, {
+      days: 7 
+    } ).getTime();
+
+    const rootRef = collection( db, 'groups', lastDirectory, 'log' );
+    const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ), orderBy( 'timestamp', 'desc' ), limit( 50 ) );
+
+    const stream = onSnapshot( 
+      ref, 
+      doc => {
+        const arr = [];
+        const current = new Date();
+        doc.forEach( solo => { 
+          const data = solo.data();
+          data.formattedTime = formatRelative( data.timestamp, current );
+          arr.push( data );
+        } );
+        arr.reverse();
+        setLog( arr );
+      }, 
+      err => {
+        console.log( err );
+        // setErr( err );
+      } 
+    );
+    return () => stream();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [] );
+
+  useEffect( () => {
+    const ownSocketInitial = ( name ) => {
       const CONNECT = 'connect';
       const DISCONNECT = 'disconnect';
       const ERROR = 'error';
@@ -61,31 +102,6 @@ const RoomsGroup = ( { name } ) => {
         socket.on( CONFIRM_INITIAL_PING, confirmInitialPing );
       };
 
-      // Activity
-      
-      const ACTIVITY_LOG = 'activity log';
-      const ACTIVITY_UPDATED = 'activity updated';
-
-      const activityLog = ( e ) => {
-        // @TODO test if the variable makes a difference
-        const current = new Date();
-        e.forEach( primer => primer.formattedTime = formatRelative( primer.timestamp, current ) );
-        setLog( e );
-      };
-
-      const activityUpdated = ( e ) => {
-        e.formattedTime = formatRelative( e.timestamp, new Date() );
-        setLog( prevState => {
-          const newNew = [ ...prevState ];
-          newNew.push( e );
-          return newNew;
-        } );
-      };
-
-      socket.on( ACTIVITY_LOG, activityLog );
-      socket.on( ACTIVITY_UPDATED, activityUpdated );
-
-
       // Users
 
       const listUsers = ( e ) => {
@@ -95,21 +111,22 @@ const RoomsGroup = ( { name } ) => {
       const userLeft = ( e ) => {
         setUsers( e.nsUsers );
       };
-      
+
 
       // Based
 
       const onConnect = () => {
         handleNewUser();
-
       };
 
       const onError = err => {
+        console.error( ERROR, err );
         l.gen.error( ERROR, err );
       };
 
       const onDisconnect = reason => {
-        l.gen.error( 'reason', reason );
+        l.gen.error( 'l reason', reason );
+        console.error( 'reason', reason );
         if ( reason === 'io server disconnect' ) {
           // the disconnection was initiated by the server, you need to reconnect manually
           socket.connect();
@@ -117,7 +134,7 @@ const RoomsGroup = ( { name } ) => {
           return;
         };
         // else the socket will automatically try to reconnect
-      };      
+      };
 
       socket.on( CONNECT, onConnect );
       socket.on( DISCONNECT, onDisconnect );
@@ -138,8 +155,8 @@ const RoomsGroup = ( { name } ) => {
     fetchData( name );
     ownSocketInitial( name );
 
-
     return () => {
+      console.log( 'returning to disconnect' );
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,7 +177,6 @@ const RoomsGroup = ( { name } ) => {
     setForced( false );
     return true;
   };
-
   
   ////
   // useEffects primarily. Meant for child components.

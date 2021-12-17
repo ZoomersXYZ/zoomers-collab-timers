@@ -3,9 +3,9 @@ if ( process.env.NODE_ENV === 'development' ) {
 };
 
 const express = require( 'express' );
-const cors = require( 'cors' );
+// const cors = require( 'cors' );
 const app = express();
-app.use( cors() );
+// app.use( cors() );
 
 const port = process.env.PORT || 8080;
 
@@ -13,7 +13,14 @@ const port = process.env.PORT || 8080;
 const server = require( 'http' ).createServer( app );
 // const io = require( 'socket.io' )( server, { transports: [ 'websocket' ] } );
 // const io = require( 'socket.io' )( server, { cookie: false } );
-const io = require( 'socket.io' )( server );
+// const io = require( 'socket.io' )( server );
+const io = require( "socket.io" )( server, {
+  cors: {
+    origin: '*',
+    credentials: true, // access-control-allow-credentials:true
+    optionSuccessStatus: 200 
+  }
+} );
 
 const group = require( './groupNamespace' );
 
