@@ -89,4 +89,92 @@ div.notification-toggle {
   input:focus {
     box-shadow: 0 0 1px #2196F3;
   }
-}
+};
+
+
+div.notifications-list {
+  width: 100%;  
+  @media only screen and ( min-width: 768px ) {
+    width: 70%;
+  };
+  @media only screen and ( min-width: 992px ) {
+    width: 50%
+  };
+
+// Grid for notification input
+div.notifications-container {
+  // display: -ms-grid;
+  // -ms-grid-columns: repeat(12, 1fr);
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  grid-gap: 1em;
+
+  background-color: rgb(235, 217, 238);
+
+  /* New styles */
+  div {
+    display: flex;
+    flex-flow: row nowrap;
+
+    align-items: center;
+    justify-content: center;
+
+    input {
+      flex-grow: 1;
+      max-width: 100%;
+    };
+  };
+  
+  .width-9 {
+    grid-column: span 9;
+  };
+  .width-8 {
+    grid-column: span 8;
+  };
+  .width-7 {
+    grid-column: span 7;
+  };
+  .width-5 {
+    grid-column: span 5;
+  };
+  .width-3 {
+    grid-column: span 3;
+  };
+  .width-2 {
+    grid-column: span 2;
+  };
+};
+
+  // div.notifications-container {
+  //   // border: 1px red solid;
+  //   margin-top: 0.5rem;
+
+  //   display: grid;
+  //   // grid-template-columns: repeat(18, 1fr);
+  //   grid-template-columns: repeat( auto-fit, minmax( 125px, 1fr ) );
+  //   grid-gap: 1.5rem;
+
+  //   background-color: rgb(235, 217, 238);
+  //   // padding: 15px;
+
+  //   // > div {
+  //   //   // border: 1px blue solid;
+  //   //   // flex: 1 1 auto;
+  //   //   flex: 1;
+  //   //   text-align: center;
+  //   //   margin: 15px;
+  //   // }
+
+  //   div {
+  //     // display: flex;
+  //     flex-flow: row nowrap;
+
+  //     // align-items: center;
+  //     // justify-content: center;
+  //   };
+  // };
+
+  div.title {
+    font-weight: bold;
+  };
+};

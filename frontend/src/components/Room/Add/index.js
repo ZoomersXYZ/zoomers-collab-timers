@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Field, Form, ErrorMessage, withFormik } from 'formik';
 import { doc, setDoc } from "firebase/firestore";
@@ -6,6 +6,8 @@ import { doc, setDoc } from "firebase/firestore";
 import db from './../../../config/firebase';
 import './../styles.scss'
 import { resetErrors } from './../../helpers.js';
+
+import { GroupContext } from './../../Contexts';
 
 const addToFirestore = async ( docName, data ) => {
   const docRef = doc( db, 'groups', docName, 'rooms', data );
@@ -23,12 +25,6 @@ const addToFirestore = async ( docName, data ) => {
   } catch ( err ) {
     console.error( err );
   };
-  // setDoc( docRef, hashie )
-  //   .then( () => 
-  //   hashie.new = true 
-  //   ).catch( err => 
-  //     console.error( err ) 
-  //   );
 
   console.log( 'add to firestore', hashie );
   return hashie;
@@ -44,35 +40,37 @@ const AddingRoom = props => {
     status 
   } = props;
 
+  const { gName } = useContext( GroupContext );
   const [ showForm, setShowForm ] = useState( false );
   
   const onHandleShowingForm = () => setShowForm( prevState => !prevState );
 
   return(
     <div className="add">
-        { showForm && 
-          <div>
-            <Form>
-              <Field autoFocus component="input" name="newRoom" className="casual-textfield" />
+      { showForm && 
+        <div>
+          <Form>
+            <Field autoFocus component="input" name="newRoom" className="casual-textfield" />
+            {/* <Field name="group" value={ gName } style={ { display: 'none' } } /> */}
 
-              <ErrorMessage name="newRoom" render={ err => <div id="feedback">{ err }</div> } />
-              { touched.create && errors.create && resetErrors( setErrors ) }
+            <ErrorMessage name="newRoom" render={ err => <div id="feedback">{ err }</div> } />
+            { touched.create && errors.create && resetErrors( setErrors ) }
 
-              <button className="casual-button" type="submit" disabled={ isSubmitting }>
-                Submit
-              </button>
-              <button className="casual-button" id="create-room-cancel" type="button" disabled={ isSubmitting } onClick={ () => onHandleShowingForm() }>
-                Cancel. Walk away!
-              </button>
-            </Form>
-          </div>
-        }
+            <button className="casual-button" type="submit" disabled={ isSubmitting }>
+              Submit
+            </button>
+            <button className="casual-button" id="create-room-cancel" type="button" disabled={ isSubmitting } onClick={ () => onHandleShowingForm() }>
+              Cancel. Walk away!
+            </button>
+          </Form>
+        </div>
+      }
 
-        { !isSubmitting && !showForm && 
-          <p>
-            <button className="add casual-button link-underline-fade" onClick={ onHandleShowingForm }>Add a room <i className="icon-pad-left far fa-door-closed"></i></button>
-          </p>
-        }
+      { !isSubmitting && !showForm && 
+        <p>
+          <button className="add casual-button link-underline-fade" onClick={ onHandleShowingForm }>Add a room <i className="icon-pad-left far fa-door-closed"></i></button>
+        </p>
+      }
 
       { status && status.success && <div className="success-msg">{ status.success }</div> }
       { status && status.msg && <div className="success-msg">{ status.msg }</div> }
@@ -87,9 +85,11 @@ const SwoleAddingRoomForm = withFormik( {
   } ), 
 
   handleSubmit: async ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
-    const { doc, setRooms } = props;
+    const { group, setRooms } = props;
+    // const { group, newRoom } = values;
     const { newRoom } = values;
-    const result = await addToFirestore( doc, newRoom );
+    console.log( 'Add values', values );
+    const result = await addToFirestore( group, newRoom );
 
     if ( result !== null && result.hasOwnProperty( 'new' ) ) {
       setTimeout( () =>
@@ -116,7 +116,6 @@ const SwoleAddingRoomForm = withFormik( {
 }, )( AddingRoom );
 
 SwoleAddingRoomForm.propTypes = {
-  doc: PropTypes.string.isRequired, 
   setRooms: PropTypes.func.isRequired 
 };
 

@@ -1,24 +1,23 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC7R5A3HKruifUjoJ3XpGx2EXNPuExTQL0",
-  authDomain: "collab-timers-k.firebaseapp.com",
-  projectId: "collab-timers-k",
-  storageBucket: "collab-timers-k.appspot.com",
-  messagingSenderId: "987511800714",
-  appId: "1:987511800714:web:4b930917fecf473c1f7e73",
-  measurementId: "G-KEWSC4VG5H"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY, 
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN, 
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID, 
+
+  // databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL, 
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET, 
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID, 
+  appId: process.env.REACT_APP_FIREBASE_APP_ID, 
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID 
 };
+
 
 initializeApp( firebaseConfig );
 const db = getFirestore();
-// const analytics = getAnalytics( db );
+const analytics = getAnalytics( db );
 
 // firebase.firestore().enablePersistence()
 //   .catch( function( err ) {
@@ -34,5 +33,4 @@ const db = getFirestore();
 //   } );
 // Subsequent queries will use persistence, if it was enabled successfully
 
-// export { db as default, analytics };
-export default db;
+export { db as default, analytics };

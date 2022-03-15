@@ -8,9 +8,9 @@ const Header = ( { title } ) => (
           <h6>
             Zoomers' Collaborative Grouped Timers
           </h6>
-          <h2>
+          <h1>
             { title } 
-          </h2>
+          </h1>
         </div>
 
         <div className="header__button">

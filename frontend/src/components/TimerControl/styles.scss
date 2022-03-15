@@ -1,19 +1,32 @@
 @import './../Room/styles';
 
 div.control__root {
-  div.intro-text {
-    display: flex;
+  @media only screen and ( min-width: 768px ) {
+    width: 75%;
+  };
+  @media only screen and ( min-width: 992px ) {
+    width: 60%
+  };
 
-    margin: 0 0 0.5em 0;
+  div.intro-text-container {
+    display: grid;
+    // grid-template-columns: 3fr 2fr;
+    grid-template-columns: repeat( auto-fit, minmax( 250px, 1fr ) );
+    grid-gap: 1rem;
+
+    // background-color: rgb(235, 217, 238);
+
+    // margin: 0 0 0.5em 0;
     padding: 0;
 
     h4 {
-      flex: 0 0 15%;
+      // grid-column: span 3;
+      // flex: 0 0 15%;
 
-      margin: 0.75rem 0 0 2rem;
-      font-style: oblique;
-      color: #e0dce1;
-      font-size: 1.1em;
+      margin: 0.5rem 0 0rem 0;
+      // font-style: oblique;
+      // color: #e0dce1;
+      // font-size: 1.1em;
   
       i.bigger-icon {
         font-size: 1.5em;
@@ -24,6 +37,8 @@ div.control__root {
     }
 
     p.room__timer-oops {
+      // grid-column: span 2;
+
       margin: 0.5em 0 0 0;  
       // padding-top: 0.001em;
 
@@ -64,29 +79,84 @@ div.control__root {
       justify-content: center;
       align-items: center;
     }
-  }
+  };
 
   div.control__parent {
-    // border: 1px red solid;
-    margin-top: 0.5rem;
-    display: flex;
-    // flex-wrap: wrap;
-    // flex-direction: row;
-    padding: 15px;
+    margin: 0;
+    padding: 0;
 
-    margin-right: 25%;
+    form {
+      background-color: rgb(234, 219, 235);
+    };
 
-    > div {
-      // border: 1px blue solid;
-      // flex: 1 1 auto;
-      flex: 1;
-      text-align: center;
-      margin: 15px;
-    }
+    div.timers-container {
+      // border: 1px red solid;
+      margin-top: 0.5rem;
 
-    div.control__div {
-      // flex: 0 0 20%;
-    } 
+      display: grid;
+      // grid-template-columns: repeat(18, 1fr);
+      grid-template-columns: repeat( auto-fit, minmax( 175px, 1fr ) );
+      grid-gap: 1rem;
+
+      // background-color: rgb(235, 217, 238);
+
+      align-items: center;
+
+      /* this is the same as grid-template-columns: 1fr 1fr 1fr 1fr; */
+      // grid-template-columns: repeat(4, 1fr);
+
+
+      // padding: 15px;
+
+      // > div {
+      //   // border: 1px blue solid;
+      //   // flex: 1 1 auto;
+      //   flex: 1;
+      //   text-align: center;
+      //   margin: 15px;
+      // }
+
+      > div {
+        // display: flex;
+        // flex-flow: row nowrap;
+
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        padding: 15px;
+
+        .casual-button {
+          margin: 0;
+        }
+      };
+    };
+
+    // .width-10 {
+    //   grid-column: span 10;
+    // };
+    // .width-9 {
+    //   grid-column: span 9;
+    // };
+    // .width-8 {
+    //   grid-column: span 8;
+    // };
+    // .width-7 {
+    //   grid-column: span 7;
+    // };
+    // .width-5 {
+    //   grid-column: span 5;
+    // };
+    // .width-3 {
+    //   grid-column: span 3;
+    // };
+    // .width-2 {
+    //   grid-column: span 2;
+    // };
+
+    // div.control__div {
+    //   // flex: 0 0 20%;
+    // } 
 
     // div.hours-button-parents {
     // }
