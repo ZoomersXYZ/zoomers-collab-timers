@@ -7,6 +7,8 @@ const firebaseConfig = {
   projectId: process.env.FIREBASE_PROJECT_ID 
 };
 
+
+
 firebase.initializeApp( firebaseConfig );
 const db = firebase.firestore();
 
