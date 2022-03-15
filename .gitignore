@@ -1,33 +1,24 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# production
-/build
-/*/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
+# Logs
+logs
+*.log
+/*/logs
 yarn-debug.log*
 yarn-error.log*
+firebase-debug.log*
+firebase-debug.*.log*
 
-/*/logs
+# Firebase cache
+.firebase/
 
-yarn.lock
+# Firebase config
 
-# Moi
-/frontend/public/bassets
-/*/secondary
+# Uncomment this if you'd like others to create their own Firebase project.
+# For a team working on the same Firebase project(s), it is recommended to leave
+# it commented so all members can deploy to the same project(s) in .firebaserc.
+.firebaserc
 
-
-# Testing/Debugging
-/tmp
-**/*moim*.js
-**/moim*/*
 
 # OS X
 .DS_Store*
@@ -44,7 +35,38 @@ Desktop.ini
 *~
 
 # npm
-node_modules
-package-lock.json
-*.log
-*.gz
+node_modules/
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+
+####
+## My additions
+####
+
+# production
+/build
+/*/build
+
+# Google Cloud, I think?
+.env.dev
+.env.prod
+
+# Proj Specific # Testing/Debugging
+/frontend/public/bassets
+/frontend/public/sounds
+
+/*/secondary
+/tmp
+**/*moim*.js
+**/moim*/*
