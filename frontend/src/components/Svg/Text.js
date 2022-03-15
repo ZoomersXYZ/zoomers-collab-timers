@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { stringOrFalse, numberOrFalse } from './../../ancillary/helpers/proptypesCustomValidators';
 
 const SvgText = ( props ) => {
-  const { text, transformRotation, x, y, translateWidth, translateHeight } = props;
+  const { transformRotation, x, y, translateWidth, translateHeight } = props;
   const { dx, dy, fill, fontWeight, fontSize, textAnchor, className } = props;
 
   const translate = `translate( ${ translateWidth }, ${ translateHeight } )`;

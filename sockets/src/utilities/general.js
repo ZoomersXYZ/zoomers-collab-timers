@@ -50,8 +50,10 @@ const isString = ( value ) => Object.prototype.toString.call( value ) === '[obje
 const isArray = ( value ) => Array.isArray( value );
 
 const isObject = ( value ) => typeof value == 'object' && value instanceof Object && !( isArray( value ) );
+const isObjectDeuces = ( obj ) => Object.prototype.toString.call( obj ) === '[object Object]';
 
 const isEmptyObj = ( value ) => Object.keys( value ).length === 0 && value.constructor === Object;
+
 
 const isUndefined = ( value ) => typeof( value ) === 'undefined';
 
@@ -91,6 +93,7 @@ module.exports = {
 
   isEmptyObj, 
   isObject, 
+  isObjectDeuces, 
   
   isBoolean, 
   isString, 

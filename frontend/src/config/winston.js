@@ -27,6 +27,7 @@ const logger = () => ( {
   struct: getLogger( 'struct' ), 
   gen: getLogger( 'gen' ), 
   bbc: getLogger( 'bbc' ), 
+  karm: getLogger( 'karm' ), 
 } );
 
 export default logger();

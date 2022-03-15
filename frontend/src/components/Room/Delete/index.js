@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { withFormik, Field, Form, ErrorMessage } from 'formik';
 import { doc, deleteDoc } from "firebase/firestore";
@@ -9,6 +9,8 @@ import { resetErrors } from './../../helpers';
 import './../styles.scss';
 import l from './../../../config/winston';
 
+import { GroupContext } from './../../Contexts';
+
 const deleteFromFirestore = async ( docName, data ) => {
   const docRef = doc( db, 'groups', docName, 'rooms', data );
 
@@ -18,19 +20,6 @@ const deleteFromFirestore = async ( docName, data ) => {
   } catch ( err ) {
     l.gen.error( 'Error removing document: ', err );
   };
-  // deleteDoc( docRef )
-  //   .then( () => {
-  //     l.gen.info( 'Room successfully deleted: ', data );
-  // } ).catch( error => {
-  //     l.gen.error( 'Error removing document: ', error );
-  // } );
-
-  // const ref = db.collection( 'groups' ).doc( doc ).collection( 'rooms' ).doc( data );
-  // ref.delete().then( () => {
-  //     l.gen.info( 'Room \'doc\' successfully deleted!' );
-  // } ).catch( error => {
-  //     l.gen.error( 'Error removing document: ', error );
-  // } );
 };
 
 const DeletingRoom = props => {
@@ -41,7 +30,7 @@ const DeletingRoom = props => {
     isSubmitting, 
     setErrors 
   } = props;
-
+  const { gName } = useContext( GroupContext );
   const [ showConfirm, setConfirm ] = useState( false );
   
   const handleDeleteStepOne = () => { setConfirm( prevState => !prevState ); };
@@ -63,6 +52,8 @@ const DeletingRoom = props => {
           <div>
             <Form>
               <Field component="input" name="deleteRoom" hidden={ true } />
+              {/* <Field name="group" value={ gName } style={ { display: 'none' } } /> */}
+
               <ErrorMessage name="roomDelete" render={ err => <div id="feedback">{ err }</div> } />
               { touched.roomDelete && errors.roomDelete && resetErrors( setErrors ) }
 
@@ -90,9 +81,9 @@ const SwoleDeletingRoomForm = withFormik( {
   } ), 
 
   handleSubmit: async ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
-    const { doc, setRooms, thisRoom, setDelete } = props;
+    const { setRooms, thisRoom, setDelete, group } = props;
     l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being looked at' );
-    const result = await deleteFromFirestore( doc, thisRoom );
+    const result = await deleteFromFirestore( group, thisRoom );
 
     if ( result !== false ) {
       l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being setDelete result being true' );
@@ -123,7 +114,6 @@ const SwoleDeletingRoomForm = withFormik( {
 }, )( DeletingRoom );
 
 SwoleDeletingRoomForm.propTypes = {
-  doc: PropTypes.string.isRequired, 
   setRooms: PropTypes.func.isRequired, 
   thisRoom: PropTypes.string.isRequired 
 };

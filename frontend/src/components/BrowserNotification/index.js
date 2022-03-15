@@ -5,22 +5,42 @@ import Push from "push.js";
 import { nanoid } from "nanoid";
 import { Collapse } from 'react-collapse';
 
-import 'styles.scss';
+import Toggle from './toggled';
+import './styles.scss';
+
+// import mp3t1 from './sounds/[4] ting.mp3';
+// import ogg1 from './sounds/[4] ting.ogg';
+
+const initialBlob = { 
+  timer: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  },
+  start: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  },
+  end: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  },
+  other: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  }, 
+  testy: 'lol' 
+};
 
 function init( { group, label, type } ) { 
   let flag = false;
   const blobby = localStorage.getItem( group ) || JSON.stringify( 
     { 
       [ label ]: { 
-        [ type ]: { 
-          checked: false, 
-          sound: { 
-            start: false, 
-            end: false, 
-            other: false, 
-          }, 
-          testy: 'lol' 
-        }
+        [ type ]: { ...initialBlob } 
       }
     }
   );
@@ -31,29 +51,13 @@ function init( { group, label, type } ) {
 
   if ( !storage.hasOwnProperty( label )  ) {
     storage[ label ] = {
-      [ type ]: {
-        checked: false, 
-        sound: { 
-          start: false, 
-          end: false, 
-          other: false, 
-        }, 
-        testy: 'lol' 
-      }
+      [ type ]: { ...initialBlob } 
     };
     flag = true;
   };
 
   if ( storage.hasOwnProperty( label ) && !storage[ label ].hasOwnProperty( type ) ) {
-    storage[ label ][ type ] = {
-        checked: false, 
-        sound: { 
-          start: false, 
-          end: false, 
-          other: false, 
-        }, 
-        testy: 'lol' 
-      };
+    storage[ label ][ type ] = { ...initialBlob };
     flag = true;
   };
 
@@ -67,43 +71,68 @@ function init( { group, label, type } ) {
 };
 
 function reducer( state, action ) {
-  const labelObj = state.storage[ state.label ];
-  switch ( action ) {
-    case 'all': 
-      labelObj[ state.type ].checked = !labelObj[ state.type ].checked;
-      break;
-    case 'sound_start': 
-      labelObj[ state.type ].sound.start = !labelObj[ state.type ].checked.sound.start;
-      break;
-    case 'sound_end': 
-      labelObj[ state.type ].sound.end = !labelObj[ state.type ].checked.sound.end;
-      break;
-    case 'sound_misc': 
-      labelObj[ state.type ].sound.misc = !labelObj[ state.type ].checked.sound.misc;
-      break;
-    default:
-      break;
+  const { label, type, storage } = state;
+
+  const newType = { ...storage[ label ][ type ] };
+  let newVal = null;
+  if ( action.includes( ' ' ) ) {
+    const arr = action.split( ' ' );
+    const first = arr[ 0 ];
+    const second = arr[ 1 ];
+
+    newVal = !state.storage[ label ][ type ][ first ][ second ];
+    newType[ first ][ second ] = newVal;
+  } else {
+    newVal = !state.storage[ label ][ type ][ action ];
+    newType[ action ] = newVal;
   };
+
+  const newStorage = {
+    [ label ]: {
+      ...storage[ label ], 
+      [ type ]: {
+        ...storage[ label ][ type ], 
+        ...newType
+      }
+    }
+  };
+
   return { 
     ...state, 
-    storage: { 
-      ...state.storage, 
-      [ state.label ]: labelObj 
+    storage: {
+      ...storage,
+      ...newStorage 
     }, 
     data: { 
-      ...labelObj[ state.type ] 
+      ...newType 
     }
   };
 };
 
 const BrowserNotification = ( props ) => {
-  const { group, label, type, run, title, body, icon, tag, timeout, requireInteraction, sound } = props;
-  // { vol } = props;
+  const { 
+    run, 
+
+    type, 
+    group, 
+    label, 
+
+    title, 
+    body, 
+
+    event, 
+
+    icon, 
+
+    timeout, 
+    requireInteraction, 
+    tag 
+  } = props;
+
   const [ prevRun, setPrevRun ] = useState( 0 );
   const audioRef = useRef();
-
-  const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );
-  const [ checked, setChecked ] = useState( state.data.checked );
+  const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );  
+  const [ checked, setChecked ] = useState( state.data );
   
   useEffect( () => { 
     const localSet = () => {
@@ -112,29 +141,37 @@ const BrowserNotification = ( props ) => {
     localSet();
   }, [ group, state.storage ] );
 
+  useEffect( () => { 
+    setChecked( state.data )
+  }, [ state.data ] );
+
   const handleCheckbox = ( e ) => {
-    const meta = e.target.meta;
-    dispatch( meta );
-    setChecked( prev => !prev[ meta ] );
+    const name = e.target.name;
+    dispatch( name );
   };
 
-  useEffect( () => {
-    if ( checked && run - 1 === prevRun ) {
-      // Ready for if statement next time
-      // State change for audio
-      setPrevRun( prevState => prevState + 1 );
+  useEffect( () => {    
+    if ( !event ) return;
+    
+    if ( checked.timer.onOff && checked[ event ].onOff && run - 1 === prevRun ) {
+      // For passing if statement next time
+      setPrevRun( prev => prev + 1 );
+
       // Run browser notification
       show();
-      if ( sound ) {
+
+      if ( checked.timer.sound && checked[ event ].sound ) {
         audioRef.current.play();
       };
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ run ] );
 
+  const runBool = ( ( ( run === prevRun ) || ( ( run - 1 ) === prevRun ) ) ) && run > 0;
+
   const show = () => {
-    Push.create( 
-      title, {
+    Push.create( title, 
+      {
         body, 
         icon, 
         tag, 
@@ -165,39 +202,49 @@ const BrowserNotification = ( props ) => {
       <Collapse isOpened={ open }>
       <div className="notifications-list">
 
-        <div className="notification-toggle">
-          <label className="notification-switch">
-            <input type="checkbox" onChange={ handleCheckbox } meta="all" checked={ checked.all } />
-          </label>
-          Notifications on/off
+        <div className="notifications-container title">
+          <div className="width-7">Type</div>
+          <div className="width-3">On/Off</div>
+          <div className="width-3">Sound</div>
+          <div className="width-5">Vol</div>
         </div>
 
-        <div className="notification-toggle">
-          <label className="notification-switch">
-            <input type="checkbox" onChange={ handleCheckbox } meta="sound_start" checked={ checked.sound_start } />
-          </label>
-          Sound when the timer begins
-        </div>
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.timer } 
+          label="All" 
+          name="timer" 
+        />
 
-        <div className="notification-toggle">
-          <label className="notification-switch">
-            <input type="checkbox" onChange={ handleCheckbox } meta="sound_end" checked={ checked.sound_end } />
-          </label>
-          Sound when the timer ends
-        </div>
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.start } 
+          label="Timer Start" 
+          name="start" 
+          root={ checked.timer } 
+        />
 
-        <div className="notification-toggle">
-          <label className="notification-switch">
-            <input type="checkbox" onChange={ handleCheckbox } meta="sound_misc" checked={ checked.sound_misc } />
-          </label>
-          Any other notification sounds
-        </div>
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.end } 
+          label="Timer End" 
+          name="end" 
+          root={ checked.timer } 
+        />
 
-        { ( ( ( run === prevRun ) || ( ( run - 1 ) === prevRun ) ) ) && run > 0 &&
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.other } 
+          label="Other" 
+          name="other" 
+          root={ checked.timer } 
+        />
+
+        { runBool &&
         <div className={ `audio ${ type }` }>
           <audio id="sound" preload="auto" ref={ audioRef }>
-            <source src="/notification-sound.mp3" type="audio/mpeg" />
-            <source src="/notification-sound.ogg" type="audio/ogg" />
+            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
+            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
           </audio>
         </div>
         }
@@ -207,7 +254,7 @@ const BrowserNotification = ( props ) => {
 
       <button className="smaller-button" onClick={ handleCollapse }>
         { !open ? 'Open Notification Settings' : 'Collapse Settings' } 
-        <i className={ `icon-pad-left fas fa-bell${ checked.all ? '-slash' : '' }` }></i>
+        <i className={ `icon-pad-left fas fa-bell${ checked.timer ? '-slash' : '' }` }></i>
       </button>
     </div>
     </>
@@ -215,40 +262,42 @@ const BrowserNotification = ( props ) => {
 };
 
 BrowserNotification.propTypes = {
-  run: PropTypes.number.isRequired, 
+  type: PropTypes.string, 
 
   group: PropTypes.string, 
   label: PropTypes.string, 
-  type: PropTypes.string, 
-
+  run: PropTypes.number.isRequired, 
+  // sound: PropTypes.bool, 
   title: PropTypes.string.isRequired, 
   body: PropTypes.string, 
+  // start, end, other
+  event: PropTypes.oneOfType( [
+    PropTypes.string, 
+    PropTypes.bool 
+  ] ), 
   icon: PropTypes.string, 
   timeout: PropTypes.number, 
   tag: PropTypes.string, 
   requireInteraction: PropTypes.string, 
-  sound: PropTypes.oneOfType( [
-    PropTypes.string, 
-    PropTypes.bool 
-  ] ), 
-  vol: PropTypes.number 
+  // vol: PropTypes.number 
 };
 
 BrowserNotification.defaultProps = { 
-  run: 0, 
-
+  type: 'room', 
+  
   group: 'default group', 
   label: 'default timer', 
-  type: 'room', 
-
+  run: 0, 
+  // sound: false, 
   title: "Yoo", 
   body: null, 
+  event: false, 
+
   icon: null, 
   tag: nanoid(), 
   timeout: null, 
   requireInteraction: null, 
-  sound: false, 
-  vol: 1 
+  // vol: 1 
 };
 
 export default BrowserNotification;

@@ -1,45 +1,58 @@
 {
-  "name": "proj-h_collab-timers",
+  "name": "zoomers-collab-timers_frontend",
   "dependencies": {
     "cra-append-sw": "^2.7.0",
     "date-fns": "^2.24.0",
     "debug": "^4.3.2",
     "firebase": "^9.0.2",
     "formik": "^2.2.9",
-    "sass": "^1.41.1",
+    "nanoid": "^3.1.25",
     "push.js": "^1.0.12",
     "react": "^17.0.2",
     "react-collapse": "^5.1.0",
     "react-dom": "^17.0.2",
     "react-firebase-hooks": "^3.0.4",
+    "react-ga": "^3.3.0",
     "react-gravatar": "^2.6.3",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-transition-group": "^4.4.2",
+    "sass": "^1.41.1",
     "serve": "^12.0.1",
-    "nanoid": "^3.1.25",
     "socket.io-client": "^4.2.0",
     "winston": "3.2.1",
     "winston-transport-browserconsole": "^1.0.5",
     "yup": "^0.32.9"
   },
   "scripts": {
-    "build1": "mv ./public/serviceWorker.min.js ./../../serviceWorker.min.min.js && react-scripts build",
-    "build2": "rm ./public/serviceWorker.min.js && react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
+    
+    "run": "serve -s ./build -l 4000",
+    "rules": "cd .. && firebase deploy --only firestore:rules",    
+    "deploy": "cd .. && firebase deploy --only hosting",
+    
+    "beploy": "react-scripts build && cd .. && firebase deploy --only hosting",
+    
+    "build1": "mv ./public/serviceWorker.min.js ./../../serviceWorker.min.min.js && react-scripts build",
+    "build2": "rm ./public/serviceWorker.min.js && react-scripts build",
+        
     "startReg": "PORT=3100 REACT_APP_FONT_ICONS=http://localhost:3100/bassets/fs/asset/nested/css/all.css REACT_APP_NOTIF=register react-scripts start && cra-append-sw --mode dev ./src/custom-sw-import.js",
     "start3": "PORT=3200 REACT_APP_FONT_ICONS=http://localhost:3200/bassets/fs/asset/nested/css/all.css react-scripts start && cra-append-sw --mode dev ./src/custom-sw-import.js",
+    
     "debugWSclient": "DEBUG=socket.io:client* react-scripts start",
     "debugWSspecific": "DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* react-scripts start",
-    "run": "serve -s ./build -l 4000",
+    
     "buildReg": "react-scripts build && rm -rf ./../buildRegister && mv ./build ./../buildRegister",
     "runReg": "serve -s ./../buildRegister -l 4100",
+    
     "buildUnreg": "react-scripts build && rm -rf ./../buildUnregister && mv ./build ./../buildUnregister",
     "runUnreg": "serve -s ./../buildUnregister -l 4200"
   },
   "version": "0.9.0",
+  "description": "React.js frontend for Zoomers' Collaborative Timers web app",
   "private": true,
   "eslintConfig": {
     "extends": "react-app"

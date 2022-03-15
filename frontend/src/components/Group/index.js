@@ -1,20 +1,16 @@
 // Core React
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState, useContext } from 'react';
 
-// Libraries
-// import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { formatRelative, sub } from 'date-fns';
-import { collection, onSnapshot, limit, query, where, orderBy } from "firebase/firestore";
-
-import db from './../../config/firebase';
+import ReactGA from 'react-ga';
 
 // Own components
+import { GroupContext } from '../Contexts';
+
 import ForcedInput from './../ForcedInput';
 import Users from './../Users';
-import ActivityLog from './../ActivityLog';
+import ActivityLog from './../ActivityLog/index2';
 
-import Room from './../Room/Room';
+import GroupOfTimers from './../GroupOfTimers';
 import Add from './../Room/Add';
 import Delete from './../Room/Delete';
 
@@ -27,59 +23,32 @@ import io from 'socket.io-client';
 import { getData, getLocal, setLocal } from './utilities';
 
 // Main component
-const RoomsGroup = ( { name } ) => {
+const RoomsGroup = () => {
   const urlPath = window.location.pathname;
-  const lastDirectory = urlPath.split( '/' ).pop();
+  // const lastDirectory = urlPath.split( '/' ).pop();
+  const ioUrl = process.env.NODE_ENV === 'production' ? 
+    // 'https://collab-timers-k.uc.r.appspot.com' 
+    'https://ktimers.zoomers.xyz' 
+    : 
+    process.env.REACT_APP_SOCKET + urlPath;
 
-  const socket = io( process.env.REACT_APP_SOCKET + urlPath );
-
+  const socket = io( ioUrl );
   // const socket = io( urlPath );
+
+  // Global, Contexts
+  const { gName } = useContext( GroupContext );
 
   // Regularly/User changing state
   const [ rooms, setRooms ] = useState( [] );
   // user handle
   const [ nickName, setNickName ] = useState( null );
   const [ email, setEmail ] = useState( null );
-  // Activity log. Meant for global/group and room
-  const [ log, setLog ] = useState( [] );
 
   ////
   // useEffect primarily. Assumed just for mount
   ////
 
   const [ showForced, setForced ] = useState( false );
-
-  useEffect( () => {
-    // Core
-    const d = new Date();
-    const oneDayAgo = sub( d, {
-      days: 7 
-    } ).getTime();
-
-    const rootRef = collection( db, 'groups', lastDirectory, 'log' );
-    const ref = query( rootRef, where( 'timestamp', '>', oneDayAgo ), orderBy( 'timestamp', 'desc' ), limit( 50 ) );
-
-    const stream = onSnapshot( 
-      ref, 
-      doc => {
-        const arr = [];
-        const current = new Date();
-        doc.forEach( solo => { 
-          const data = solo.data();
-          data.formattedTime = formatRelative( data.timestamp, current );
-          arr.push( data );
-        } );
-        arr.reverse();
-        setLog( arr );
-      }, 
-      err => {
-        console.log( err );
-        // setErr( err );
-      } 
-    );
-    return () => stream();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [] );
 
   useEffect( () => {
     const ownSocketInitial = ( name ) => {
@@ -94,22 +63,26 @@ const RoomsGroup = ( { name } ) => {
         const CONFIRM_INITIAL_PING = 'confirm initial ping';
         const CONFIRM_INITIAL_PONG = 'confirm initial pong';
         const ADD_USER = 'add user';
+        // console.log( 'handleNewUser 1' );
         const confirmInitialPing = id => {
+          // console.log( 'confirmInitialPing 1' );
           if ( isEmpty( id ) ) return false;
+          // console.log( 'confirmInitialPing 2' );
           socket.emit( CONFIRM_INITIAL_PONG );
+          // console.log( 'confirmInitialPing 3 + handleNewUser 2' );
         };
         socket.emit( ADD_USER, nickName, email );
+        // console.log( 'handleNewUser 3 after ADD_USER' );
         socket.on( CONFIRM_INITIAL_PING, confirmInitialPing );
       };
 
-      // Users
-
       const listUsers = ( e ) => {
-        setUsers( e.nsUsers );
+        // console.log( 'listUsers', e );
+        setUsers( e.users );
       };
 
       const userLeft = ( e ) => {
-        setUsers( e.nsUsers );
+        setUsers( e.users );
       };
 
 
@@ -124,16 +97,21 @@ const RoomsGroup = ( { name } ) => {
         l.gen.error( ERROR, err );
       };
 
+      // @@TODO erm. this was causing disconnecting to happen 5x instead of just 1x when refreshing browser.
+      // Maybe this was for older sockets.io versions? Like V2?
+      // @TOLOOKUP later. Likely this is looking for the server initiating the disconnect.
+      // If there is no "io client disconnect" recently, then it's likelier it began from the server
+      // @UPDATE - this stuff is messy. have a possible interim solution in backend.
       const onDisconnect = reason => {
         l.gen.error( 'l reason', reason );
         console.error( 'reason', reason );
         if ( reason === 'io server disconnect' ) {
-          // the disconnection was initiated by the server, you need to reconnect manually
+          // the disconnection was initiated by the server, reconnect attempt here
           socket.connect();
         } else {
           return;
         };
-        // else the socket will automatically try to reconnect
+        // else the socket will automatically try to reconnect -- wat??
       };
 
       socket.on( CONNECT, onConnect );
@@ -152,15 +130,17 @@ const RoomsGroup = ( { name } ) => {
       setEmail( email );
       setUserEnabled( true );
     };
-    fetchData( name );
-    ownSocketInitial( name );
+    fetchData( gName );
+    ownSocketInitial( gName );
+
+    // console.log( 'Group core useEffect()', [ gName, nickName, email ] );
 
     return () => {
       console.log( 'returning to disconnect' );
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ name, nickName, email ] );
+  }, [ gName, nickName, email ] );
 
   const fetchData = async ( name ) => {
     const data = await getData( name );
@@ -177,17 +157,29 @@ const RoomsGroup = ( { name } ) => {
     setForced( false );
     return true;
   };
+
   
   ////
   // useEffects primarily. Meant for child components.
-  // @TODO ugly! Should be refactored.
+  // @TODO ugly. Should be refactored.
   ///
 
   const [ users, setUsers ] = useState( [] );
   // @TODO ugly, refactor
   const [ userEnabled, setUserEnabled ] = useState( false );
+  useEffect( () => { 
+    ReactGA.initialize( 'G-MZDK05NDHT', {
+      debug: true,
+      titleCase: false,
+      gaOptions: {
+        // userId: socket.id, 
+        usernameId: nickName, 
+        emailId: email 
+      }
+    } );
+    ReactGA.pageview( window.location.pathname );    
+  }, [ userEnabled, socket.id, nickName, email ] );
 
-  // Deleting room
   const [ roomDeleted, setRoomDeleted ] = useState( false );
   useEffect( () => { 
     const TIMER_REMOVED = 'timer removed';
@@ -198,12 +190,14 @@ const RoomsGroup = ( { name } ) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ roomDeleted ] );
 
+  const roomsCheck = rooms && Array.isArray( rooms ) && rooms.length > 0;
+  
   ////
   // Render
   ////
   
   return (
-        <>
+    <>
       { showForced && 
         <div>
           <ForcedInput 
@@ -214,20 +208,22 @@ const RoomsGroup = ( { name } ) => {
       }
 
       <Users 
-        groupName={ name } 
+        // groupName={ name } @KBJ
         data={ users } 
       />
 
-      <div>
-        { rooms && Array.isArray( rooms ) && rooms.length > 0 && 
+      <div id="upper-rooms">
+        { roomsCheck && 
         <>
-          <h3 className="group__pre-listing">All timers in this group:</h3>
+          <h3 className="group__pre-listing">
+            All timers in this group:
+          </h3>
           <ul className="group__listing">
             { rooms.map( arrival => 
               <li key={ `room-toc-list-${ arrival.name }` }>
-                { arrival.name }
+                { arrival.name } 
                 <Delete 
-                  doc={ name } 
+                  group={ gName } 
                   setRooms={ setRooms } 
                   thisRoom={ arrival.name } 
                   setDelete={ setRoomDeleted } 
@@ -238,45 +234,30 @@ const RoomsGroup = ( { name } ) => {
         </>
         }
         <Add 
-          doc={ name } 
-          setRooms={ setRooms } 
-
+          group={ gName } 
+          { ...{ setRooms } } 
         />
       </div>
 
       <hr className="rooms-borderbottom" />
 
       <ActivityLog 
-        log={ log } 
         userEnabled={ userEnabled } 
-        group={ name } 
+        // group={ name } @KBJ
       />
-
-      <>
-        { rooms && Array.isArray( rooms ) && rooms.length > 0 && 
-          <div id="all-timers">
-          { rooms.map( arrival => 
-              <Room 
-                key={ `room-${ arrival.name }` } 
-                roomie={ arrival } 
-
-                socket={ socket } 
-                group={ name } 
-
-                log={ log } 
-                userEnabled={ userEnabled }         
-              />
-            )
-          }
-          </div>
-        }
-      </>      
+      
+      <GroupOfTimers 
+        check={ roomsCheck } 
+        { ...{ 
+          socket, 
+          rooms, 
+          userEnabled 
+        } } 
+      />
     </>
   );
 };
 
-RoomsGroup.propTypes = {
-  name: PropTypes.string.isRequired 
-};
+// RoomsGroup.propTypes = {};
 
 export default RoomsGroup;

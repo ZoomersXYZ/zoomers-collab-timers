@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { Collapse } from 'react-collapse';
@@ -6,7 +6,10 @@ import { Collapse } from 'react-collapse';
 import Activity from './../Activity';
 import './styles.scss';
 
-const ActivityLog = ( { log, timer, userEnabled, group } ) => {
+import { GroupContext } from '../Contexts';
+
+const ActivityLog = ( { timer, userEnabled } ) => {
+  const { gName } = useContext( GroupContext );
   const [ localLog, setLog ] = useState( [] );
   const [ toSlice, setSlice ] = useState( -8 );
   useEffect( () => {
@@ -43,7 +46,7 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
               key={ `full-log-${ index }` } 
               name={ arrival.username } 
               email={ arrival.email } 
-              group={ group && arrival.group } 
+              group={ gName && arrival.group } 
               timer={ arrival.timer } 
               activity={ arrival.activity } 
               formattedTime={ arrival.formattedTime } 
@@ -56,7 +59,7 @@ const ActivityLog = ( { log, timer, userEnabled, group } ) => {
             key={ `log-clip-${ index }` } 
             name={ arrival.username } 
             email={ arrival.email } 
-            group={ group && arrival.group } 
+            group={ gName && arrival.group } 
             timer={ arrival.timer } 
             activity={ arrival.activity } 
             formattedTime={ arrival.formattedTime } 

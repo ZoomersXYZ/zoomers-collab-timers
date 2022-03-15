@@ -1,20 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
 import Svg from './../TimerSvgs';
 import TimerControl from './../../TimerControl';
-import ActivityLog from './../../ActivityLog';
+import ActivityLog from './../../ActivityLog/index2';
 import './styles.scss';
 
 import BrowserNotification from './../../CommonNotification';
 
+import { 
+  // GroupContext, 
+  SocketContext, 
+  RoomContext 
+} from './../../Contexts';
+
 let stoplightInterval = null;
 let hourglassInterval = null;
 
-const Room = ( { socket, group, roomie, log, userEnabled, width, height, className } ) => { 
+const Room = ( { 
+  // isNew, 
+  userEnabled,  
+  width, 
+  height, 
+  CircleClass 
+} ) => { 
+  // const { gName } = useContext( GroupContext );
+  const socket = useContext( SocketContext );
+  const aRoom = useContext( RoomContext );
   // const { name, timers, createdAt, lastUsed } = roomie;
-  const { name } = roomie;
+  const { name } = aRoom;
   const aptRoom = name;
 
   const emitRoom = ( msg ) => socket.emit( msg, aptRoom );
@@ -22,11 +37,16 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     if ( aptRoom !== room ) { return true; };
   };
 
+
   // States
   const [ showTimer, setShowTimer ] = useState( false );
   // Push notifications
-  const [ notify, setNotify ] = useState( 0 );
-  const [ notifyInfo, setNotifyInfo ] = useState( { title: 'Timer Notification', body: 'You\'re notified' } );
+  const [ push, setPush ] = useState( { 
+    event: false, 
+    onOff: 0, 
+    title: 'Timer Notification', 
+    body: 'You\'re notified' 
+  } );
 
   const [ curr, setCurr ] = useState( { 
     current: 0, 
@@ -40,17 +60,17 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const [ session, setSession ] = useState( { 
     term: 'work', 
     icon: 'briefcase', 
-    opp: 'break', 
+    opp: 'brake', 
     oppIcon: 'coffee', 
     scheme: '', 
-    oppScheme: 'break' 
+    oppScheme: 'brake' 
   } );
-  const [ repeating, setRepeating ] = useState( { 
+  const [ reap, setReap ] = useState( { 
     on: false, 
     length: 0, 
     endTime: 0, 
     work: 32, 
-    break: 8 
+    brake: 8 
   } );
 
   const [ stoplight, setStoplight ] = useState( 'stop' );
@@ -63,12 +83,14 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const TIMER_FINISHED = 'timer finished';
   const TIMER_CREATED = 'timer created';
 
-  const REPEATING_ON = 'repeating on';
-  const REPEATING_OFF = 'repeating off';
+  const REAP_ON = 'repeating timers on';
+  const REAP_DONE = 'repeating timers done';
+  const REAP_STOPPED = 'repeating timers stopped';
 
   const ROOM_ENTERED = 'room entered';
   const LEAVE_DOWN = 'leave down';
-  const STOP_TIMER = 'stop timer';
+  const STOP_TIMER = 'stop timer';  
+  const STOP_REAP = 'stop repeating timers';
 
   const moveInToMyRoom = ( setCurr ) => {
     const updateTimer = e => {
@@ -85,20 +107,20 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
 
     const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
-      console.log( 'timerPause happening', aptRoom );
+      // console.log( 'timerPause happening', aptRoom );
       setPauseTerm( 'unpause' );
     };
 
     const timerResumed = ( room ) => {
       if ( filterOutRoom( room ) ) { return; };
-      console.log( 'timerResumed happening', aptRoom );
+      // console.log( 'timerResumed happening', aptRoom );
       setPauseTerm( 'pause' );
     };    
 
-    const timerStopped = ( room ) => {
-      if ( filterOutRoom( room ) ) { return; };
+    const __endTimer = ( room ) => {
+      if ( filterOutRoom( room ) ) { return false; };
       setShowTimer( false );
-      console.log( 'showtimer off' );
+      // console.log( 'showtimer off' );
 
       setCurr( setupCurr( { 
         current: null, 
@@ -106,39 +128,95 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
         totalDuration: null 
       } ) );
     };
-    const timerFinished = ( room ) => {      
+
+    const timerStopped = ( room ) => {
+      __endTimer( room );
+
+      setPush( prev => {
+        return { 
+        ...prev, 
+        event: 'end', 
+        onOff: prev.onOff + 1, 
+        title: `${ room } timer stopped`,
+        body: 'Timer stopped. What up?' 
+        };
+      } );
+    };
+
+    const timerFinished = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
       // Browser notification
-      setNotifyInfo( { title: `${ name } timer finished`, body: 'Timer up. What\'s next?', sound: 1 } );
-      setNotify( prevState => prevState + 1 );
+      setPush( prev => {
+        return { 
+        ...prev, 
+        event: 'end', 
+        onOff: prev.onOff + 1, 
+        title: `${ room } timer finished`,
+        body: 'Timer up. What\'s next?' 
+        };
+      } );
 
-      timerStopped( room );
+      __endTimer( room );
     };
 
-    const repeatingTimerOn = ( e ) => {
-      const { length, endTime, work_time, break_time, room } = e;
+    const reapTimerOn = ( e ) => {
+      const { length, startTime, endTime, work, brake, room } = e;
       if ( filterOutRoom( room ) ) { return; };
-      setRepeating( { 
+      setReap( { 
         on: true, 
         length, 
+        startTime, 
         endTime, 
-        work: work_time, 
-        break: break_time 
+        work, 
+        brake  
       } );
     };
 
-    const repeatingTimerOff = ( room ) => {
-      if ( filterOutRoom( room ) ) { return; };
-      setRepeating( { 
+    const __endReap = ( room ) => {
+      if ( filterOutRoom( room ) ) { return false; };
+      setReap( { 
         on: false, 
         length: 0, 
+        startTime: 0, 
         endTime: 0, 
-        work: 32, 
-        break: 8 
+        work: 0, 
+        brake: 0 
+      } );
+      __endTimer( room );
+    };
+
+    const reapTimerDone = ( room ) => {
+      __endReap( room );
+
+      setPush( prev => {
+        return { 
+        ...prev, 
+        event: 'repeating end', 
+        onOff: prev.onOff + 1, 
+        title: `${ room } repeating timer finished`,
+        body: 'So. What\'s next?' 
+        };
       } );
     };
 
-    if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
+    // dupe
+    const reapTimerStopped = ( room ) => {
+      __endReap( room );
+
+      setPush( prev => {
+        return { 
+        ...prev, 
+        event: 'repeating end', 
+        onOff: prev.onOff + 1, 
+        title: `${ room } repeating timer force stopped`,
+        body: 'Hm. What up?' 
+        };
+      } );
+    };
+
+    // if ( isNew ) {
+    // if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
+    if ( aRoom.hasOwnProperty( 'new' ) && aRoom.new ) {
       emitRoom( TIMER_CREATED );
       // socket.emit( TIMER_CREATED );
     };
@@ -149,8 +227,9 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
     socket.on( TIMER_STOPPED, timerStopped );
     socket.on( TIMER_FINISHED, timerFinished );
 
-    socket.on( REPEATING_ON, repeatingTimerOn );
-    socket.on( REPEATING_OFF, repeatingTimerOff );
+    socket.on( REAP_ON, reapTimerOn );
+    socket.on( REAP_DONE, reapTimerDone );
+    socket.on( REAP_STOPPED, reapTimerStopped );
   };
 
   const setupCurr = ( e ) => {
@@ -162,21 +241,28 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   };
 
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
-  useEffect( () => {    
+  useEffect( () => { 
+    // console.log( 'room entered next' );
     emitRoom( ROOM_ENTERED );
 
     moveInToMyRoom( setCurr );
     return () => {
       emitRoom( LEAVE_DOWN );
-      socket.emit( 'leave down', name );
+      // socket.emit( 'leave down', name ); @KBJ
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
   const handlePauseResumeTimer = ( e, pauseTerm ) => {
     emitRoom( pauseTerm );
-    // notify.show();
-    setNotify( prevState => prevState + 1 );
+    setPush( prev => { 
+      return { 
+        ...prev, 
+        event: 'other', 
+        title: 'Paused timer', 
+        onOff: prev.onOff + 1 
+      }; 
+    } );
 
     // socket.emit( pauseTerm );
   };
@@ -184,6 +270,10 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   const handleStopTimer = ( e ) => {
     emitRoom( STOP_TIMER );
     // socket.emit( 'stop timer' );
+  };
+
+  const handleStopReap = ( e ) => {
+    emitRoom( STOP_REAP );
   };
 
   const handleStoplightHover = () => {
@@ -211,48 +301,63 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
   return (
     <div className="content">
       <h2 className="theh">
-        { name } 
+        { name }
       </h2>
 
       <BrowserNotification 
-        label={ aptRoom } 
         type="notifications" 
-        group={ group } 
-        run={ notify } 
-        title={ notifyInfo.title } 
-        body={ notifyInfo.body } 
+        core={ push } 
+        // label={ aptRoom } @KBJ
+        // group={ group } @KBJ
+        // timer={ name } @KBJ
+        // run={ push.onOff } 
+        // event={ push.event } 
+        // title={ push.title } 
+        // body={ push.body } 
       />
-      
+
       <ActivityLog 
-        log={ log } 
         userEnabled={ userEnabled } 
-        timer={ name } 
+        // group={ group } @KBJ
+        // timer={ name } @KBJ - done
       />
 
       <CSSTransition 
         in={ showTimer } 
         timeout={ 2500 } 
         classNames="coretimer" 
-        // mountOnEnter
-        unmountOnExit
         // appear={ true } 
+        // mountOnEnter 
+        unmountOnExit 
       >
+        <>
+        { reap.on && 
+          <h4>
+            Repeat, Pomo timers started at { reap.startTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+            Repeat, Pomo timers end at { reap.endTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+          </h4>
+        }
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 
-            className={ className } 
+            className={ CircleClass } 
             timer={ currentFormatted } 
             secondsLeft={ current } 
             duration={ totalDuration } 
             ongoingTime={ curr.ongoingTime } 
-
-            width={ width } 
-            height={ height } 
+            { ...{ 
+              width, 
+              height 
+            } } 
           />
+
           <div className="pause-button-parent">
+
             <button 
               id="pause-timer"
               className="casual-button link-underline-fade cap-it-up" 
-              onClick={ ( e ) => handlePauseResumeTimer( e, pauseTerm ) } 
+              onClick={ ( e ) => 
+                handlePauseResumeTimer( e, pauseTerm ) 
+              } 
               onMouseEnter={ handleHourglassHover } 
               onMouseLeave={ handleHourglassOut } 
             >
@@ -278,6 +383,7 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
               <div className="button-content">
                 <div className="button-content-left">
                   <p className="no-gap">Stop</p>
+                  <p className="no-gap">Current</p>
                   <p className="no-gap">Timer</p>
                 </div>
                 <div className="button-content-right">
@@ -285,52 +391,73 @@ const Room = ( { socket, group, roomie, log, userEnabled, width, height, classNa
                 </div>
               </div>
             </button>
-          </div>
+
+            { reap.on && 
+              <button 
+                id="stop-reap" 
+                className="casual-button link-underline-fade" 
+                onClick={ handleStopReap } 
+                onMouseEnter={ handleStoplightHover } 
+                onMouseLeave={ handleStoplightOut } 
+              >
+                {} 
+                <div className="button-content">
+                  <div className="button-content-left">
+                    <p className="no-gap">Fully Stop</p>
+                    <p className="no-gap">All</p>
+                    <p className="no-gap">Repeating</p>
+                  </div>
+                  <div className="button-content-right">
+                    <i className={ `bigger-icon icon-pad-left far fa-traffic-light-${ stoplight }` }></i>
+                  </div>
+                </div>
+              </button>
+            }
+          </div> {/* .pause-button-parent */}
         </div>
+        </>
+        {/*  */}
       </CSSTransition>
 
       <TimerControl 
-        aptRoom={ name }
-        socket={ socket } 
+        // aptRoom={ name } @KBJ
+        // socket={ socket } @KBJ
         time={ current } 
         duration={ totalDuration } 
         width={ width / 2 } 
         height={ height / 2 } 
-        session={ session } 
-        setSession={ setSession } 
+        { ...{ 
+          session, 
+          setSession, 
+          setPush, 
+          setShowTimer, 
+          reap 
+        } }
+      />
 
-
-        
-        setNotify={ setNotify } 
-        setNotifyInfo={ setNotifyInfo } 
-
-        setShowTimer={ setShowTimer } 
-      />      
     </div>
   ); 
 };
 
 Room.propTypes = {
-  roomie: PropTypes.object.isRequired, 
+  isNew: PropTypes.bool, 
+  userEnabled: PropTypes.bool, 
 
   width: PropTypes.number, 
   height: PropTypes.number, 
-
-  className: PropTypes.oneOfType( [
+  CircleClass: PropTypes.oneOfType( [
     PropTypes.string, 
     PropTypes.number 
-  ] ), 
-
-  // nick, 
-  // email, 
-  // sockets, 
-  // group 
+  ] ) 
 };
 
-Room.defaultProps = {  
+Room.defaultProps = { 
+  isNew: false, 
+  userEnabled: false, 
+
   width: 300, 
   height: 300, 
-  className: 'roompop' 
+  CircleClass: 'roompop' 
 };
 
 export default Room;

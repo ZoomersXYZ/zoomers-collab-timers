@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google-cloud/logging-winston": "^4.1.3",
     "cors": "^2.8.5",
     "debug": "^4.3.2",
     "express": "^4.17.1",
@@ -17,14 +18,19 @@
   },
   "scripts": {
     "start": "node src/server.js",
+    "server": "NODE_ENV=development nodemon src/server.js",
+    "server2": "NODE_ENV=development MIN_IN_HR=2 HR_REPEAT=4 nodemon src/server.js",
+    
     "debug": "NODE_ENV=development DEBUG=* nodemon src/server.js",
     "debugWSAll": "NODE_ENV=development DEBUG=engine,socket.io* nodemon src/server.js",
-    "debugWS": "NODE_ENV=development DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* nodemon src/server.js",
-    "server": "NODE_ENV=development nodemon src/server.js"
+    "debugWS": "NODE_ENV=development DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* nodemon src/server.js"
   },
-  "name": "collaborative-multiple-timers-websockets-server",
-  "version": "1.0.0",
-  "description": "Backend WebSockets server for 'Collaborative Multiple Timers' front-end web app",
+  "engines": {
+    "node": "16"
+  },
+  "name": "zoomers-collab-timers_socket.io-backend",
+  "version": "0.9.0",
+  "description": "Backend socket.io server for Zoomers' Collaborative Timers web app",
   "main": "src/server.js",
   "repository": {
     "type": "git",

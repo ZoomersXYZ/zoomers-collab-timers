@@ -1,101 +1,110 @@
-import React, { useEffect, useImperativeHandle } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+// import PropTypes from 'prop-types';
 import { Form, Field, withFormik } from 'formik';
 import * as Yup from 'yup';
 
+import Circle from './../Circle';
 import './../styles.scss';
+import { isEmpty } from './../../../ancillary/helpers/general';
 
 const validationSchema = Yup.object().shape( {
-  newTimer: Yup.number().integer().min( 1 ).max( 999 ).positive( 'Number must be positive' ).required( 'Number required' ) 
+  newTimer: Yup.number().integer().min( 1 ).max( 720 ).positive( 'Number must be positive' ).required( 'Number required' ) 
 } );
-
-// resetFormTimeout
 
 const SubmitTime = props => {
   const {
     touched, 
     errors, 
     status, 
-    isSubmitting, 
-    setErrors 
+    isSubmitting 
   } = props;
-  const { 
-    theRef, 
-    handleSubmit, 
-    handleErrors, 
-    resetForm
+  const {
+    className, 
+    width, 
+    height, 
+    sessionScheme, 
+    children, 
+
+    setErr,
+    handleSuccess, 
   } = props;
-
-  let setErrTimeout = null;
-  let handleErrTimeout = null;
-
-  useImperativeHandle( theRef, () => ( {
-    submitForm: () => handleSubmit() 
-  } ) );
+  const session = sessionScheme;
 
   useEffect( () => { 
-    return () => {
-      if ( status && status.hasOwnProperty( 'success' ) && status.success === 'Successfully added new timer' ) {
-        resetForm();
+    if ( status === true ) handleSuccess();
+  }, [ status, handleSuccess ] );
+
+  useEffect( () => { 
+    const resetErrors = ( errors, setErr, timeOut = 2500 ) => {
+      setErr( errors );
+      if ( errors && !isEmpty( errors ) ) {
+        setTimeout( () => setErr( {} ), timeOut );
       };
-      if ( setErrTimeout ) clearTimeout( setErrTimeout );
-      if ( handleErrTimeout ) clearTimeout( handleErrTimeout );
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [] );
-
-  useEffect( () => { 
-    if ( props.status && props.status.hasOwnProperty( 'success' ) && props.status.success === 'Successfully added new timer' ) {
-      resetForm();
+    if ( touched.newTimer && errors ) {
+      resetErrors( errors, setErr );
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ props.status ] );
-
-  const resetErrors = ( setErrors, handleErrors, timeOut = 2500 ) => {
-    setErrTimeout = setTimeout( () => setErrors( {} ), timeOut );
-    handleErrTimeout = setTimeout( () => handleErrors( null ), timeOut );
-  }
+  }, [ touched.newTimer, errors, setErr ] );
 
   return(
-    <>
-    <Form>
-      <Field autoFocus component="input" name="newTimer" className="timer-text-field" />
-      <button className="casual-button" type="submit" disabled={ isSubmitting }>
-        Submit
-      </button>
-    </Form>
-      { touched && touched.newTimer && errors.newTimer && handleErrors( errors ) } 
-      { touched && touched.newTimer && errors.newTimer && resetErrors( setErrors, handleErrors ) } 
-    </>
+  <Form>
+    <div className="timers-container">
+      <div className={ `${ className }__div ${ session ? session : 'def' }` }>
+        <Circle 
+          className={ className } 
+          width={ width } 
+          height={ height } 
+        >
+          <>
+          <Field autoFocus component="input" name="newTimer" className="timer-text-field" />
+          
+          <button className="casual-button" type="submit" disabled={ isSubmitting }>
+            Submit
+          </button>
+          </>
+        </Circle>
+      </div>
+      { children } 
+    </div>
+  </Form>
   );
-}
+};
 
-// let flagStarted = false;
 const SwoleSubmitTimeForm = withFormik( {
   mapPropsToValues: () => ( {
       newTimer: 5, 
   } ), 
   validationSchema, 
-  handleSubmit: ( values, { setStatus, resetForm, props } ) => {
-    const { aptRoom, socket, setNotify, setNotifyInfo } = props;
-    setStatus( { success: 'Successfully added new timer' } );
-    props.handleStatus( 'Successfully added new timer' );
-    // setTimeout( resetForm, 1400 );
-    // resetForm();
-    // setTimeout( props.onHandleShowing, 1500 );
-    // props.onHandleShowing();
-    socket.emit( 'start timer', aptRoom, values.newTimer );
+  handleSubmit: ( 
+    values, 
+    { setStatus, props } 
+  ) => {
+    const { 
+      aptRoom, 
+      socket, 
+      setPush, 
+      sessionScheme 
+    } = props;
 
-    setNotifyInfo( { title: `${ aptRoom } timer has begun`, body: 'Let\'s go!' } );
-    setNotify( prevState => prevState + 1 );
+    setStatus( true );
+
+    socket.emit( 
+      'start timer', 
+      aptRoom, values.newTimer 
+    );
+
+    setPush( prev => { 
+      return {
+        ...prev, 
+        event: 'start', 
+        onOff: prev.onOff + 1, 
+        title: `${ aptRoom } ${ sessionScheme } timer for ${ values.newTimer } has begun`, 
+        body: 'Let\'s go!' 
+      };
+    } );
   }, 
 
   displayName: 'SubmitTime' 
 }, )( SubmitTime );
-
-SwoleSubmitTimeForm.propTypes = {
-  socket: PropTypes.object.isRequired, 
-  theRef: PropTypes.object
-};
 
 export default SwoleSubmitTimeForm;
