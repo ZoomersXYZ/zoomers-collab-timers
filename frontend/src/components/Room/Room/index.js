@@ -131,7 +131,7 @@ const Room = ( {
 
     const timerStopped = ( room ) => {
       __endTimer( room );
-
+      
       setPush( prev => {
         return { 
         ...prev, 
@@ -162,13 +162,17 @@ const Room = ( {
     const reapTimerOn = ( e ) => {
       const { length, startTime, endTime, work, brake, room } = e;
       if ( filterOutRoom( room ) ) { return; };
+      const DateObjEndTime = new Date( endTime );
+      const DateObjStartTime = new Date( startTime );
       setReap( { 
         on: true, 
         length, 
         startTime, 
         endTime, 
         work, 
-        brake  
+        brake, 
+        DateObjStartTime, 
+        DateObjEndTime
       } );
     };
 
@@ -332,10 +336,14 @@ const Room = ( {
       >
         <>
         { reap.on && 
-          <h4>
-            Repeat, Pomo timers started at { reap.startTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
-            Repeat, Pomo timers end at { reap.endTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
-          </h4>
+          <div className="repeat-timer-headers">
+            <h4>
+              Repeat, Pomo timers started at { reap.DateObjStartTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+            </h4>
+            <h4>
+              Repeat, Pomo timers end at { reap.DateObjEndTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+            </h4>
+          </div>
         }
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 

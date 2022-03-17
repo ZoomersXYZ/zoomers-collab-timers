@@ -30,7 +30,7 @@ const SocketCoreAndUtils = function (
   // Run at start
   // @param obj
   // @globals emitRoom()
-  // @global @anotherFile timeFormatted()
+  // @anotherFile timeFormatted()
   function onRoomConnect( preciousHashie ) {
     const { duration, pausedAt, roomie, secondsLeft, session, time, timerFlag, secondsGoneBy } = preciousHashie;
     emitRoom( 'session skipped', { room: roomie, session } );
@@ -61,7 +61,7 @@ const SocketCoreAndUtils = function (
   // @globals sassy
   // @globals sockJoin (socket.join)
   // @globals nspName
-  // @global @anotherFile initNsp
+  // @anotherFile initNsp
   module.roomEntered = function( initialRoom ) {
     if ( 
       ( !sassy.hasOwnProperty( initialRoom ) )
@@ -112,7 +112,7 @@ const SocketCoreAndUtils = function (
   // @globals gCore
   // @globals sockId (socket.id)
   // @globals nspName
-  // @global @anotherFile commonUserFunctionality
+  // @anotherFile commonUserFunctionality
   module.disconnect = async function( reason ) {    
     if ( !disconnectAnnoyance( reason ) ) return;
 
@@ -159,7 +159,7 @@ const SocketCoreAndUtils = function (
     };
   };
 
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile async logItWrapper()
   // module.disconnecting = async function() {
   disconnecting = async function() {
     const event = 'left room';

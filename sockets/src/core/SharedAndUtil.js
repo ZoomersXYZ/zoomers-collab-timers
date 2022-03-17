@@ -91,7 +91,7 @@ const SharedAndUtil = function (
   module.groupEmit = ( event, msg = null ) => nspaceEmit( event, msg );
 
   // @globals seshie
-  // @global @anotherFile getGroupLog()
+  // @anotherFile getGroupLog()
   module.pongId = async () => {
     // l.karm.debug( 'pongId()', 'beg' );
     // seshie.confirmIdPong = true;

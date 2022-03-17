@@ -14,7 +14,7 @@ const Timer = function (
   const module = {};
 
   // @param inRoom: String
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile async logItWrapper()
   // @globals sassy
   module.timerDeleted = async ( inRoom ) => {
     await logItWrapper( inRoom, 'removed & deleted' );
@@ -22,7 +22,7 @@ const Timer = function (
   };
 
   // @param inRoom: String
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile async logItWrapper()
   module.timerCreated = async ( inRoom ) => {
     await logItWrapper( inRoom, 'created & added' );
   };
@@ -34,8 +34,8 @@ const Timer = function (
   // @param inRoom: String
   // @param timeInMin: Number
   // @globals v
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal goneByTimer()
   module.startTimer = async ( inRoom, timeInMin ) => {
@@ -57,8 +57,8 @@ const Timer = function (
 
   // @param inRoom: String
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @internal clearUpdateTimer()
   // @internal ongoingTimer()
   module.pauseTimer = async ( inRoom ) => {
@@ -82,8 +82,8 @@ const Timer = function (
 
   // @param inRoom: String
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal-ish clearInterval()
   module.resumeTimer = async ( inRoom ) => {
@@ -118,8 +118,8 @@ const Timer = function (
 
   // @param inRoom: String
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile timeFormatted()
+  // @anotherFile emitRoom()
+  // @anotherFile timeFormatted()
   // @internal updateTimer()
   // @internal-ish setInterval()
   // @internal-ish clearInterval()
@@ -179,8 +179,8 @@ const Timer = function (
 
   // @param inRoom: String
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile timeFormatted()
+  // @anotherFile emitRoom()
+  // @anotherFile timeFormatted()
   // @internal finishedTimer()
   // @internal-ish clearInterval()
   updateTimer = ( inRoom ) => {
@@ -230,17 +230,18 @@ const Timer = function (
   };
 
 
-  // @param inRoom: String
-  // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
-  // @internal updateTimer()
+  // * @param inRoom: String
+  //
+  // * @globals sassy
+  // * @anotherFile emitRoom()
+  // * @anotherFile async logItWrapper()
+  //
   // @internal-ish clearInterval()
   module.skipSession = async ( inRoom ) => {
     const curr = sassy[ inRoom ];
+    // roomie is not needed. it's inRoom...
     const { roomie, timerFlag } = curr;
     let { session } = curr;
-    // @DONOW roomie is not needed. it's inRoom...
     
     if ( timerFlag ) {
       l.bbc.error( `${ sockId }: skipSession(): if wat` );
@@ -251,18 +252,18 @@ const Timer = function (
     session = session === 'work' ? 'brake' : 'work';
     curr.session = session;
     emitRoom( 'session skipped', { room: roomie, session } );
-    // @todo meh - shouldnt this just be room: inRoom. not needing to destructure roomie
     await logItWrapper( inRoom, `skipped to ${ session } mode` );
-    // deleteCollection( db, nspName );
   };
 
   // @param inRoom: String
   // @param msg: String
   // @param activity: String
+  //
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @anotherFile wrappingUpRepeating()
+  //
   // @internal clearUpdateTimer()
   // @internal-ish clearInterval()
   wrappingUp = async ( inRoom, msg, activity ) => {

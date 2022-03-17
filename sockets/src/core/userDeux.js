@@ -27,8 +27,8 @@ const User = function (
   // @globals gCore
   // @globals nspName
   // @globals socket.id as sockId
-  // @global @anotherFile groupEmit()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile groupEmit()
+  // @anotherFile async logItWrapper()
   module.addUser = async ( handle, emailAcct ) => {
     // l.karm.debug( 'addUser()', 'beg' );
     if ( simpMe.addedUser ) return;
@@ -71,7 +71,7 @@ const User = function (
     l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
   };
 
-  // @global @anotherFile groupEmit()
+  // @anotherFile groupEmit()
   module.listUsers = () => {
     const event = 'list users';
     const hashie = commonUserFunctionality( event );

@@ -10,7 +10,7 @@ const CommonFuncs = function (
   // @param String
   // @globals gCore (gCore.users)
   // @globals seshie (seshie.username)
-  // @global @anotherFile groupEmit()
+  // @anotherFile groupEmit()
   module.commonUserFunctionality = ( event ) => {
     const users = gCore.users;
     const hashie = ( { 

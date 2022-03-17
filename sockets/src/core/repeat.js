@@ -18,8 +18,8 @@ const RepeatingTimers = function (
   // @param brake: Number?
   // @param length: Number
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @anotherFile startTimer()
   module.repeatingStart = async ( inRoom, work, brake, length ) => {
     const curr = sassy[ inRoom ];
@@ -29,9 +29,11 @@ const RepeatingTimers = function (
     curr.repeat = { 
       on: true, 
       length, 
+      // @TODO why am i going into milliseconds?
       // endTime: theTime + ( length * 60 * 60 * 1000 ), 
-      // silly way to allow debugging quicker times. For 240x less: 7.5. For 180x less: 10.
-      // 240x/180x less. 1H is 15/20s. 2H is 30/40s. 3H is 45/70s
+      // allow debugging w/ quicker times. oops lol stupes maths b4.
+      // For 5, 8, 10, 15. Value of 1H translates to: 
+      // 2.4min (144sec), 0.83m (50s), 0.6m (36s), 0.267m (16s)
       startTime: theTime, 
       endTime: theTime + ( length * ( 60 / v.HR_REPEAT ) * ( 60 / v.HR_REPEAT ) * 1000 ), 
       work, 
@@ -62,21 +64,19 @@ const RepeatingTimers = function (
 
   // @param inRoom: String
   // @globals sassy
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @internal resetRepeating()
   module.repeatingDone = async ( inRoom ) => {
-    const curr = sassy[ inRoom ];
-    const { repeat } = curr;
-
+    const { repeat } = sassy[ inRoom ];
     resetRepeating( inRoom );
     emitRoom( 'repeating timers done', { room: inRoom } );
     await logItWrapper( inRoom, `repeating timers done after ${ repeat.length } hours` );
   };
 
   // @param inRoom: String
-  // @global @anotherFile emitRoom()
-  // @global @anotherFile async logItWrapper()
+  // @anotherFile emitRoom()
+  // @anotherFile async logItWrapper()
   // @internal resetRepeating()
   // @anotherFile stopTimer()
   module.repeatingStop = async ( inRoom ) => {
@@ -93,12 +93,13 @@ const RepeatingTimers = function (
   // @param skipSession: func()
   // @param startTimer: func()
   // @internal module.repeatingDone()
-  module.wrappingUpRepeating = ( inRoom, repeat, session, skipSession, startTimer ) => {
+  module.wrappingUpRepeating = async ( inRoom, repeat, session, skipSession, startTimer ) => {
     if ( repeat.on == true ) {
       if ( repeat.endTime < new Date().getTime() ) {
+        // track the 
         l.karm.debug( 'if ===', 'repeat.endTime < new Date().getTime()' );
         
-        module.repeatingDone();
+        await module.repeatingDone( inRoom );
       } else {
         l.karm.debug( 'if else', 'repeat.endTime < new Date().getTime()' );
 
