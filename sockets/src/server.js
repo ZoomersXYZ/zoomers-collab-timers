@@ -3,34 +3,42 @@ const { instrument } = require( '@socket.io/admin-ui' );
 const l = require( './config/winston' );
 const v = process.env;
 
-l.bbc.info( 'TESTIE 1', v.TESTIE );
 if ( v.NODE_ENV === 'development' ) {
-  console.log( 'dev' );
+  l.bbc.info( 'dev' );
   // require( 'dotenv' ).config( { path: './.env.dev' } );
   require( 'dotenv' ).config();
 };
-l.bbc.info( 'TESTIE 2', v.TESTIE );
+l.bbc.info( 'TESTIE', v.TESTIE );
 
 const express = require( 'express' );
 const cors = require( 'cors' );
 const app = express();
 app.use( cors() );
 
-const port = v.PORT || 8080;
+const port = process.env.PORT || 8080;
 
 // Socket.io
 const server = require( 'http' ).createServer( app );
 // const io = require( 'socket.io' )( server, { transports: [ 'websocket' ] } );
 // const io = require( 'socket.io' )( server, { cookie: false } );
 
-const origin = v.NODE_ENV === 'production' ? 'https://timers.zoomers.xyz' : 'http://localhost:3000';
+const originArr = [ 
+  'https://timers.zoomers.xyz', 
+  'https://ci.timers.zoomers.xyz', 
+  'https://citimers.zoomers.xyz', 
+  // /\.zoomers\.xyz$/, // this regex doesnt include protocol or wildcard for subdomains?
+  'http://localhost:3000', 
+  'http://localhost:8000', 
+  'http://weshouldjustbefriends.local:3000', 
+  'http://wsjbf.dir:3000' 
+ ];
 
 const io = require( 'socket.io' )( server, {
     cors: {
       // origin: '*',
-      origin: origin,
-      credentials: true, // access-control-allow-credentials:true
-      optionSuccessStatus: 200 
+      origin: originArr, 
+      // credentials: true, // access-control-allow-credentials:true
+      // optionSuccessStatus: 200 
     }
 } );
 // const io = ;
@@ -54,10 +62,16 @@ instrument( io, {
 
 const group = require( './core/gNSP' );
 
+// const { nspGroup } = require( './socket' );
+const nspGroup = io.of( /^\/group\/[a-zA-Z0-9-_\.]+$/ );
+nspGroup.on( 'connect', group );
+
 // Express
 server.listen( port, () => {
-  console.log( 'Server listening at port %d', port );
-  l.struct.info( 'Server listening at port', port );
+  if ( v.NODE_ENV !== 'production' ) {
+    console.log( 'Server listening at port %d :', port );
+  };
+  l.struct.info( 'Server listening at port:', port );
 } );
 
 // For production, use the build
@@ -74,10 +88,6 @@ server.listen( port, () => {
 // };
 
 app.get( '/', ( req, res ) => {
+  l.struct.info( 'Server listening at port kk:', port );
   res.send( 'Only route.' );
 } );
-
-// const { nspGroup } = require( './socket' );
-
-const nspGroup = io.of( /^\/group\/[a-zA-Z0-9-_\.]+$/ );
-nspGroup.on( 'connect', group );

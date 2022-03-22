@@ -26,14 +26,27 @@ import { getData, getLocal, setLocal } from './utilities';
 const RoomsGroup = () => {
   const urlPath = window.location.pathname;
   // const lastDirectory = urlPath.split( '/' ).pop();
-  const ioUrl = process.env.NODE_ENV === 'production' ? 
-    // 'https://collab-timers-k.uc.r.appspot.com' 
-    'https://ktimers.zoomers.xyz' 
-    : 
-    process.env.REACT_APP_SOCKET + urlPath;
 
-  const socket = io( ioUrl );
-  // const socket = io( urlPath );
+  const hostName = window.location.hostname;
+  let ioUrl = null;
+  if ( hostName.includes( 'ci' ) ) {
+    ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
+  } else if ( process.env.NODE_ENV === 'production' ) { 
+    ioUrl = 'https://ktimers.zoomers.xyz';
+    // ioUrl = 'https://api.timers.zoomers.xyz';
+    // ioUrl = 'https://collab-timers-k.uc.r.appspot.com';
+  } else if ( process.env.NODE_ENV === 'development' ) {
+    ioUrl = window.location.hostname + ':' + process.env.REACT_APP_SOCKET_PORT;
+  };
+  console.log( 'final url', ioUrl + urlPath );
+
+  // const socket = io( ioUrl, { 
+  //   withCredentials: true, 
+  //   extraHeaders: {
+  //     "my-custom-header": "abcd"
+  //   } 
+  // } );
+  const socket = io( ioUrl + urlPath );
 
   // Global, Contexts
   const { gName } = useContext( GroupContext );
