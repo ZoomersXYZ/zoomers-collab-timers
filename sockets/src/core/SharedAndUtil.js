@@ -6,7 +6,6 @@ const SharedAndUtil = function (
   
   nspace, 
   getGroupLog, 
-  // simpMe, 
 
   gCore, 
   handle 

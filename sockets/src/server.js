@@ -1,3 +1,5 @@
+const { instrument } = require( '@socket.io/admin-ui' );
+
 const l = require( './config/winston' );
 const v = process.env;
 
@@ -40,6 +42,15 @@ const io = require( 'socket.io' )( server, {
 // } = require( './socket' );
 
 // const io = initIo( server );
+
+instrument( io, {
+  auth: {
+    type: "basic", 
+    username: "chaseit", 
+    password: "$2b$09$o1S3SWrY0fSRGeYA8iolkuOdbQ0vY2urvwL20U.B847H2DvAaGOUK" 
+    // encrypted with bcrypt. in password mgr
+  },
+} );
 
 const group = require( './core/gNSP' );
 

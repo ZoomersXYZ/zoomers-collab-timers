@@ -96,10 +96,6 @@ const group = socket => {
     nspName 
   );
 
-  // const {
-  //   simpMe 
-  // } = require( './prep' );
-
   const {
     simpMe, 
     timeFormatted, 
@@ -115,7 +111,6 @@ const group = socket => {
 
     nspace, 
     getGroupLog, 
-    // simpMe, 
 
     gCore, 
     seshie.username 
@@ -130,7 +125,7 @@ const group = socket => {
     addUser, 
     listUsers, 
     // disconnectWrapper 
-  } = require( './userDeux' )( 
+  } = require( './user' )( 
     sockId, 
 
     seshie, 
