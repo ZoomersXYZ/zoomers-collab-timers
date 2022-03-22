@@ -78,14 +78,13 @@ const RoomsGroup = () => {
         const ADD_USER = 'add user';
         // console.log( 'handleNewUser 1' );
         const confirmInitialPing = id => {
-          // console.log( 'confirmInitialPing 1' );
+          console.log( 'confirmInitialPing 1' );
           if ( isEmpty( id ) ) return false;
-          // console.log( 'confirmInitialPing 2' );
           socket.emit( CONFIRM_INITIAL_PONG );
-          // console.log( 'confirmInitialPing 3 + handleNewUser 2' );
+          console.log( 'confirmInitialPing 3 + handleNewUser 2' );
         };
         socket.emit( ADD_USER, nickName, email );
-        // console.log( 'handleNewUser 3 after ADD_USER' );
+        console.log( 'handleNewUser 3 after ADD_USER' );
         socket.on( CONFIRM_INITIAL_PING, confirmInitialPing );
       };
 

@@ -16,7 +16,8 @@ const SharedAndUtil = function (
     confirmIdPong: false, 
     addedUser: null, 
     userModuleCount: 0, 
-    reason: false 
+    reason: false, 
+    confirmIdCount: 0 
   };
 
   ////
