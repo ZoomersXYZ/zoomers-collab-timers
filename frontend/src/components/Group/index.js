@@ -8,7 +8,7 @@ import { GroupContext } from '../Contexts';
 
 import ForcedInput from './../ForcedInput';
 import Users from './../Users';
-import ActivityLog from './../ActivityLog/index2';
+import ActivityLog from './../ActivityLog';
 
 import GroupOfTimers from './../GroupOfTimers';
 import Add from './../Room/Add';
@@ -25,10 +25,9 @@ import { getData, getLocal, setLocal } from './utilities';
 // Main component
 const RoomsGroup = () => {
   const urlPath = window.location.pathname;
-  // const lastDirectory = urlPath.split( '/' ).pop();
-
   const hostName = window.location.hostname;
   let ioUrl = null;
+
   if ( hostName.includes( 'ci' ) ) {
     ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
   } else if ( process.env.NODE_ENV === 'production' ) { 
@@ -38,14 +37,7 @@ const RoomsGroup = () => {
   } else if ( process.env.NODE_ENV === 'development' ) {
     ioUrl = window.location.hostname + ':' + process.env.REACT_APP_SOCKET_PORT;
   };
-  console.log( 'final url', ioUrl + urlPath );
 
-  // const socket = io( ioUrl, { 
-  //   withCredentials: true, 
-  //   extraHeaders: {
-  //     "my-custom-header": "abcd"
-  //   } 
-  // } );
   const socket = io( ioUrl + urlPath );
 
   // Global, Contexts
@@ -58,11 +50,12 @@ const RoomsGroup = () => {
   const [ email, setEmail ] = useState( null );
 
   ////
-  // useEffect primarily. Assumed just for mount
+  // useEffect primarily. 
   ////
 
   const [ showForced, setForced ] = useState( false );
 
+  // Assumed only for mount
   useEffect( () => {
     const ownSocketInitial = ( name ) => {
       const CONNECT = 'connect';
@@ -89,16 +82,12 @@ const RoomsGroup = () => {
       };
 
       const listUsers = ( e ) => {
-        // console.log( 'listUsers', e );
         setUsers( e.users );
       };
 
       const userLeft = ( e ) => {
         setUsers( e.users );
       };
-
-
-      // Based
 
       const onConnect = () => {
         handleNewUser();
@@ -126,10 +115,10 @@ const RoomsGroup = () => {
         // else the socket will automatically try to reconnect -- wat??
       };
 
+      // Sockets
       socket.on( CONNECT, onConnect );
       socket.on( DISCONNECT, onDisconnect );
       socket.on( ERROR, onError );
-
       socket.on( LIST_USERS, listUsers );
       socket.on( USER_LEFT, userLeft );      
     };
@@ -144,8 +133,6 @@ const RoomsGroup = () => {
     };
     fetchData( gName );
     ownSocketInitial( gName );
-
-    // console.log( 'Group core useEffect()', [ gName, nickName, email ] );
 
     return () => {
       console.log( 'returning to disconnect' );
@@ -204,10 +191,8 @@ const RoomsGroup = () => {
 
   const roomsCheck = rooms && Array.isArray( rooms ) && rooms.length > 0;
   
-  ////
-  // Render
-  ////
-  
+
+  //// Render
   return (
     <>
       { showForced && 

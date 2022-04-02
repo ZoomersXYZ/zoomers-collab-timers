@@ -116,8 +116,8 @@ const SwoleReap = withFormik( {
   ) => {    
     const { 
       aptRoom, 
-      socket, 
-      setPush 
+      setPush, 
+      emitAll 
     } = props;
     const { 
       work, 
@@ -126,12 +126,11 @@ const SwoleReap = withFormik( {
     } = values;
 
     setStatus( true );
-    // 18 seconds total length - wat ?
-    socket.emit( 
-      'turn on repeating timers', 
-      // aptRoom, work, brake, 0.005 
-      aptRoom, work, brake, length 
-    );
+    // socket.emit( 
+    //   'turn on repeating timers', 
+    //   aptRoom, work, brake, length 
+    // );
+    emitAll( 'turn on repeating timers', work, brake, length );
     setPush( prev => { 
       return {
         ...prev, 

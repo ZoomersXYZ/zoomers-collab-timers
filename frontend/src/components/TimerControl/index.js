@@ -11,8 +11,7 @@ import { SocketContext, RoomContext } from './../Contexts';
 import './styles.scss';
 
 const TimerControl = ( { 
-  // socket, 
-  // aptRoom, 
+  emitAll, 
 
   session, 
   setSession, 
@@ -101,7 +100,7 @@ const TimerControl = ( {
 
   const handleSessionTimer = ( e ) => {
     e.preventDefault();
-    socket.emit( SKIP_SESSION, aptRoom );
+    emitAll( SKIP_SESSION );
   };
 
   const [ err, setErr ]= useState( {} );
@@ -127,6 +126,7 @@ const TimerControl = ( {
             handleSuccess={ onShowingNorm } 
             sessionScheme={ session.scheme } 
             { ...{ 
+              emitAll, 
               aptRoom, 
               socket, 
               setErr, 
@@ -174,6 +174,7 @@ const TimerControl = ( {
             handleSuccess={ onShowingReap } 
             setErr={ setErrReap } 
             { ...{ 
+              emitAll, 
               aptRoom, 
               socket, 
               setPush, 

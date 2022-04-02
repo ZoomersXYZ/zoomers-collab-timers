@@ -4,10 +4,10 @@ import { CSSTransition } from 'react-transition-group';
 
 import Svg from './../TimerSvgs';
 import TimerControl from './../../TimerControl';
-import ActivityLog from './../../ActivityLog/index2';
+import ActivityLog from './../../ActivityLog';
 import './styles.scss';
 
-import BrowserNotification from './../../CommonNotification';
+import BrowserNotification from './../../BrowserNotification/Common';
 
 import { 
   // GroupContext, 
@@ -32,7 +32,9 @@ const Room = ( {
   const { name } = aRoom;
   const aptRoom = name;
 
-  const emitRoom = ( msg ) => socket.emit( msg, aptRoom );
+  // const emitRoom = ( msg, ...restoros ) => socket.emit( msg, aptRoom, [ ...restoros ] );
+  // const emitUser = ( msg, ...restoros ) => socket.emit( msg, aUser, [ ...restoros ] );
+  const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, [ ...restoros ] );
   const filterOutRoom = ( room ) => {
     if ( aptRoom !== room ) { return true; };
   };
@@ -251,14 +253,13 @@ const Room = ( {
 
     moveInToMyRoom( setCurr );
     return () => {
-      emitRoom( LEAVE_DOWN );
-      // socket.emit( 'leave down', name ); @KBJ
+      emitAll( LEAVE_DOWN );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
   const handlePauseResumeTimer = ( e, pauseTerm ) => {
-    emitRoom( pauseTerm );
+    emitAll( pauseTerm );
     setPush( prev => { 
       return { 
         ...prev, 
@@ -272,12 +273,11 @@ const Room = ( {
   };
 
   const handleStopTimer = ( e ) => {
-    emitRoom( STOP_TIMER );
-    // socket.emit( 'stop timer' );
+    emitAll( STOP_TIMER );
   };
 
   const handleStopReap = ( e ) => {
-    emitRoom( STOP_REAP );
+    emitAll( STOP_REAP );
   };
 
   const handleStoplightHover = () => {
@@ -435,6 +435,7 @@ const Room = ( {
         width={ width / 2 } 
         height={ height / 2 } 
         { ...{ 
+          emitAll, 
           session, 
           setSession, 
           setPush, 
