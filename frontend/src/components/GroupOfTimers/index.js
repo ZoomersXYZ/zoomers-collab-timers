@@ -16,10 +16,12 @@ const GroupOfTimers = ( {
     { check && 
       <div id="all-timers">
       { rooms.map( ( aRoom, index ) => 
-          <RoomContext.Provider key={ `aRoom-Provider-${ index }` } value={ aRoom }>
+          <RoomContext.Provider 
+            key={ `aRoom-Provider-${ index }` } 
+            value={ { ...aRoom, emitRoom: ( msg ) => socket.emit( msg, aRoom.name ) } }
+          >
             <Room 
               key={ `aRoom-${ aRoom.name }` } 
-              // isNew={ aRoom.hasOwnProperty( 'new' ) && aRoom.new } 
               { ...{ userEnabled } } 
             />
           </RoomContext.Provider>

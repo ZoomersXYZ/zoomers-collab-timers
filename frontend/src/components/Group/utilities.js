@@ -11,18 +11,6 @@ const getData = async ( document ) => {
       ...doc.data() 
     } )
   );
-
-  // db.collection( 'groups' ).doc( document ).collection( 'rooms' ).get().then( snapshot => {
-  //   if ( Object.keys( snapshot ).length > 0 ) {
-  //     snapshot.forEach( doc => 
-  //       data.push( { 
-  //         name: doc.id, 
-  //         ...doc.data() 
-  //       } )
-  //     );
-  //   };
-  // } );
-  // console.log( 'fucking data', data );
   return data;
 };
 
