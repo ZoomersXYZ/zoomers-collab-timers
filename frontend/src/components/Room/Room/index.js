@@ -12,7 +12,8 @@ import BrowserNotification from './../../BrowserNotification/Common';
 import { 
   // GroupContext, 
   SocketContext, 
-  RoomContext 
+  RoomContext, 
+  UserContext 
 } from './../../Contexts';
 
 let stoplightInterval = null;
@@ -28,9 +29,8 @@ const Room = ( {
   // const { gName } = useContext( GroupContext );
   const socket = useContext( SocketContext );
   const aRoom = useContext( RoomContext );
-  // const { name, timers, createdAt, lastUsed } = roomie;
-  const { name } = aRoom;
-  const aptRoom = name;
+  const aUser = useContext( UserContext );
+  const aptRoom = aRoom.name;
 
   // const emitRoom = ( msg, ...restoros ) => socket.emit( msg, aptRoom, [ ...restoros ] );
   // const emitUser = ( msg, ...restoros ) => socket.emit( msg, aUser, [ ...restoros ] );
@@ -220,11 +220,8 @@ const Room = ( {
       } );
     };
 
-    // if ( isNew ) {
-    // if ( roomie.hasOwnProperty( 'new' ) && roomie.new ) {
     if ( aRoom.hasOwnProperty( 'new' ) && aRoom.new ) {
-      emitRoom( TIMER_CREATED );
-      // socket.emit( TIMER_CREATED );
+      emitAll( TIMER_CREATED );
     };
 
     socket.on( TIMER_UPDATED, updateTimer );
@@ -248,8 +245,7 @@ const Room = ( {
 
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
   useEffect( () => { 
-    // console.log( 'room entered next' );
-    emitRoom( ROOM_ENTERED );
+    emitAll( ROOM_ENTERED );
 
     moveInToMyRoom( setCurr );
     return () => {
@@ -257,6 +253,14 @@ const Room = ( {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
+
+  useEffect( () => { 
+    if ( showTimer && !curr.current ) {
+      setShowTimer( false );
+    } else if ( !showTimer && curr.current ) {
+      setShowTimer( true );
+    };
+  }, [ curr, showTimer ] );
 
   const handlePauseResumeTimer = ( e, pauseTerm ) => {
     emitAll( pauseTerm );
@@ -268,8 +272,6 @@ const Room = ( {
         onOff: prev.onOff + 1 
       }; 
     } );
-
-    // socket.emit( pauseTerm );
   };
 
   const handleStopTimer = ( e ) => {
@@ -300,12 +302,12 @@ const Room = ( {
     setHourglass( 'start' );
   };
   
-  const { current, currentFormatted, totalDuration } = curr;
+  // const { current, currentFormatted, totalDuration } = curr;
 
   return (
     <div className="content">
       <h2 className="theh">
-        { name }
+        { aptRoom }
       </h2>
 
       <BrowserNotification 
@@ -313,7 +315,7 @@ const Room = ( {
         core={ push } 
         // label={ aptRoom } @KBJ
         // group={ group } @KBJ
-        // timer={ name } @KBJ
+        // timer={ aptRoom } @KBJ
         // run={ push.onOff } 
         // event={ push.event } 
         // title={ push.title } 
@@ -323,7 +325,7 @@ const Room = ( {
       <ActivityLog 
         userEnabled={ userEnabled } 
         // group={ group } @KBJ
-        // timer={ name } @KBJ - done
+        // timer={ aptRoom } @KBJ - done
       />
 
       <CSSTransition 
@@ -348,9 +350,9 @@ const Room = ( {
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 
             className={ CircleClass } 
-            timer={ currentFormatted } 
-            secondsLeft={ current } 
-            duration={ totalDuration } 
+            timer={ curr.currentFormatted } 
+            secondsLeft={ curr.current } 
+            duration={ curr.totalDuration } 
             ongoingTime={ curr.ongoingTime } 
             { ...{ 
               width, 
@@ -428,10 +430,8 @@ const Room = ( {
       </CSSTransition>
 
       <TimerControl 
-        // aptRoom={ name } @KBJ
-        // socket={ socket } @KBJ
-        time={ current } 
-        duration={ totalDuration } 
+        time={ curr.current } 
+        duration={ curr.totalDuration } 
         width={ width / 2 } 
         height={ height / 2 } 
         { ...{ 

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import ReactGA from 'react-ga';
 
 // Own components
-import { GroupContext } from '../Contexts';
+import { GroupContext, UserContext } from '../Contexts';
 
 import ForcedInput from './../ForcedInput';
 import Users from './../Users';
@@ -32,13 +32,14 @@ const RoomsGroup = () => {
     ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
   } else if ( process.env.NODE_ENV === 'production' ) { 
     ioUrl = 'https://ktimers.zoomers.xyz';
-    // ioUrl = 'https://api.timers.zoomers.xyz';
-    // ioUrl = 'https://collab-timers-k.uc.r.appspot.com';
+    // Group 1c
   } else if ( process.env.NODE_ENV === 'development' ) {
     ioUrl = window.location.hostname + ':' + process.env.REACT_APP_SOCKET_PORT;
   };
 
   const socket = io( ioUrl + urlPath );
+  // Group 1b
+  const { emit } = socket;
 
   // Global, Contexts
   const { gName } = useContext( GroupContext );
@@ -46,39 +47,40 @@ const RoomsGroup = () => {
   // Regularly/User changing state
   const [ rooms, setRooms ] = useState( [] );
   // user handle
-  const [ nickName, setNickName ] = useState( null );
+  const [ nick, setNick ] = useState( null );
   const [ email, setEmail ] = useState( null );
+  const [ aUser, setAUser ] = useState( { nick, email } );e
 
   ////
   // useEffect primarily. 
   ////
 
+  useEffect( () => { 
+    setAUser( { nick, email } );
+  }, [ nick, email ] );
+
   const [ showForced, setForced ] = useState( false );
 
   // Assumed only for mount
   useEffect( () => {
+    const CONNECT = 'connect';
+    const DISCONNECT = 'disconnect';
+    const ERROR = 'error';
+    const LIST_USERS = 'list users';
+    const USER_LEFT = 'user left';
+    const ADD_USER = 'add user'
+
     const ownSocketInitial = ( name ) => {
-      const CONNECT = 'connect';
-      const DISCONNECT = 'disconnect';
-      const ERROR = 'error';
-
-      const LIST_USERS = 'list users';
-      const USER_LEFT = 'user left';
-
       const handleNewUser = () => {
-        const CONFIRM_INITIAL_PING = 'confirm initial ping';
-        const CONFIRM_INITIAL_PONG = 'confirm initial pong';
-        const ADD_USER = 'add user';
-        // console.log( 'handleNewUser 1' );
         const confirmInitialPing = id => {
           console.log( 'confirmInitialPing 1' );
           if ( isEmpty( id ) ) return false;
-          socket.emit( CONFIRM_INITIAL_PONG );
-          console.log( 'confirmInitialPing 3 + handleNewUser 2' );
+          emit( 'confirm initial pong' );
+          console.log( 'confirmInitialPing 2' );
         };
-        socket.emit( ADD_USER, nickName, email );
-        console.log( 'handleNewUser 3 after ADD_USER' );
-        socket.on( CONFIRM_INITIAL_PING, confirmInitialPing );
+        emit( ADD_USER, nick, email );
+        console.log( 'handleNewUser 3' );
+        socket.on( 'confirm initial ping', confirmInitialPing );
       };
 
       const listUsers = ( e ) => {
@@ -98,21 +100,16 @@ const RoomsGroup = () => {
         l.gen.error( ERROR, err );
       };
 
-      // @@TODO erm. this was causing disconnecting to happen 5x instead of just 1x when refreshing browser.
-      // Maybe this was for older sockets.io versions? Like V2?
-      // @TOLOOKUP later. Likely this is looking for the server initiating the disconnect.
-      // If there is no "io client disconnect" recently, then it's likelier it began from the server
-      // @UPDATE - this stuff is messy. have a possible interim solution in backend.
+      // #docs Group 1a
       const onDisconnect = reason => {
         l.gen.error( 'l reason', reason );
-        console.error( 'reason', reason );
         if ( reason === 'io server disconnect' ) {
           // the disconnection was initiated by the server, reconnect attempt here
           socket.connect();
         } else {
           return;
         };
-        // else the socket will automatically try to reconnect -- wat??
+        // else the socket will automatically try to reconnect - wat?
       };
 
       // Sockets
@@ -127,7 +124,7 @@ const RoomsGroup = () => {
     if ( !nick || !email ) {
       setForced( true );
     } else {
-      setNickName( nick );
+      setNick( nick );
       setEmail( email );
       setUserEnabled( true );
     };
@@ -139,7 +136,7 @@ const RoomsGroup = () => {
       socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ gName, nickName, email ] );
+  }, [ gName, nick, email ] );
 
   const fetchData = async ( name ) => {
     const data = await getData( name );
@@ -149,7 +146,7 @@ const RoomsGroup = () => {
   const handleForcedInput = ( nick, email ) => {
     setLocal( nick, email );
 
-    setNickName( nick );
+    setNick( nick );
     setEmail( email );
     setUserEnabled( true );
 
@@ -171,19 +168,19 @@ const RoomsGroup = () => {
       debug: true,
       titleCase: false,
       gaOptions: {
-        // userId: socket.id, 
-        usernameId: nickName, 
+        userId: socket.id, 
+        usernameId: nick, 
         emailId: email 
       }
     } );
     ReactGA.pageview( window.location.pathname );    
-  }, [ userEnabled, socket.id, nickName, email ] );
+  }, [ userEnabled, socket.id, nick, email ] );
 
   const [ roomDeleted, setRoomDeleted ] = useState( false );
   useEffect( () => { 
     const TIMER_REMOVED = 'timer removed';
     if ( roomDeleted ) {
-      socket.emit( TIMER_REMOVED, roomDeleted );
+      emit( TIMER_REMOVED, roomDeleted, aUser );
     };
     setRoomDeleted( false );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,7 +191,7 @@ const RoomsGroup = () => {
 
   //// Render
   return (
-    <>
+    <UserContext.Provider value={ aUser }>
       { showForced && 
         <div>
           <ForcedInput 
@@ -205,7 +202,6 @@ const RoomsGroup = () => {
       }
 
       <Users 
-        // groupName={ name } @KBJ
         data={ users } 
       />
 
@@ -220,7 +216,6 @@ const RoomsGroup = () => {
               <li key={ `room-toc-list-${ arrival.name }` }>
                 { arrival.name } 
                 <Delete 
-                  group={ gName } 
                   setRooms={ setRooms } 
                   thisRoom={ arrival.name } 
                   setDelete={ setRoomDeleted } 
@@ -231,7 +226,6 @@ const RoomsGroup = () => {
         </>
         }
         <Add 
-          group={ gName } 
           { ...{ setRooms } } 
         />
       </div>
@@ -240,7 +234,6 @@ const RoomsGroup = () => {
 
       <ActivityLog 
         userEnabled={ userEnabled } 
-        // group={ name } @KBJ
       />
       
       <GroupOfTimers 
@@ -251,7 +244,7 @@ const RoomsGroup = () => {
           userEnabled 
         } } 
       />
-    </>
+    </UserContext.Provider>
   );
 };
 
