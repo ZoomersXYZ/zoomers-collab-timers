@@ -10,7 +10,7 @@ const User = function (
 
   groupEmit, 
   logItWrapper, 
-  commonUserFunctionality, 
+  commonUserFunc, 
   // disconnect, 
   simpMe 
 ) {
@@ -49,11 +49,11 @@ const User = function (
     ++gCore.numUsers;
     
     simpMe.addedUser = true;
-
+    
     // Not sure confirmIdPong is needed, even as extra precaution. It sometimes doesn't work
     const confirmId = setInterval( () => { 
       const event = 'confirm initial ping';
-      groupEmit( event, sockId );      
+      groupEmit( event, sockId );
       l.karm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
       simpMe.confirmIdCount++;
       
@@ -61,8 +61,9 @@ const User = function (
         l.karm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
         module.listUsers();
         clearInterval( confirmId );
+        
         simpMe.confirmIdCount = 0;
-      } else if ( simpMe.confirmIdCount > 2 ) {
+      } else if ( simpMe.confirmIdCount > 3 ) {
         l.karm.debug( 'confirmIdPong did not work' );
         module.listUsers();
         clearInterval( confirmId );
@@ -76,7 +77,7 @@ const User = function (
   // @anotherFile groupEmit()
   module.listUsers = () => {
     const event = 'list users';
-    const hashie = commonUserFunctionality( event );
+    const hashie = commonUserFunc( event );
     groupEmit( event, hashie );
     l.bbc.debug( `${ sockId }: fin listUsers() emit`, hashie.hasOwnProperty( 'count' ) && hashie.count );
     // l.bbc.debug( 'fin listUsers() emit', hashie );

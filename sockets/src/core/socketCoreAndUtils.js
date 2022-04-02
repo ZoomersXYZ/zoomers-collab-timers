@@ -13,7 +13,7 @@ const SocketCoreAndUtils = function (
   
   socket, 
   sassy, 
-  seshie, 
+  // seshie, 
   core, 
   gCore, 
   nspName, 
@@ -22,7 +22,7 @@ const SocketCoreAndUtils = function (
   initSassy, 
   logItWrapper, 
   timeFormatted, 
-  commonUserFunctionality, 
+  commonUserFunc, 
   simpMe 
 ) {
   const module = {};
@@ -32,13 +32,13 @@ const SocketCoreAndUtils = function (
   // @globals emitRoom()
   // @anotherFile timeFormatted()
   function onRoomConnect( preciousHashie ) {
-    const { duration, pausedAt, roomie, secondsLeft, session, time, timerFlag, secondsGoneBy } = preciousHashie;
+    const { duration, pausedAt, roomie, secondsLeft, session, time, pauseFlag, secondsGoneBy } = preciousHashie;
     emitRoom( 'session skipped', { room: roomie, session } );
 
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
     const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-    if ( pausedAt && !timerFlag && currentBool && durationBool ) {
+    if ( pausedAt && !pauseFlag && currentBool && durationBool ) {
       const hashish = { 
         current: secondsLeft, 
         currentFormatted: timeFormatted( secondsLeft ), 
@@ -46,7 +46,7 @@ const SocketCoreAndUtils = function (
         totalDuration: duration, 
         started: time, 
 
-        paused: !timerFlag, 
+        paused: !pauseFlag, 
         pausedAt: pausedAt, 
 
         ongoingTime: secondsGoneBy 
@@ -92,10 +92,10 @@ const SocketCoreAndUtils = function (
 
     const TRANSPORT_CLOSE = 'transport close';
     const TRANSPORT_ERROR = 'transport error';
-    const SERVER_DISCONNECT = 'server namespace disconnect';
-    const CLIENT_DISCONNECT = 'client namespace disconnect';
-    const SERVER_DOWN = 'server shutting down';
-    const PING_TIMEOUT = 'piung timeout';
+    // const SERVER_DISCONNECT = 'server namespace disconnect';
+    // const CLIENT_DISCONNECT = 'client namespace disconnect';
+    // const SERVER_DOWN = 'server shutting down';
+    // const PING_TIMEOUT = 'ping timeout';
 
     if ( reason === TRANSPORT_ERROR ) {
       if ( simpMe.reason ) return false;
@@ -107,18 +107,15 @@ const SocketCoreAndUtils = function (
     return true;
   };
 
-  // @globals seshie
+  // @globals simpMe
   // @globals core
   // @globals gCore
   // @globals sockId (socket.id)
   // @globals nspName
-  // @anotherFile commonUserFunctionality
+  // @anotherFile commonUserFunc
   module.disconnect = async function( reason ) {    
     if ( !disconnectAnnoyance( reason ) ) return;
 
-    // l.karm.debug( 'disconnect()', 'pre' );
-    // if ( seshie.addedUser ) {
-    // if ( addedUser ) {
     if ( simpMe.addedUser ) {
       l.karm.debug( `${ sockId }: disconnect() if`, 'simpMe.addedUser' );
       // DD - is there a situation where the user is still 'online' but roomEntered() didnt happen [again]?
@@ -148,7 +145,7 @@ const SocketCoreAndUtils = function (
       };
       
       const event = 'user left';
-      commonUserFunctionality( event );
+      commonUserFunc( event );
 
       // Reset
       simpMe.addedUser = false;

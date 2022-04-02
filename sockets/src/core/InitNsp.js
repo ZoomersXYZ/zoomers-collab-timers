@@ -1,24 +1,38 @@
-const initNsp = {
+const InitNsp = function() {
+  const module = {};
 
-  // @param String
-  // @param String
-  sassy( roomie, nspName ) { 
+  module.resetTimer = function() {
     return {
+      manager: {
+        username: null, 
+        email: null 
+      }, 
+      
       timerFlag: false, 
-      session: 'work', 
-
-      timer: null, 
+      pauseFlag: false, 
       pausedAt: null, 
 
       duration: 0, 
       secondsLeft: 0, 
-      secondsGoneBy: 1, 
+      secondsGoneBy: 1 
+    };
+  };
+
+  // @param String
+  // @param String
+  module.sassy = function( roomie, nspName ) { 
+    return {
+      ...module.resetTimer(), 
+
+      session: 'work', 
 
       updateTimerInterval: null, 
       ongoingInterval: null, 
       goneByInterval: null, 
+
       roomie: roomie, 
       group: nspName, // DD
+
       repeat: { 
         on: false, 
         length: 0,  
@@ -27,38 +41,34 @@ const initNsp = {
         brake: 0  
       }
     };
-  }, 
+  };
 
   // @param String
-  seshie( groupName ) { 
+  module.seshie = function( groupName ) { 
     return { 
-      // nspName
       group: groupName, 
       username: null, 
       email: null, 
-      loggy: [], 
-
-      // confirmIdPong: false, 
-      // addedUser: false  
+      loggy: [] 
     };
-  }, 
-
-  core() { 
-    return { 
-      groups: [], 
-      users: [], 
-      userCount: 0, 
-      numUsers: 0 // delete soon
-    };
-  }, 
-
-  gCore() { 
+  };
+  
+  module.gCore = function() { 
     return {  
       users: [], 
       userCount: 0, 
-      numUsers: 0 // delete soon
+      numUsers: 0 // delete soon 
     };
-  } 
+  };
+
+  module.core = function() { 
+    return { 
+      ...module.gCore(), 
+      groups: [] 
+    };
+  };
+
+  return module;
 };
 
-module.exports = initNsp;
+module.exports = InitNsp;

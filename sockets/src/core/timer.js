@@ -1,8 +1,9 @@
 const l = require( './../config/winston' );
 
 const Timer = function ( 
-  sockId, 
+  // sockId, 
   v, 
+  // simpMe, 
   
   sassy, 
   emitRoom, 
@@ -40,12 +41,19 @@ const Timer = function (
   // @internal goneByTimer()
   module.startTimer = async ( inRoom, timeInMin ) => {
     const curr = sassy[ inRoom ];
+    if ( curr.timerFlag ) {
+      emitRoom( 'timer already begun', { room: inRoom } );
+      return false;
+    };
+
     v.MIN_IN_HR ??= 60;
     curr.duration = timeInMin * v.MIN_IN_HR;
     curr.secondsLeft = curr.duration;
     // @TODO refact: can this be done:
     curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
     curr.timerFlag = true;
+    curr.pauseFlag = true;
+    curr.endFlag = false;
     curr.time = new Date().getTime();
 
     updateTimer( inRoom );
@@ -63,14 +71,14 @@ const Timer = function (
   // @internal ongoingTimer()
   module.pauseTimer = async ( inRoom ) => {
     const curr = sassy[ inRoom ];
-    const { timerFlag } = curr;
+    const { pauseFlag } = curr;
 
-    if ( !timerFlag ) {
+    if ( !pauseFlag ) {
       emitRoom( 'timer ALREADY paused' );
       return;
     };
     
-    curr.timerFlag = false;
+    curr.pauseFlag = false;
     curr.pausedAt = new Date().getTime();
 
     clearUpdateTimer( inRoom );
@@ -88,14 +96,14 @@ const Timer = function (
   // @internal-ish clearInterval()
   module.resumeTimer = async ( inRoom ) => {
     const curr = sassy[ inRoom ];
-    const { timerFlag } = curr;
+    const { pauseFlag } = curr;
     
-    if ( timerFlag ) {
+    if ( pauseFlag ) {
       emitRoom( 'timer ALREADY resumed', { room: inRoom } );
       return;
     };
     
-    curr.timerFlag = true;
+    curr.pauseFlag = true;
     curr.pausedAt = null;
 
     updateTimer( inRoom );
@@ -127,7 +135,7 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     const {
       duration,       
-      timerFlag, 
+      pauseFlag, 
       time, 
       pausedAt, 
       secondsGoneBy, 
@@ -137,7 +145,7 @@ const Timer = function (
     curr.ongoingInterval = setInterval( () => {
       const durationBool = !isNaN( duration ) && duration > -1;
       const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-      if ( !timerFlag && durationBool && currentBool ) {
+      if ( !pauseFlag && durationBool && currentBool ) {
         const hashish = { 
           current: secondsLeft, 
           currentFormatted: timeFormatted( secondsLeft ), 
@@ -145,7 +153,7 @@ const Timer = function (
           totalDuration: duration, 
           started: time, 
 
-          paused: !timerFlag, 
+          paused: !pauseFlag, 
           pausedAt: pausedAt, 
 
           ongoingTime: secondsGoneBy 
@@ -166,7 +174,7 @@ const Timer = function (
   finishedTimer = ( inRoom ) => wrappingUp( inRoom, 'timer finished', 'finished' );
   // @param inRoom: String
   // @internal wrappingUp()
-  module.doneTimer = ( inRoom ) => wrappingUp( inRoom, 'timer done', 'done' );
+  module.resetTimer = ( inRoom ) => wrappingUp( inRoom, 'timer reset', 'reset' );
 
   // @params inRoom: String
   // @global sassy
@@ -187,7 +195,7 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     const {
       duration,       
-      timerFlag, 
+      pauseFlag, 
       time, 
       pausedAt, 
       secondsGoneBy 
@@ -202,9 +210,9 @@ const Timer = function (
       const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
 
         const noTimeLeftBool = !isNaN( secondsLeft ) && secondsLeft < 1;
-        const commonTimerVarsExistBool = timerFlag || duration;
+        const commonTimerVarsExistBool = pauseFlag || duration;
 
-      if ( timerFlag && durationBool && currentBool ) {
+      if ( pauseFlag && durationBool && currentBool ) {
         const hashish = { 
           current: secondsLeft, 
           currentFormatted: timeFormatted( secondsLeft ), 
@@ -212,7 +220,7 @@ const Timer = function (
           totalDuration: duration, 
           started: time, 
 
-          paused: !timerFlag, 
+          paused: !pauseFlag, 
           pausedAt: pausedAt, 
 
           ongoingTime: secondsGoneBy 
@@ -239,12 +247,12 @@ const Timer = function (
   // @internal-ish clearInterval()
   module.skipSession = async ( inRoom ) => {
     const curr = sassy[ inRoom ];
+    console.log( '2', curr );
     // roomie is not needed. it's inRoom...
-    const { roomie, timerFlag } = curr;
+    const { roomie, pauseFlag } = curr;
     let { session } = curr;
     
-    if ( timerFlag ) {
-      l.bbc.error( `${ sockId }: skipSession(): if wat` );
+    if ( pauseFlag ) {
       emitRoom( 'timer still running. Stop it first.', roomie );
       return;
     };
@@ -268,6 +276,10 @@ const Timer = function (
   // @internal-ish clearInterval()
   wrappingUp = async ( inRoom, msg, activity ) => {
     const curr = sassy[ inRoom ];
+    if ( !curr.secondsLeft ) {
+      emitRoom( `${ msg } already done`, { room: inRoom } );
+      return false;
+    };
     const { repeat, session } = curr;
     clearUpdateTimer( inRoom );
     clearInterval( curr.ongoingInterval );
@@ -275,6 +287,7 @@ const Timer = function (
 
     curr.secondsLeft = 0;
     curr.timerFlag = false;
+    curr.pauseFlag = false;
 
     emitRoom( msg, { room: inRoom } );
     wrappingUpRepeating( 
@@ -285,6 +298,7 @@ const Timer = function (
       module.startTimer 
     );
 
+    // await logItWrapper( inRoom, user, activity, { manager: manager } );
     await logItWrapper( inRoom, activity );
   };
 

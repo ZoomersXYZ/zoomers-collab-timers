@@ -1,7 +1,7 @@
 // const db = require( './../config/firebase' );
 const l = require( './../config/winston' );
 const { isEmpty, isObject } = require( './../utilities/general' );
-const initNsp = require( './InitNsp' );
+const InitNsp = require( './InitNsp' )();
 
 ////
 // Initializing Variables
@@ -60,15 +60,15 @@ const group = socket => {
       socket.client.server.glue.groups[ nspName ] ||= {
         timers: {}, 
         sesh: null, 
-        core: initNsp.gCore() 
+        core: InitNsp.gCore() 
       };
 
       if ( isEmpty( socket.client.server.glue.core ) ) { 
-        socket.client.server.glue.core ||= initNsp.core();
+        socket.client.server.glue.core ||= InitNsp.core();
       };      
 
       if ( isEmpty( socket.client.server.glue.groups[ nspName ].sesh ) ) {
-        socket.client.server.glue.groups[ nspName ].sesh ||= initNsp.seshie( nspName );
+        socket.client.server.glue.groups[ nspName ].sesh ||= InitNsp.seshie( nspName );
       };
 
       // Shortening
@@ -105,7 +105,7 @@ const group = socket => {
 
     pongId, 
 
-    commonUserFunctionality  
+    commonUserFunc 
   } = require( './SharedAndUtil' )( 
     sockId, 
 
@@ -135,7 +135,7 @@ const group = socket => {
 
     groupEmit, 
     logItWrapper, 
-    commonUserFunctionality, 
+    commonUserFunc, 
     // disconnect, 
     simpMe 
   );
@@ -149,27 +149,28 @@ const group = socket => {
 
     socket, 
     sassy, 
-    seshie, 
+    // seshie, 
     core, 
     gCore, 
     nspName, 
 
     emitRoom, 
-    initNsp.sassy, 
+    InitNsp.sassy, 
     logItWrapper, 
     timeFormatted, 
-    commonUserFunctionality, 
+    commonUserFunc, 
     simpMe
   );
 
   const { 
     wrappingUpRepeating 
   } = require( './repeat' )( 
-    sockId, 
+    null, 
 
     sassy, 
     emitRoom, 
     logItWrapper, 
+    
     null, 
     null 
   );
@@ -181,11 +182,12 @@ const group = socket => {
     pauseTimer, 
     resumeTimer, 
     stopTimer, 
-    doneTimer, 
+    resetTimer, 
     skipSession 
   } = require( './timer' )( 
-    sockId, 
+    // sockId, 
     v, 
+    // simpMe, 
     
     sassy, 
     emitRoom, 
@@ -227,8 +229,6 @@ const group = socket => {
     socket.on( 'list users', listUsers ); 
     // socketCoreAndUtils 5th
     socket.on( 'disconnect', disconnect ); 
-    // socket.on( 'disconnect', disconnectWrapper );
-    // socket.on( 'disconnecting', disconnecting );
  
     // timer 1st
     socket.on( 'timer removed', timerDeleted ); 
@@ -245,8 +245,8 @@ const group = socket => {
     socket.on( 'start timer', startTimer );
     // timer 8th
     socket.on( 'stop timer', stopTimer ); 
-    // timer 9th
-    socket.on( 'timer done', doneTimer );
+    // timer 9th or 10th
+    socket.on( 'reset timer', resetTimer ); 
     // socket.on( 'timer done', finishedTimer );
     // timer 4th
     socket.on( 'pause', pauseTimer ); 

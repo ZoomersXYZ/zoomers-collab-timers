@@ -93,14 +93,10 @@ const SharedAndUtil = function (
   // @globals seshie
   // @anotherFile getGroupLog()
   module.pongId = async () => {
-    // l.karm.debug( 'pongId()', 'beg' );
-    // seshie.confirmIdPong = true;
-    // simpMe.confirmIdPong = true;
     module.simpMe.confirmIdPong = true;
-    // l.karm.debug( 'pongId()', 2 );
     try {
       const res = await getGroupLog();
-      // l.bbc.info( 'pongId() getGroupLog success', res );
+      l.bbc.info( 'pongId() getGroupLog success', res );
       // undefined
     } catch ( err ) {
       l.bbc.error( `${ sockId }: pongId() getGroupLog fail`, err );
@@ -115,7 +111,7 @@ const SharedAndUtil = function (
   // @globals gCore (gCore.users)
   // @globals seshie (seshie.username)
   // @internal groupEmit()
-  module.commonUserFunctionality = ( event ) => {
+  module.commonUserFunc = ( event ) => {
     const users = gCore.users;
     const hashie = ( { 
       username: handle, 

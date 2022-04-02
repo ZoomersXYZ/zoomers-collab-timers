@@ -1,8 +1,9 @@
 const l = require( './../config/winston' );
 
 const RepeatingTimers = function ( 
-  sockId, 
+  // sockId, 
   v, 
+  // simpMe, 
   
   sassy, 
   emitRoom, 
@@ -23,17 +24,19 @@ const RepeatingTimers = function (
   // @anotherFile startTimer()
   module.repeatingStart = async ( inRoom, work, brake, length ) => {
     const curr = sassy[ inRoom ];
-    const { roomie, session } = curr;
+    const { repeat } = curr;
+    if ( repeat.on ) {
+      emitRoom( 'repeat timers already begun', { room: inRoom } );
+      return false;
+    };
+
     const theTime = new Date().getTime();
     v.HR_REPEAT ??= 1;
     curr.repeat = { 
       on: true, 
       length, 
-      // @TODO why am i going into milliseconds?
-      // endTime: theTime + ( length * 60 * 60 * 1000 ), 
-      // allow debugging w/ quicker times. oops lol stupes maths b4.
-      // For 5, 8, 10, 15. Value of 1H translates to: 
-      // 2.4min (144sec), 0.83m (50s), 0.6m (36s), 0.267m (16s)
+      // allow debugging w/ quicker times
+      // For HR_REPEAT 5, 8, 10, 15. Value of 1H translates to: 2.4min, 50s, 36s, 16s
       startTime: theTime, 
       endTime: theTime + ( length * ( 60 / v.HR_REPEAT ) * ( 60 / v.HR_REPEAT ) * 1000 ), 
       work, 
@@ -43,8 +46,9 @@ const RepeatingTimers = function (
     emitRoom( 'repeating timers on', { room: inRoom, ...curr.repeat } );
     await logItWrapper( inRoom, 'repeating timers on & started' );
 
+    const { session } = curr;
     if ( session === 'brake' ) {
-      emitRoom( 'session skipped', { room: roomie, session: session } );
+      emitRoom( 'session skipped', { room: inRoom, session: session } );
     };
     startTimer( inRoom, work );
   };
@@ -69,6 +73,11 @@ const RepeatingTimers = function (
   // @internal resetRepeating()
   module.repeatingDone = async ( inRoom ) => {
     const { repeat } = sassy[ inRoom ];
+    if ( repeat.off ) {
+      emitRoom( 'repeating already off', { room: inRoom } );
+      return false;
+    };
+
     resetRepeating( inRoom );
     emitRoom( 'repeating timers done', { room: inRoom } );
     await logItWrapper( inRoom, `repeating timers done after ${ repeat.length } hours` );
@@ -80,9 +89,14 @@ const RepeatingTimers = function (
   // @internal resetRepeating()
   // @anotherFile stopTimer()
   module.repeatingStop = async ( inRoom ) => {
+    const { repeat } = sassy[ inRoom ];
+    if ( repeat.off ) {
+      emitRoom( 'repeating already off', { room: inRoom } );
+      return false;
+    };
+
     resetRepeating( inRoom );
     stopTimer( inRoom );
-
     emitRoom( 'repeating timers stopped', { room: inRoom } );
     await logItWrapper( inRoom, `repeating timers force stopped` );
   };
@@ -96,7 +110,6 @@ const RepeatingTimers = function (
   module.wrappingUpRepeating = async ( inRoom, repeat, session, skipSession, startTimer ) => {
     if ( repeat.on == true ) {
       if ( repeat.endTime < new Date().getTime() ) {
-        // track the 
         l.karm.debug( 'if ===', 'repeat.endTime < new Date().getTime()' );
         
         await module.repeatingDone( inRoom );
