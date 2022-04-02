@@ -1,18 +1,18 @@
 import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { Field, Form, ErrorMessage, withFormik } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { doc, setDoc } from "firebase/firestore";
 
 import db from './../../../config/firebase';
 import './../styles.scss'
 import { resetErrors } from './../../helpers.js';
 
-import { GroupContext } from './../../Contexts';
+import { GroupContext, UserContext } from './../../Contexts';
 
-const addToFirestore = async ( docName, data ) => {
+const addToFirestore = async ( docName, data, aUser ) => {
   const docRef = doc( db, 'groups', docName, 'rooms', data );
   const hashie = { 
     name: data, 
+    creator: aUser, 
     timers: [], 
     createdAt: new Date().getTime(), 
     lastUsed: new Date().getTime() 
@@ -30,7 +30,48 @@ const addToFirestore = async ( docName, data ) => {
   return hashie;
 };
 
-const AddingRoom = props => {
+const AddRoom = async ( props ) => {
+  const ogProps = props;
+  const { gName } = useContext( GroupContext );
+  const aUser = useContext( UserContext );
+
+  return(
+    <Formik
+      initialValues={ {
+        newRoom: '', 
+      } } 
+      onSubmit={ async ( 
+        values, { setSubmitting, setStatus, setErrors, resetForm } 
+      ) => {
+        console.log( 'Add values', values );
+        const result = await addToFirestore( gName, values.newRoom, aUser );
+
+        if ( result !== null && result.hasOwnProperty( 'new' ) ) {
+          setTimeout( () =>
+            ogProps.setRooms( prevState => {
+              if ( prevState ) {
+                return prevState.concat( result );
+              } else {
+                return [ result ];
+              }
+            } ), 
+            1500 
+          );
+
+          setStatus( { success: 'Successfully added new room' } );
+          setTimeout( resetForm, 2000 );
+          
+        } else if ( result === false ) {
+          setSubmitting( false );
+          setErrors( { newRoom: 'Error uploading new room' } );
+        }
+      } }
+      children={ props => <SwoleAddRoom { ...props } /> } 
+    />
+  );
+};
+
+const SwoleAddRoom = props => {
   const {
     touched, 
     errors, 
@@ -40,9 +81,7 @@ const AddingRoom = props => {
     status 
   } = props;
 
-  const { gName } = useContext( GroupContext );
   const [ showForm, setShowForm ] = useState( false );
-  
   const onHandleShowingForm = () => setShowForm( prevState => !prevState );
 
   return(
@@ -51,7 +90,6 @@ const AddingRoom = props => {
         <div>
           <Form>
             <Field autoFocus component="input" name="newRoom" className="casual-textfield" />
-            {/* <Field name="group" value={ gName } style={ { display: 'none' } } /> */}
 
             <ErrorMessage name="newRoom" render={ err => <div id="feedback">{ err }</div> } />
             { touched.create && errors.create && resetErrors( setErrors ) }
@@ -71,52 +109,12 @@ const AddingRoom = props => {
           <button className="add casual-button link-underline-fade" onClick={ onHandleShowingForm }>Add a room <i className="icon-pad-left far fa-door-closed"></i></button>
         </p>
       }
-
+      
       { status && status.success && <div className="success-msg">{ status.success }</div> }
       { status && status.msg && <div className="success-msg">{ status.msg }</div> }
       { status && status.success && showForm && onHandleShowingForm() }
     </div>
   );
-}
-
-const SwoleAddingRoomForm = withFormik( {
-  mapPropsToValues: () => ( { 
-      newRoom: '', 
-  } ), 
-
-  handleSubmit: async ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
-    const { group, setRooms } = props;
-    // const { group, newRoom } = values;
-    const { newRoom } = values;
-    console.log( 'Add values', values );
-    const result = await addToFirestore( group, newRoom );
-
-    if ( result !== null && result.hasOwnProperty( 'new' ) ) {
-      setTimeout( () =>
-        setRooms( prevState => {
-          if ( prevState ) {
-            return prevState.concat( result );
-          } else {
-            return [ result ];
-          }
-        } ), 
-        1500 
-      );
-
-      setStatus( { success: 'Successfully added new room' } );
-      setTimeout( resetForm, 2000 );
-      
-    } else if ( result === false ) {
-      setSubmitting( false );
-      setErrors( { newRoom: 'Error uploading new room' } );
-    }
-  }, 
-
-  displayName: 'AddingRoom' 
-}, )( AddingRoom );
-
-SwoleAddingRoomForm.propTypes = {
-  setRooms: PropTypes.func.isRequired 
 };
 
-export default SwoleAddingRoomForm;
+export default AddRoom;

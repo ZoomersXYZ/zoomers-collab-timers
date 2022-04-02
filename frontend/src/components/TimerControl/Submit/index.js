@@ -1,23 +1,69 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Field, withFormik } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
 import Circle from './../Circle';
 import './../styles.scss';
 import { isEmpty } from './../../../ancillary/helpers/general';
 
+// import { SocketContext, RoomContext, UserContext } from './../../Contexts';
+import { RoomContext } from './../../Contexts';
+
 const validationSchema = Yup.object().shape( {
   newTimer: Yup.number().integer().min( 1 ).max( 720 ).positive( 'Number must be positive' ).required( 'Number required' ) 
 } );
 
 const SubmitTime = props => {
-  const {
-    touched, 
-    errors, 
-    status, 
-    isSubmitting 
-  } = props;
+  const ogProps = props;
+  // const socket = useContext( SocketContext );
+  const aRoom = useContext( RoomContext );
+  // const aUser = useContext( UserContext );
+
+  return(
+    <Formik
+      initialValues={ {
+        newTimer: 5, 
+      } } 
+      validationSchema={ validationSchema } 
+      onSubmit={ ( 
+        values, actions
+      ) => {
+        const {
+          setPush, 
+          sessionScheme, 
+          emitAll 
+        } = ogProps;
+        actions.setStatus( true );
+
+        // socket.emit( 
+        //   'start timer', 
+        //   aRoom.name, aUser, values.newTimer 
+        //   // aRoom.name, values.newTimer 
+        // );
+        emitAll( 'start timer', values.newTimer );
+
+        setPush( prev => { 
+          return {
+            ...prev, 
+            event: 'start', 
+            onOff: prev.onOff + 1, 
+            title: `${ aRoom.name } ${ sessionScheme } timer for ${ values.newTimer } has begun`, 
+            body: 'Let\'s go!' 
+          };
+        } );
+      } } 
+      children={ props => 
+        <SwoleSubmitTime 
+          { ...props } 
+          { ...ogProps } 
+        /> 
+      } 
+    />
+  );
+};
+
+const SwoleSubmitTime = props => {
   const {
     className, 
     width, 
@@ -25,8 +71,14 @@ const SubmitTime = props => {
     sessionScheme, 
     children, 
 
-    setErr,
-    handleSuccess, 
+    setErr, 
+    handleSuccess 
+  } = props;
+  const {
+    status, 
+    errors, 
+    isSubmitting, 
+    touched 
   } = props;
   const session = sessionScheme;
 
@@ -70,41 +122,4 @@ const SubmitTime = props => {
   );
 };
 
-const SwoleSubmitTimeForm = withFormik( {
-  mapPropsToValues: () => ( {
-      newTimer: 5, 
-  } ), 
-  validationSchema, 
-  handleSubmit: ( 
-    values, 
-    { setStatus, props } 
-  ) => {
-    const { 
-      aptRoom, 
-      socket, 
-      setPush, 
-      sessionScheme 
-    } = props;
-
-    setStatus( true );
-
-    socket.emit( 
-      'start timer', 
-      aptRoom, values.newTimer 
-    );
-
-    setPush( prev => { 
-      return {
-        ...prev, 
-        event: 'start', 
-        onOff: prev.onOff + 1, 
-        title: `${ aptRoom } ${ sessionScheme } timer for ${ values.newTimer } has begun`, 
-        body: 'Let\'s go!' 
-      };
-    } );
-  }, 
-
-  displayName: 'SubmitTime' 
-}, )( SubmitTime );
-
-export default SwoleSubmitTimeForm;
+export default SubmitTime;

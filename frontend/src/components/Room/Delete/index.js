@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { withFormik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { doc, deleteDoc } from "firebase/firestore";
 
 import db from './../../../config/firebase';
@@ -22,7 +22,53 @@ const deleteFromFirestore = async ( docName, data ) => {
   };
 };
 
-const DeletingRoom = props => {
+const DeleteRoom = async ( props ) => {
+  const ogProps = props;
+  const { gName } = useContext( GroupContext );
+
+  return( 
+    <Formik
+      initialValues={ { 
+        deleteRoom: false 
+      } }
+
+      onSubmit={ async ( 
+        values, { setSubmitting, setStatus, setErrors } 
+        ) => {
+        const { setRooms, thisRoom, setDelete } = ogProps;
+        l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being looked at' );
+        const result = await deleteFromFirestore( gName, thisRoom );
+
+        if ( result !== false ) {
+          l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being setDelete result being true' );
+          setTimeout( () => {
+            setDelete( thisRoom );
+          }, 1500 );
+
+          setTimeout( () => {
+            setRooms( prevState => {
+              const arrCopy = [ ...prevState ];
+              arrCopy.splice( 
+                prevState.findIndex( arrival => arrival.name === thisRoom ), 1 
+              );
+              return arrCopy;
+            } );
+            setSubmitting( false );
+          }, 2000 );
+
+          setStatus( { success: 'Successfully deleted. Removing from view.' } );
+          
+        } else if ( result === false ) {
+          setSubmitting( false );
+          setErrors( { roomDelete: 'Error uploading changes.' } );
+        }
+      } }
+      children={ props => <SwoleDeleteRoom { ...props } /> } 
+    />
+  )
+}
+
+const SwoleDeleteRoom = props => {
   const {
     touched, 
     errors, 
@@ -30,9 +76,8 @@ const DeletingRoom = props => {
     isSubmitting, 
     setErrors 
   } = props;
-  const { gName } = useContext( GroupContext );
+
   const [ showConfirm, setConfirm ] = useState( false );
-  
   const handleDeleteStepOne = () => { setConfirm( prevState => !prevState ); };
 
   const displayLogic = { status, success: null };
@@ -42,80 +87,41 @@ const DeletingRoom = props => {
   displayLogic.success = isObject( status ) ? status.success : false;
 
   return(
+  <>
+    { !displayLogic.status && !displayLogic.success && 
     <>
-      { !displayLogic.status && !displayLogic.success && 
-      <>
-        { !showConfirm && 
-          <sup><i className="left-buffer color-serious fas fa-times" onClick={ handleDeleteStepOne }></i></sup>
-        }
-        { showConfirm && 
-          <div>
-            <Form>
-              <Field component="input" name="deleteRoom" hidden={ true } />
-              {/* <Field name="group" value={ gName } style={ { display: 'none' } } /> */}
-
-              <ErrorMessage name="roomDelete" render={ err => <div id="feedback">{ err }</div> } />
-              { touched.roomDelete && errors.roomDelete && resetErrors( setErrors ) }
-
-              <button type="submit" className="as-text-addon as-link color-serious smaller-middle-upper-text" disabled={ isSubmitting }>
-                <span>Confirm deleting room.</span>
-              </button>
-              <button type="button" className="as-text-addon as-link color-blue smaller-middle-upper-text" disabled={ isSubmitting } onClick={ () => handleDeleteStepOne() }>
-                <span>Don't do it, friend!</span>
-              </button>
-            </Form>
-          </div>
-        }
-      </>
+      { !showConfirm && 
+        <sup><i className="left-buffer color-serious fas fa-times" onClick={ handleDeleteStepOne }></i></sup>
       }
+      { showConfirm && 
+        <div>
+          <Form>
+            <Field component="input" name="deleteRoom" hidden={ true } />
 
-      { status && status.success && <div className="delete-msg">{ status.success }</div> }
-      { status && status.msg && <div className="delete-msg">{ status.msg }</div> }
+            <ErrorMessage name="roomDelete" render={ err => <div id="feedback">{ err }</div> } />
+            { touched.roomDelete && errors.roomDelete && resetErrors( setErrors ) }
+
+            <button type="submit" className="as-text-addon as-link color-serious smaller-middle-upper-text" disabled={ isSubmitting }>
+              <span>Confirm deleting room.</span>
+            </button>
+            <button type="button" className="as-text-addon as-link color-blue smaller-middle-upper-text" disabled={ isSubmitting } onClick={ () => handleDeleteStepOne() }>
+              <span>Don't do it, friend!</span>
+            </button>
+          </Form>
+        </div>
+      }
     </>
-  );
-}
-
-const SwoleDeletingRoomForm = withFormik( {
-  mapPropsToValues: () => ( { 
-    deleteRoom: false
-  } ), 
-
-  handleSubmit: async ( values, { setSubmitting, setStatus, setErrors, resetForm, props } ) => {
-    const { setRooms, thisRoom, setDelete, group } = props;
-    l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being looked at' );
-    const result = await deleteFromFirestore( group, thisRoom );
-
-    if ( result !== false ) {
-      l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being setDelete result being true' );
-      setTimeout( () => {
-        setDelete( thisRoom );
-      }, 1500 );
-
-      setTimeout( () => {
-        setRooms( prevState => {
-          const arrCopy = [ ...prevState ];
-          arrCopy.splice( 
-            prevState.findIndex( arrival => arrival.name === thisRoom ), 1 
-          );
-          return arrCopy;
-        } );
-        setSubmitting( false );
-      }, 2000 );
-
-      setStatus( { success: 'Successfully deleted. Removing from view.' } );
-      
-    } else if ( result === false ) {
-      setSubmitting( false );
-      setErrors( { roomDelete: 'Error uploading changes.' } );
     }
-  }, 
 
-  displayName: 'DeletingRoom' 
-}, )( DeletingRoom );
+    { status && status.success && <div className="delete-msg">{ status.success }</div> }
+    { status && status.msg && <div className="delete-msg">{ status.msg }</div> }
+  </>
+  );
+};
 
-SwoleDeletingRoomForm.propTypes = {
+DeleteRoom.propTypes = {
   setRooms: PropTypes.func.isRequired, 
   thisRoom: PropTypes.string.isRequired 
 };
 
-export default SwoleDeletingRoomForm;
+export default DeleteRoom;
