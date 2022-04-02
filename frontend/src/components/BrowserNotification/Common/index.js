@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { isEmpty } from './../../ancillary/helpers/general';
 
-import BrowserNotification from './../BrowserNotification';
+import BrowserNotification from './../Full';
 
 import { GroupContext, RoomContext } from '../Contexts';
 
