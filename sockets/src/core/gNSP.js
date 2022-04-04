@@ -1,4 +1,3 @@
-// const db = require( './../config/firebase' );
 const l = require( './../config/winston' );
 const { isEmpty, isObject } = require( './../utilities/general' );
 const InitNsp = require( './InitNsp' )();
@@ -7,11 +6,8 @@ const InitNsp = require( './InitNsp' )();
 // Initializing Variables
 ////
 
-// @TODO can initialize with the keys immediately
 let nspace = null;
 let nspName = null;
-// let simpSock = null;
-// let ref = null;
 // shortening
 const v = process.env;
 
@@ -20,19 +16,8 @@ let seshie = null;
 let sassy = null;
 let gCore = null;
 
-// const simpMe = { 
-//   confirmIdPong: false, 
-//   addedUser: null, 
-//   userModuleCount: 0, 
-//   reason: false 
-// };
-
 l.struct.info( '-- -- Pre-SOCKET -- --' );
 const group = socket => {
-  // @TODO put these variables in a func to limit func global scope
-  // const { client, id, nsp, emit, join, on } = socket;
-  // const simpSock = { client, id, nsp, emit, join, on };
-  
   ////
   // Initialization
   ////
@@ -41,7 +26,6 @@ const group = socket => {
   nspName ??= nspace.name.substring( 7 );
 
   l.struct.info( '- beg g()', nspName ); 
-  // if ( isEmpty( sassy ) ) l.struct.info( '- w/o sassy -' );
 
   const oneBool = isObject( core ) 
     && core.hasOwnProperty( 'groups' ) 
@@ -136,7 +120,6 @@ const group = socket => {
     groupEmit, 
     logItWrapper, 
     commonUserFunc, 
-    // disconnect, 
     simpMe 
   );
 
@@ -149,7 +132,6 @@ const group = socket => {
 
     socket, 
     sassy, 
-    // seshie, 
     core, 
     gCore, 
     nspName, 
@@ -185,9 +167,7 @@ const group = socket => {
     resetTimer, 
     skipSession 
   } = require( './timer' )( 
-    // sockId, 
     v, 
-    // simpMe, 
     
     sassy, 
     emitRoom, 
@@ -218,7 +198,7 @@ const group = socket => {
   // Listening
   ////
 
-  // 6 active
+  // 5 active
   // @globals socket.on
   function listeningSockets() {
     // util 4th
@@ -234,7 +214,7 @@ const group = socket => {
     socket.on( 'timer removed', timerDeleted ); 
   };
 
-  // 9 active
+  // 11 active
   // @globals socket.on
   function respondingSockets() {
     // socketCoreAndUtils 2nd
@@ -266,11 +246,7 @@ const group = socket => {
   listeningSockets();
   respondingSockets();
   
-  // console.log( 'sassy', Object.keys( sassy ).length );
-  // console.log( '2nd', Object.keys( seshie ).length );
-  
   l.struct.info( '- fin g()', nspName );
-  // if ( isEmpty( sassy ) ) l.struct.info( '- w/o sassy -' );
 };
 l.struct.info( '-- -- Post-SOCKET -- --' );
 

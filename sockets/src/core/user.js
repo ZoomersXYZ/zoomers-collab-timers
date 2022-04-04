@@ -11,15 +11,16 @@ const User = function (
   groupEmit, 
   logItWrapper, 
   commonUserFunc, 
-  // disconnect, 
   simpMe 
 ) {
   const module = {};
 
   simpMe.userModuleCount++;
-  if ( simpMe.userModuleCount === 1 ) {
-    simpMe.addedUser = false;
-  };
+  // @TODO wtf is this?
+  // if ( simpMe.userModuleCount === 1 ) {
+    // simpMe.addedUser = false;
+  // };
+  
   // @param String
   // @param String (email address)
   // @globals seshie
@@ -30,7 +31,7 @@ const User = function (
   // @anotherFile groupEmit()
   // @anotherFile async logItWrapper()
   module.addUser = async ( handle, emailAcct ) => {
-    // l.karm.debug( 'addUser()', 'beg' );
+    l.karm.debug( 'addUser()', 'beg' );
     if ( simpMe.addedUser ) return;
     l.karm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
     seshie.username = handle;

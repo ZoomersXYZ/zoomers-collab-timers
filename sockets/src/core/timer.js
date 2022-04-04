@@ -1,9 +1,7 @@
 const l = require( './../config/winston' );
 
 const Timer = function ( 
-  // sockId, 
   v, 
-  // simpMe, 
   
   sassy, 
   emitRoom, 

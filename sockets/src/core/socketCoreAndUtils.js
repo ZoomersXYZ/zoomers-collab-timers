@@ -13,7 +13,6 @@ const SocketCoreAndUtils = function (
   
   socket, 
   sassy, 
-  // seshie, 
   core, 
   gCore, 
   nspName, 
