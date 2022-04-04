@@ -180,7 +180,7 @@ const RoomsGroup = () => {
   useEffect( () => { 
     const TIMER_REMOVED = 'timer removed';
     if ( roomDeleted ) {
-      emit( TIMER_REMOVED, roomDeleted, aUser );
+      emit( TIMER_REMOVED, roomDeleted );
     };
     setRoomDeleted( false );
     // eslint-disable-next-line react-hooks/exhaustive-deps
