@@ -31,10 +31,8 @@ const Room = ( {
   const aRoom = useContext( RoomContext );
   const aUser = useContext( UserContext );
   const aptRoom = aRoom.name;
-
-  // const emitRoom = ( msg, ...restoros ) => socket.emit( msg, aptRoom, [ ...restoros ] );
-  // const emitUser = ( msg, ...restoros ) => socket.emit( msg, aUser, [ ...restoros ] );
-  const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, [ ...restoros ] );
+  
+  const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, ...restoros );
   const filterOutRoom = ( room ) => {
     if ( aptRoom !== room ) { return true; };
   };

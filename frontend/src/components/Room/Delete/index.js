@@ -21,7 +21,7 @@ const deleteFromFirestore = async ( docName, data ) => {
   };
 };
 
-const DeleteRoom = async ( props ) => {
+const DeleteRoom = props => {
   const ogProps = props;
   const { gName } = useContext( GroupContext );
 

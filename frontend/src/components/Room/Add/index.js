@@ -29,7 +29,7 @@ const addToFirestore = async ( docName, data, aUser ) => {
   return hashie;
 };
 
-const AddRoom = async ( props ) => {
+const AddRoom = props => {
   const ogProps = props;
   const { gName } = useContext( GroupContext );
   const aUser = useContext( UserContext );

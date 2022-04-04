@@ -39,7 +39,7 @@ const RoomsGroup = () => {
 
   const socket = io( ioUrl + urlPath );
   // Group 1b
-  const { emit } = socket;
+  const emit = ( ...restoros ) => socket.emit( ...restoros );
 
   // Global, Contexts
   const { gName } = useContext( GroupContext );
@@ -49,7 +49,7 @@ const RoomsGroup = () => {
   // user handle
   const [ nick, setNick ] = useState( null );
   const [ email, setEmail ] = useState( null );
-  const [ aUser, setAUser ] = useState( { nick, email } );e
+  const [ aUser, setAUser ] = useState( { nick, email } );
 
   ////
   // useEffect primarily. 
