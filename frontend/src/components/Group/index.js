@@ -187,7 +187,10 @@ const RoomsGroup = () => {
   }, [ roomDeleted ] );
 
   const roomsCheck = rooms && Array.isArray( rooms ) && rooms.length > 0;
-  
+
+  const resetErrors = ( setErrors, timeOut = 2500 ) => {
+    setTimeout( () => setErrors( {} ), timeOut );
+  };
 
   //// Render
   return (
@@ -197,6 +200,7 @@ const RoomsGroup = () => {
           <ForcedInput 
             show={ showForced } 
             handler={ handleForcedInput } 
+            resetErrors={ resetErrors } 
           />
         </div>
       }
@@ -216,17 +220,17 @@ const RoomsGroup = () => {
               <li key={ `room-toc-list-${ arrival.name }` }>
                 { arrival.name } 
                 <Delete 
-                  setRooms={ setRooms } 
                   thisRoom={ arrival.name } 
                   setDelete={ setRoomDeleted } 
+                  { ...{ setRooms, resetErrors } } 
                 />
               </li>
             ) } 
           </ul>
         </>
         }
-        <Add 
-          { ...{ setRooms } } 
+        <Add           
+          { ...{ setRooms, resetErrors } } 
         />
       </div>
 

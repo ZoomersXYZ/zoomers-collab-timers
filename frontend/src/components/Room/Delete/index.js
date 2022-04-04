@@ -5,7 +5,6 @@ import { doc, deleteDoc } from "firebase/firestore";
 
 import db from './../../../config/firebase';
 import { isUndefined, isObject } from './../../../ancillary/helpers/general';
-import { resetErrors } from './../../helpers';
 import './../styles.scss';
 import l from './../../../config/winston';
 
@@ -63,7 +62,7 @@ const DeleteRoom = async ( props ) => {
           setErrors( { roomDelete: 'Error uploading changes.' } );
         }
       } }
-      children={ props => <SwoleDeleteRoom { ...props } /> } 
+      children={ props => <SwoleDeleteRoom { ...props } resetErrors={ ogProps.resetErrors } /> } 
     />
   )
 }
@@ -74,7 +73,9 @@ const SwoleDeleteRoom = props => {
     errors, 
     status, 
     isSubmitting, 
-    setErrors 
+    setErrors, 
+
+    resetErrors 
   } = props;
 
   const [ showConfirm, setConfirm ] = useState( false );

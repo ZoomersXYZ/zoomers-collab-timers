@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
 
-import { isEmpty } from './../../ancillary/helpers/general';
+import { isEmpty } from './../../../ancillary/helpers/general';
 
 import BrowserNotification from './../Full';
 
-import { GroupContext, RoomContext } from '../Contexts';
+import { GroupContext, RoomContext } from './../../Contexts';
 
 const CommonBrowserNotification = ( { 
   core,   

@@ -4,7 +4,6 @@ import { doc, setDoc } from "firebase/firestore";
 
 import db from './../../../config/firebase';
 import './../styles.scss'
-import { resetErrors } from './../../helpers.js';
 
 import { GroupContext, UserContext } from './../../Contexts';
 
@@ -66,7 +65,7 @@ const AddRoom = async ( props ) => {
           setErrors( { newRoom: 'Error uploading new room' } );
         }
       } }
-      children={ props => <SwoleAddRoom { ...props } /> } 
+      children={ props => <SwoleAddRoom { ...props } resetErrors={ ogProps.resetErrors } /> } 
     />
   );
 };
@@ -78,9 +77,11 @@ const SwoleAddRoom = props => {
     isSubmitting, 
     setErrors, 
     
-    status 
-  } = props;
+    status, 
 
+    resetErrors 
+  } = props;
+  
   const [ showForm, setShowForm ] = useState( false );
   const onHandleShowingForm = () => setShowForm( prevState => !prevState );
 

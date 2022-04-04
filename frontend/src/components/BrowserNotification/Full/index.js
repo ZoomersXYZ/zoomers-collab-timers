@@ -5,11 +5,8 @@ import Push from "push.js";
 import { nanoid } from "nanoid";
 import { Collapse } from 'react-collapse';
 
-import Toggle from './toggled';
-import './styles.scss';
-
-// import mp3t1 from './sounds/[4] ting.mp3';
-// import ogg1 from './sounds/[4] ting.ogg';
+import Toggle from './../toggled';
+import './../styles.scss';
 
 const initialBlob = { 
   timer: {

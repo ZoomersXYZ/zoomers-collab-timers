@@ -4,7 +4,6 @@ import { Field, Form, ErrorMessage, withFormik } from 'formik';
 import * as Yup from 'yup';
 
 import './styles.scss'
-import { resetErrors } from './../helpers.js';
 
 import { isEmpty } from './../../ancillary/helpers/general';
 
@@ -18,7 +17,9 @@ const ForcedInput = props => {
     touched, 
     errors, 
     isSubmitting, 
-    setErrors 
+    setErrors, 
+
+    resetErrors 
   } = props;
 
   return(
