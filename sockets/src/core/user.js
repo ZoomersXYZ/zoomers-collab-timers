@@ -71,7 +71,7 @@ const User = function (
       };
     }, 1000 );
     const event = 'joined room';
-    await logItWrapper( null, event );
+    await logItWrapper( null, { nick: handle, email: emailAcct }, event );
     l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
   };
 

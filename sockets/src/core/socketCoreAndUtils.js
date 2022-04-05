@@ -13,6 +13,7 @@ const SocketCoreAndUtils = function (
   
   socket, 
   sassy, 
+  seshie, 
   core, 
   gCore, 
   nspName, 
@@ -159,7 +160,7 @@ const SocketCoreAndUtils = function (
   // module.disconnecting = async function() {
   disconnecting = async function() {
     const event = 'left room';
-    await logItWrapper( null, event );
+    await logItWrapper( null, { nick: seshie.username, email: seshie.email }, event );
     l.bbc.debug( `${ sockId }: fin disconnecting. logItWrapper()`, event );
   };
 

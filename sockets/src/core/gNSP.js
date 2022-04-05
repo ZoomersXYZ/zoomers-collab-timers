@@ -132,6 +132,7 @@ const group = socket => {
 
     socket, 
     sassy, 
+    seshie, 
     core, 
     gCore, 
     nspName, 
