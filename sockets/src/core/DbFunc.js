@@ -6,6 +6,7 @@ const { isEmpty } = require( '../utilities/general' );
 
 const DbFuncs = function (
   sockId, 
+  sassy, 
   seshie, 
   nspName 
 ) {
@@ -76,22 +77,22 @@ const DbFuncs = function (
     
     // @param String
     // @param String
+    // @globals sassy
     // @globals seshie
-    module.logIt = async ( inRoom, activity ) => {
-      const { group, username, email } = seshie;
-      // console.log( 'logIt 0', activity  );
+    module.logIt = async ( inRoom, aUser, activity ) => {
+      const { group } = seshie;
+      let manager = null;
       if ( isEmpty( inRoom ) ) {
         inRoom = null;
+      } else if ( sassy.hasOwnProperty( inRoom ) && !isEmpty( sassy[ inRoom ].manager.username ) ) {
+        manager = sassy[ inRoom ].manager
       };
-      if ( isEmpty( username ) || isEmpty( email )  ) {
-        return;
-      };
-      // console.log( 'logIt 1', activity );
       
       const hashie = {
         group, 
-        username, 
-        email, 
+        username: aUser.nick, 
+        email: aUser.email, 
+        manager, 
       
         timer: inRoom, 
         activity, 
@@ -115,8 +116,8 @@ const DbFuncs = function (
       // console.log( 'logIt 3', activity );
     };
 
-    module.logItWrapper = async ( inRoom, activity ) => {
-      await module.logIt( inRoom, activity );
+    module.logItWrapper = async ( inRoom, aUser, activity ) => {
+      await module.logIt( inRoom, aUser, activity );
     };
 
   // db [global import]

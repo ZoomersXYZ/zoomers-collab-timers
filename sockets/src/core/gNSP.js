@@ -76,6 +76,7 @@ const group = socket => {
     logItWrapper 
   } = require( './DbFunc' )( 
     sockId, 
+    sassy, 
     seshie, 
     nspName 
   );
