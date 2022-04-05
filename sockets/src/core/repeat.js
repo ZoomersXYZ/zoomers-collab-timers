@@ -22,7 +22,7 @@ const RepeatingTimers = function (
   // @anotherFile emitRoom()
   // @anotherFile async logItWrapper()
   // @anotherFile startTimer()
-  module.repeatingStart = async ( inRoom, work, brake, length ) => {
+  module.repeatingStart = async ( inRoom, aUser, work, brake, length ) => {
     const curr = sassy[ inRoom ];
     const { repeat } = curr;
     if ( repeat.on ) {
@@ -44,7 +44,7 @@ const RepeatingTimers = function (
     };
     
     emitRoom( 'repeating timers on', { room: inRoom, ...curr.repeat } );
-    await logItWrapper( inRoom, 'repeating timers on & started' );
+    await logItWrapper( inRoom, aUser, 'repeating timers on & started' );
 
     const { session } = curr;
     if ( session === 'brake' ) {
@@ -71,7 +71,7 @@ const RepeatingTimers = function (
   // @anotherFile emitRoom()
   // @anotherFile async logItWrapper()
   // @internal resetRepeating()
-  module.repeatingDone = async ( inRoom ) => {
+  module.repeatingDone = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
     if ( repeat.off ) {
       emitRoom( 'repeating already off', { room: inRoom } );
@@ -80,7 +80,7 @@ const RepeatingTimers = function (
 
     resetRepeating( inRoom );
     emitRoom( 'repeating timers done', { room: inRoom } );
-    await logItWrapper( inRoom, `repeating timers done after ${ repeat.length } hours` );
+    await logItWrapper( inRoom, aUser, `repeating timers done after ${ repeat.length } hours` );
   };
 
   // @param inRoom: String
@@ -88,7 +88,7 @@ const RepeatingTimers = function (
   // @anotherFile async logItWrapper()
   // @internal resetRepeating()
   // @anotherFile stopTimer()
-  module.repeatingStop = async ( inRoom ) => {
+  module.repeatingStop = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
     if ( repeat.off ) {
       emitRoom( 'repeating already off', { room: inRoom } );
@@ -98,7 +98,7 @@ const RepeatingTimers = function (
     resetRepeating( inRoom );
     stopTimer( inRoom );
     emitRoom( 'repeating timers stopped', { room: inRoom } );
-    await logItWrapper( inRoom, `repeating timers force stopped` );
+    await logItWrapper( inRoom, aUser, `repeating timers force stopped` );
   };
 
   // @param inRoom: String

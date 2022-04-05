@@ -15,15 +15,15 @@ const Timer = function (
   // @param inRoom: String
   // @anotherFile async logItWrapper()
   // @globals sassy
-  module.timerDeleted = async ( inRoom ) => {
-    await logItWrapper( inRoom, 'removed & deleted' );
+  module.timerDeleted = async ( inRoom, aUser ) => {
+    await logItWrapper( inRoom, aUser, 'removed & deleted' );
     delete sassy[ inRoom ];
   };
 
   // @param inRoom: String
   // @anotherFile async logItWrapper()
-  module.timerCreated = async ( inRoom ) => {
-    await logItWrapper( inRoom, 'created & added' );
+  module.timerCreated = async ( inRoom, aUser ) => {
+    await logItWrapper( inRoom, aUser, 'created & added' );
   };
 
   ////
@@ -37,7 +37,7 @@ const Timer = function (
   // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal goneByTimer()
-  module.startTimer = async ( inRoom, timeInMin ) => {
+  module.startTimer = async ( inRoom, aUser, timeInMin ) => {
     const curr = sassy[ inRoom ];
     if ( curr.timerFlag ) {
       emitRoom( 'timer already begun', { room: inRoom } );
@@ -58,7 +58,7 @@ const Timer = function (
     goneByTimer( inRoom );
 
     emitRoom( 'timer started', { room: inRoom } );
-    await logItWrapper( inRoom, 'started' );
+    await logItWrapper( inRoom, aUser, 'started' );
   };
 
   // @param inRoom: String
@@ -67,7 +67,7 @@ const Timer = function (
   // @anotherFile async logItWrapper()
   // @internal clearUpdateTimer()
   // @internal ongoingTimer()
-  module.pauseTimer = async ( inRoom ) => {
+  module.pauseTimer = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     const { pauseFlag } = curr;
 
@@ -83,7 +83,7 @@ const Timer = function (
     ongoingTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
-    await logItWrapper( inRoom, 'paused' );
+    await logItWrapper( inRoom, aUser, 'paused' );
   };
 
   // @param inRoom: String
@@ -92,7 +92,7 @@ const Timer = function (
   // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal-ish clearInterval()
-  module.resumeTimer = async ( inRoom ) => {
+  module.resumeTimer = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     const { pauseFlag } = curr;
     
@@ -108,7 +108,7 @@ const Timer = function (
     clearInterval( curr.ongoingInterval );
     
     emitRoom( 'timer resumed', { room: inRoom } );
-    await logItWrapper( inRoom, 'resumed' );
+    await logItWrapper( inRoom, aUser, 'resumed' );
   };
 
   // @param inRoom: String
@@ -243,22 +243,20 @@ const Timer = function (
   // * @anotherFile async logItWrapper()
   //
   // @internal-ish clearInterval()
-  module.skipSession = async ( inRoom ) => {
+  module.skipSession = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     console.log( '2', curr );
-    // roomie is not needed. it's inRoom...
-    const { roomie, pauseFlag } = curr;
     let { session } = curr;
     
-    if ( pauseFlag ) {
-      emitRoom( 'timer still running. Stop it first.', roomie );
+    if ( curr.pauseFlag ) {
+      emitRoom( 'timer still running. Stop it first.', inRoom );
       return;
     };
 
     session = session === 'work' ? 'brake' : 'work';
     curr.session = session;
-    emitRoom( 'session skipped', { room: roomie, session } );
-    await logItWrapper( inRoom, `skipped to ${ session } mode` );
+    emitRoom( 'session skipped', { room: inRoom, session } );
+    await logItWrapper( inRoom, aUser, `skipped to ${ session } mode` );
   };
 
   // @param inRoom: String
@@ -272,7 +270,7 @@ const Timer = function (
   //
   // @internal clearUpdateTimer()
   // @internal-ish clearInterval()
-  wrappingUp = async ( inRoom, msg, activity ) => {
+  wrappingUp = async ( inRoom, aUser, msg, activity ) => {
     const curr = sassy[ inRoom ];
     if ( !curr.secondsLeft ) {
       emitRoom( `${ msg } already done`, { room: inRoom } );
@@ -297,7 +295,7 @@ const Timer = function (
     );
 
     // await logItWrapper( inRoom, user, activity, { manager: manager } );
-    await logItWrapper( inRoom, activity );
+    await logItWrapper( inRoom, aUser, activity );
   };
 
   return module;
