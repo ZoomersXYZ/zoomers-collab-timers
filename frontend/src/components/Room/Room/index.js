@@ -13,7 +13,7 @@ import {
   // GroupContext, 
   SocketContext, 
   RoomContext, 
-  // UserContext 
+  UserContext 
 } from './../../Contexts';
 
 let stoplightInterval = null;
@@ -29,11 +29,11 @@ const Room = ( {
   // const { gName } = useContext( GroupContext );
   const socket = useContext( SocketContext );
   const aRoom = useContext( RoomContext );
-  // const aUser = useContext( UserContext );
+  const aUser = useContext( UserContext );
   const aptRoom = aRoom.name;
 
-  // const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, ...restoros );
-  const emitAll = ( msg ) => socket.emit( msg, aptRoom );
+  // const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, ...restoros );
+  const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, ...restoros );
   const filterOutRoom = ( room ) => {
     if ( aptRoom !== room ) { return true; };
   };
