@@ -93,23 +93,14 @@ const ActivityLog = ( { userEnabled } ) => {
       </div>
       <div id="activity-log">
         <Collapse isOpened={ open }>
-          {/* { localLog.slice( 0, toSlice ).map( ( arrival, index ) => 
-            <Activity
-              key={ `full-log-${ index }` } 
-              name={ arrival.username } 
-              email={ arrival.email } 
-              group={ gName && arrival.group } 
-              timer={ arrival.timer } 
-              activity={ arrival.activity } 
-              formattedTime={ arrival.formattedTime } 
-            />
-          ) } */}
-          { localLog.slice( 0, toSlice ).map( ( { username, email, group, timer, activity, formattedTime }, index ) => 
+          { localLog.slice( 0, toSlice ).map( ( { username, email, manager, group, timer, activity, formattedTime }, index ) => 
             <Activity
               key={ `full-log-${ index }` } 
               name={ username } 
               { ...{ 
                 email, 
+                manager, 
+
                 group, 
                 timer, 
                 activity, 
@@ -119,23 +110,14 @@ const ActivityLog = ( { userEnabled } ) => {
           ) }
         </Collapse>
 
-        {/* { localLog.slice( toSlice ).map( ( arrival, index ) => 
-          <Activity
-            key={ `log-clip-${ index }` } 
-            name={ arrival.username } 
-            email={ arrival.email } 
-            group={ gName && arrival.group } 
-            timer={ arrival.timer } 
-            activity={ arrival.activity } 
-            formattedTime={ arrival.formattedTime } 
-          />
-        ) } */}
-        { localLog.slice( toSlice ).map( ( { username, email, group, timer, activity, formattedTime }, index ) => 
+        { localLog.slice( toSlice ).map( ( { username, email, manager, group, timer, activity, formattedTime }, index ) => 
           <Activity
             key={ `log-clip-${ index }` } 
             name={ username } 
             { ...{ 
               email, 
+              manager, 
+              
               group, 
               timer, 
               activity, 

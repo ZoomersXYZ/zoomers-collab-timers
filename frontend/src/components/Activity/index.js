@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Gravatar from 'react-gravatar';
+import { isEmpty } from './../../ancillary/helpers/general';
 
 import './styles.scss';
 
-const Activity = ( { name, email, group, timer, activity, formattedTime } ) => {
+const Activity = ( { name, email, manager, group, timer, activity, formattedTime } ) => {
   let extra = '';
   if ( activity.slice( -4 ) !== 'room' ) {
     if ( 
@@ -14,6 +15,12 @@ const Activity = ( { name, email, group, timer, activity, formattedTime } ) => {
       ( group && activity.slice( 0, 7 ) === 'skipped' ) ) {
       extra = ' for ';
     };
+  };
+  let manageFlag = true;
+  if ( isEmpty( manager.username ) || isEmpty( manager.email ) ) {
+    manageFlag = null;
+  } else if ( name === manager.username && email === manager.email) {
+    manageFlag = false;
   };
 
   return (
@@ -28,6 +35,16 @@ const Activity = ( { name, email, group, timer, activity, formattedTime } ) => {
         {} { name } { activity } {}
         { extra }
 
+        { group && timer && manageFlag === true && 
+        <>
+          {} <Gravatar email={ manager.email } className="avatar__image" />{ manager.username }'s {} 
+        </>
+        }
+
+        { group && timer && manageFlag === false && 
+          <> {} their {} </>
+        }
+
         { group && timer && 
         <>
           {} <span className="timer-emphasis">{ timer }</span> {} 
@@ -35,7 +52,7 @@ const Activity = ( { name, email, group, timer, activity, formattedTime } ) => {
         }
          timer 
          {} <span className="seperator"> <b>|</b> </span>
-        {} <span className="lowercaseFns">{ formattedTime }</span>
+         {} <span className="lowercaseFns">{ formattedTime }</span>
       </div>
     </div>
   );
@@ -44,10 +61,12 @@ const Activity = ( { name, email, group, timer, activity, formattedTime } ) => {
 Activity.propTypes = {
   name: PropTypes.string, 
   email: PropTypes.string, 
+  manager: PropTypes.object, 
+
   group: PropTypes.string, 
   timer: PropTypes.string, 
   activity: PropTypes.string, 
-  timestamp: PropTypes.number 
+  formattedTime: PropTypes.string 
 };
 
 export default Activity;
