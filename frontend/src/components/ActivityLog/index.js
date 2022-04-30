@@ -12,6 +12,32 @@ import './styles.scss';
 
 import { GroupContext, RoomContext } from '../Contexts';
 
+const SubActivityLog = ( activityLog, collapse, toSlice, keyInfo ) => {
+  const thisLog = collapse ? activityLog.slice( 0, toSlice ) : activityLog.slice( toSlice );
+  return( 
+    <>
+    { thisLog.map( ( { username, email, manager, group, timer, activity, desc, meta, repeatAuto, formattedTime }, index ) => 
+      <Activity
+        key={ `${ keyInfo }-${ index }` } 
+        name={ username } 
+        { ...{ 
+          email, 
+          manager, 
+
+          group, 
+          timer, 
+          activity, 
+          desc, 
+          meta, 
+          repeatAuto, 
+          formattedTime 
+        } } 
+      />
+    ) }
+    </>
+  )
+};
+
 const ActivityLog = ( { userEnabled } ) => {
   const { gName } = useContext( GroupContext );
   const __room = useContext( RoomContext );
@@ -93,38 +119,20 @@ const ActivityLog = ( { userEnabled } ) => {
       </div>
       <div id="activity-log">
         <Collapse isOpened={ open }>
-          { localLog.slice( 0, toSlice ).map( ( { username, email, manager, group, timer, activity, formattedTime }, index ) => 
-            <Activity
-              key={ `full-log-${ index }` } 
-              name={ username } 
-              { ...{ 
-                email, 
-                manager, 
-
-                group, 
-                timer, 
-                activity, 
-                formattedTime 
-              } } 
-            />
-          ) }
+          <SubActivityLog 
+            activityLog={ localLog } 
+            keyInfo='full-log' 
+            collapse={ open } 
+            toSlice={ toSlice } 
+          />
         </Collapse>
 
-        { localLog.slice( toSlice ).map( ( { username, email, manager, group, timer, activity, formattedTime }, index ) => 
-          <Activity
-            key={ `log-clip-${ index }` } 
-            name={ username } 
-            { ...{ 
-              email, 
-              manager, 
-              
-              group, 
-              timer, 
-              activity, 
-              formattedTime 
-            } } 
-          />
-        ) }
+        <SubActivityLog 
+          activityLog={ localLog } 
+          keyInfo='log-clip' 
+          collapse={ false } 
+          toSlice={ toSlice } 
+        />
       </div>
       
       <div className="barrier" />
