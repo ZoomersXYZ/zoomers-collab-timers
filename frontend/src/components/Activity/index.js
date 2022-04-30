@@ -6,18 +6,22 @@ import { isEmpty } from './../../ancillary/helpers/general';
 
 import './styles.scss';
 
-const Activity = ( { name, email, manager, group, timer, activity, formattedTime } ) => {
+const Activity = ( { name, email, manager, group, timer, activity, desc, repeatAuto, formattedTime } ) => {
   let extra = '';
+
+  const repeatText = repeatAuto === true ? ' <i>(auto repeating)</i> ' : '';
+  activity = ( desc !== null ) ? desc : activity;
   if ( activity.slice( -4 ) !== 'room' ) {
     if ( 
-      // ( !group && activity.slice( 0, 7 ) !== 'skipped' ) 
-      // || 
+      // ( !group && activity.slice( 0, 7 ) !== 'skipped' )  
       ( group && activity.slice( 0, 7 ) === 'skipped' ) ) {
       extra = ' for ';
     };
   };
   let manageFlag = true;
-  if ( isEmpty( manager.username ) || isEmpty( manager.email ) ) {
+  if ( isEmpty( manager ) ) {
+    manageFlag = null;
+  } else if ( isEmpty( manager.username ) || isEmpty( manager.email ) ) {
     manageFlag = null;
   } else if ( name === manager.username && email === manager.email) {
     manageFlag = false;
@@ -32,6 +36,7 @@ const Activity = ( { name, email, manager, group, timer, activity, formattedTime
       </div>
       
       <div className="text-content">
+        { repeatText }
         {} { name } { activity } {}
         { extra }
 
