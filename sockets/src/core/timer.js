@@ -166,13 +166,13 @@ const Timer = function (
 
   // @param inRoom: String
   // @internal wrappingUp()
-  module.stopTimer = ( inRoom ) => wrappingUp( inRoom, 'timer stopped', 'force stopped' );
+  module.stopTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer stopped', 'force stopped' );
   // @param inRoom: String
   // @internal wrappingUp()
-  finishedTimer = ( inRoom ) => wrappingUp( inRoom, 'timer finished', 'finished' );
+  finishedTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer finished', 'finished' );
   // @param inRoom: String
   // @internal wrappingUp()
-  module.resetTimer = ( inRoom ) => wrappingUp( inRoom, 'timer reset', 'reset' );
+  module.resetTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer reset', 'reset' );
 
   // @params inRoom: String
   // @global sassy
@@ -288,14 +288,14 @@ const Timer = function (
     emitRoom( msg, { room: inRoom } );
     wrappingUpRepeating( 
       inRoom, 
+      aUser, 
       repeat, 
       session, 
       module.skipSession, 
       module.startTimer 
     );
 
-    // await logItWrapper( inRoom, user, activity, { manager: manager } );
-    await logItWrapper( inRoom, aUser, activity );
+    await logItWrapper( inRoom, aUser, msg, activity );
   };
 
   return module;

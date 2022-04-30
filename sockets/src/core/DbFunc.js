@@ -102,18 +102,14 @@ const DbFuncs = function (
       const reversedCached = seshie.loggy.reverse();
       // don't log
       if ( duplicateIsh( reversedCached, hashie ) ) return;
-      // console.log( 'logIt 2', activity );
       seshie.loggy.push( hashie );
 
       try {
         const res = await ref().doc().set( { ...hashie } );
-        // l.bbc.info( 'logIt set success', res );
-        // undefined
+        // @TODO some logs could maybe grab the last ref doc added ?
       } catch ( err ) {
         l.bbc.error( `${ sockId }: logIt set fail`, err );
       };
-
-      // console.log( 'logIt 3', activity );
     };
 
     module.logItWrapper = async ( inRoom, aUser, activity ) => {

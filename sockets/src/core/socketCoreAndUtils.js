@@ -82,26 +82,23 @@ const SocketCoreAndUtils = function (
     --parentObj.numUsers;
     parentObj.users.splice( 
       parentObj.users.findIndex( arrival => arrival.id === sockId ), 1 
-      // core.users.findIndex( arrival => arrival.id === sockId ), 1 
     );
     parentObj.userCount = parentObj.users.length;
+    return parentObj;
   };
 
-  disconnectAnnoyance = function( reason ) {
-    // l.karm.debug( 'disconnect() reason', reason );
-
+  disconnectAnnoyance = function( reason ) {    
     const TRANSPORT_CLOSE = 'transport close';
     const TRANSPORT_ERROR = 'transport error';
-    // const SERVER_DISCONNECT = 'server namespace disconnect';
-    // const CLIENT_DISCONNECT = 'client namespace disconnect';
-    // const SERVER_DOWN = 'server shutting down';
-    // const PING_TIMEOUT = 'ping timeout';
 
     if ( reason === TRANSPORT_ERROR ) {
+      l.karm.debug( 'disconnect():', reason );
       if ( simpMe.reason ) return false;
     } else if ( reason === TRANSPORT_CLOSE ) {
+      l.karm.debug( 'disconnect():', reason );
       simpMe.reason = true;
     } else if ( reason !== TRANSPORT_CLOSE && reason !== TRANSPORT_ERROR ) {
+      l.karm.debug( 'disconnect() reason', reason );
       simpMe.reason = false;
     };
     return true;
@@ -118,26 +115,24 @@ const SocketCoreAndUtils = function (
 
     if ( simpMe.addedUser ) {
       l.karm.debug( `${ sockId }: disconnect() if`, 'simpMe.addedUser' );
-      // DD - is there a situation where the user is still 'online' but roomEntered() didnt happen [again]?
-      // DD - that would not have the user disconnect then. If so. Doesn't seem like it though.
+
+      // DD - chance user is still 'online' but roomEntered() didnt happen [again]?
+      // DD - if so, the user wouldn't have disconnected. Doesn't seem like it
+
+      // modifyUsers( core, sockId );
       --core.numUsers;
       core.users.splice( 
-        core.users.findIndex( arrival => arrival.id === sockId ), 1 
-        // core.users.findIndex( arrival => arrival.id === sockId ), 1 
+        core.users.findIndex( arrival => arrival.id === sockId ), 1       
       );
       core.userCount = core.users.length;
-      // modifyUsers( core );
 
+      // modifyUsers( gCore, socketId );
       --gCore.numUsers
       gCore.users.splice( 
         gCore.users.findIndex( arrival => arrival.id === sockId ), 1 
-        // gCore.users.findIndex( arrival => arrival.id === sockId ), 1 
       );
       gCore.userCount = gCore.users.length;
-      // modifyUsers( gCore );
 
-      // PP - beta depending on scope of socket 
-      // @TODO - the scope matters...users is more broad. shouldnt the users that are removed be the ones for the group?
       if ( gCore.users.length === 0 ) {
         core.groups.splice( 
           core.groups.findIndex( arrival => arrival === nspName ), 1 
@@ -160,7 +155,9 @@ const SocketCoreAndUtils = function (
   // module.disconnecting = async function() {
   disconnecting = async function() {
     const event = 'left room';
-    await logItWrapper( null, { nick: seshie.username, email: seshie.email }, event );
+    const aUser = { nick: seshie.username, email: seshie.email };
+    await logItWrapper( null, aUser, event );
+    // @TODO why isn't seshie, et al being wiped? Will the seshie/sockId disappear after this?
     l.bbc.debug( `${ sockId }: fin disconnecting. logItWrapper()`, event );
   };
 

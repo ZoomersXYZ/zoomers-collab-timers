@@ -71,7 +71,8 @@ const User = function (
       };
     }, 1000 );
     const event = 'joined room';
-    await logItWrapper( null, { nick: handle, email: emailAcct }, event );
+    const aUser = { nick: handle, email: emailAcct };
+    await logItWrapper( null, aUser, event );
     l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
   };
 
@@ -81,12 +82,7 @@ const User = function (
     const hashie = commonUserFunc( event );
     groupEmit( event, hashie );
     l.bbc.debug( `${ sockId }: fin listUsers() emit`, hashie.hasOwnProperty( 'count' ) && hashie.count );
-    // l.bbc.debug( 'fin listUsers() emit', hashie );
   };
-
-  // module.disconnectWrapper = function() {
-  //   if ( addedUser ) disconnect();
-  // };
 
   l.karm.debug( `${ sockId }: userModuleCount`, simpMe.userModuleCount );
   

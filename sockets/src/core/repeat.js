@@ -50,7 +50,7 @@ const RepeatingTimers = function (
     if ( session === 'brake' ) {
       emitRoom( 'session skipped', { room: inRoom, session: session } );
     };
-    startTimer( inRoom, work );
+    startTimer( inRoom, aUser, work );
   };
 
   // @param inRoom: String
@@ -74,7 +74,7 @@ const RepeatingTimers = function (
   module.repeatingDone = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
     if ( repeat.off ) {
-      emitRoom( 'repeating already off', { room: inRoom } );
+      emitRoom( 'repeating timer already off', { room: inRoom } );
       return false;
     };
 
@@ -107,7 +107,7 @@ const RepeatingTimers = function (
   // @param skipSession: func()
   // @param startTimer: func()
   // @internal module.repeatingDone()
-  module.wrappingUpRepeating = async ( inRoom, repeat, session, skipSession, startTimer ) => {
+  module.wrappingUpRepeating = async ( inRoom, aUser, repeat, session, skipSession, startTimer ) => {
     if ( repeat.on == true ) {
       if ( repeat.endTime < new Date().getTime() ) {
         l.karm.debug( 'if ===', 'repeat.endTime < new Date().getTime()' );
@@ -117,9 +117,9 @@ const RepeatingTimers = function (
         l.karm.debug( 'if else', 'repeat.endTime < new Date().getTime()' );
 
         const newSesh = session === 'work' ? 'brake' : 'work';
-        skipSession( inRoom );
+        skipSession( inRoom, aUser );
         const newSeshInMin = repeat[ newSesh ];
-        startTimer( inRoom, newSeshInMin );
+        startTimer( inRoom, aUser, newSeshInMin );
       };
     };
   };
