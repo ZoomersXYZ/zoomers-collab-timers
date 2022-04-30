@@ -30,7 +30,7 @@ const TimerControl = ( {
 } ) => {
   const socket = useContext( SocketContext );
   const __room = useContext( RoomContext );
-  const aptRoom = __room.name;
+  const aptRoom = __room.name; 
   
   const filterOutRoom = ( room ) => {
     if ( aptRoom !== room ) { return true; };

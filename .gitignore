@@ -70,3 +70,5 @@ node_modules/
 /tmp
 **/*moim*.js
 **/moim*/*
+
+.history
