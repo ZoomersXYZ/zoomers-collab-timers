@@ -243,7 +243,7 @@ const Timer = function (
   // * @anotherFile async logItWrapper()
   //
   // @internal-ish clearInterval()
-  module.skipSession = async ( inRoom, aUser ) => {
+  module.skipSession = async ( inRoom, aUser, repeat = false ) => {
     const curr = sassy[ inRoom ];
     console.log( '2', curr );
     let { session } = curr;
@@ -256,7 +256,27 @@ const Timer = function (
     session = session === 'work' ? 'brake' : 'work';
     curr.session = session;
     emitRoom( 'session skipped', { room: inRoom, session } );
-    await logItWrapper( inRoom, aUser, `skipped to ${ session } mode` );
+
+    sameHashieArr = [
+      inRoom, 
+      aUser, 
+      'session skipped', 
+    ];
+    sameStr = `skipped to ${ session } mode`;
+    if ( repeat ) { 
+      await logItWrapper( 
+        ...sameHashieArr, 
+        'repeat timer auto ' + sameStr, 
+        session, 
+        true  
+      );
+    } else if ( !repeat ) {
+      await logItWrapper( 
+        ...sameHashieArr, 
+        sameStr, 
+        session
+      );
+    };
   };
 
   // @param inRoom: String

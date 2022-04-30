@@ -77,9 +77,12 @@ const DbFuncs = function (
     
     // @param String
     // @param String
+    // @param String
+    // @param String
+    // @param Boolean
     // @globals sassy
     // @globals seshie
-    module.logIt = async ( inRoom, aUser, activity ) => {
+    module.logIt = async ( inRoom, aUser, activity, desc = null, meta = null, repeatAuto = false ) => {
       const { group } = seshie;
       let manager = null;
       if ( isEmpty( inRoom ) ) {
@@ -92,13 +95,18 @@ const DbFuncs = function (
         group, 
         username: aUser.nick, 
         email: aUser.email, 
-        manager, 
-      
+        manager,   
         timer: inRoom, 
+
+        repeat: repeatAuto, 
         activity, 
+        desc, 
+        meta, 
         timestamp: new Date().getTime() 
       };
-      
+     
+      l.bbc.debug( 'hashie', hashie );
+
       const reversedCached = seshie.loggy.reverse();
       // don't log
       if ( duplicateIsh( reversedCached, hashie ) ) return;
@@ -112,8 +120,8 @@ const DbFuncs = function (
       };
     };
 
-    module.logItWrapper = async ( inRoom, aUser, activity ) => {
-      await module.logIt( inRoom, aUser, activity );
+    module.logItWrapper = async ( ...restoros ) => {
+      await module.logIt( ...restoros );
     };
 
   // db [global import]

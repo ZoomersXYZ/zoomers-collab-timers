@@ -42,9 +42,9 @@ const RepeatingTimers = function (
       work, 
       brake 
     };
-    
-    emitRoom( 'repeating timers on', { room: inRoom, ...curr.repeat } );
-    await logItWrapper( inRoom, aUser, 'repeating timers on & started' );
+    const event = 'repeating timers on';
+    emitRoom( event, { room: inRoom, ...curr.repeat } );
+    await logItWrapper( inRoom, aUser, event, 'repeating timers on & started' );
 
     const { session } = curr;
     if ( session === 'brake' ) {
@@ -79,8 +79,9 @@ const RepeatingTimers = function (
     };
 
     resetRepeating( inRoom );
-    emitRoom( 'repeating timers done', { room: inRoom } );
-    await logItWrapper( inRoom, aUser, `repeating timers done after ${ repeat.length } hours` );
+    const event = 'repeating timer done';
+    emitRoom( event, { room: inRoom } );
+    await logItWrapper( inRoom, aUser, event, `repeating timer done after ${ repeat.length } hours` );
   };
 
   // @param inRoom: String
@@ -97,8 +98,9 @@ const RepeatingTimers = function (
 
     resetRepeating( inRoom );
     stopTimer( inRoom );
-    emitRoom( 'repeating timers stopped', { room: inRoom } );
-    await logItWrapper( inRoom, aUser, `repeating timers force stopped` );
+    const event = 'repeating timer stopped';
+    emitRoom( event, { room: inRoom } );
+    await logItWrapper( inRoom, aUser, event, `repeating timer force stopped` );
   };
 
   // @param inRoom: String
@@ -117,7 +119,7 @@ const RepeatingTimers = function (
         l.karm.debug( 'if else', 'repeat.endTime < new Date().getTime()' );
 
         const newSesh = session === 'work' ? 'brake' : 'work';
-        skipSession( inRoom, aUser );
+        skipSession( inRoom, aUser, repeat.on );
         const newSeshInMin = repeat[ newSesh ];
         startTimer( inRoom, aUser, newSeshInMin );
       };
