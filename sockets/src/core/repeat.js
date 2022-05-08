@@ -97,7 +97,7 @@ const RepeatingTimers = function (
     };
 
     resetRepeating( inRoom );
-    stopTimer( inRoom );
+    stopTimer( inRoom, aUser );
     const event = 'repeating timer stopped';
     emitRoom( event, { room: inRoom } );
     await logItWrapper( inRoom, aUser, event, `repeating timer force stopped` );
@@ -114,7 +114,7 @@ const RepeatingTimers = function (
       if ( repeat.endTime < new Date().getTime() ) {
         l.karm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
         
-        await module.repeatingDone( inRoom );
+        await module.repeatingDone( inRoom, aUser );
       } else {
         l.karm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
 

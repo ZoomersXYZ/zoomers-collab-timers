@@ -54,7 +54,7 @@ const Timer = function (
     curr.endFlag = false;
     curr.time = new Date().getTime();
 
-    updateTimer( inRoom );
+    updateTimer( inRoom, aUser );
     goneByTimer( inRoom );
 
     emitRoom( 'timer started', { room: inRoom } );
@@ -111,8 +111,7 @@ const Timer = function (
     await logItWrapper( inRoom, aUser, 'resumed' );
   };
 
-  // @param inRoom: String
-  // @globals sassy
+  // @param inRoom: String  // @globals sassy
   // @internal-ish setInterval()
   goneByTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];

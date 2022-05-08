@@ -84,6 +84,7 @@ const DbFuncs = function (
     // @globals seshie
     module.logIt = async ( inRoom, aUser, activity, desc = null, meta = null, repeatAuto = false ) => {
       const { group } = seshie;
+      const { nick, email } = aUser;
       let manager = null;
       if ( isEmpty( inRoom ) ) {
         inRoom = null;
@@ -93,8 +94,8 @@ const DbFuncs = function (
       
       const hashie = {
         group, 
-        username: aUser.nick, 
-        email: aUser.email, 
+        username: nick, 
+        email, 
         manager,   
         timer: inRoom, 
 
@@ -105,7 +106,7 @@ const DbFuncs = function (
         timestamp: new Date().getTime() 
       };
      
-      l.bbc.debug( 'hashie', hashie );
+      l.bbc.debug( 'hashie', JSON.stringify( hashie ) );
 
       const reversedCached = seshie.loggy.reverse();
       // don't log
