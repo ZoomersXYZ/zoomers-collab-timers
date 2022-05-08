@@ -16,13 +16,13 @@ const NotifyToggle = ( { parent, checked, name, label, className, onChange, root
     </div>
 
     <div className="width-3">
-    <input type="checkbox" name={ `${ name } onOff` } onChange={ onChange } checked={ checked.onOff } disabled={ !root.onOff } className="toggle" />
+      <input type="checkbox" name={ `${ name } onOff` } onChange={ onChange } checked={ checked.onOff } disabled={ !root.onOff } className="toggle" />
     </div>
     <div className="width-3">
-    <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.sound } className="toggle" />
+      <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.sound } className="toggle" />
     </div >
     <div className="width-5">
-    <input type="checkbox" name={ `${ name } vol` } onChange={ onChange } checked={ false } disabled={ true } className="toggle" />
+      <input type="checkbox" name={ `${ name } vol` } onChange={ onChange } checked={ false } disabled={ true } className="toggle" />
     </div>
   </div>
 )

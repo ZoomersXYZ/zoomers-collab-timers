@@ -147,10 +147,12 @@ const BrowserNotification = ( props ) => {
     dispatch( name );
   };
 
-  useEffect( () => {    
+  useEffect( () => { 
+    console.log( 'useEffect run' );
     if ( !event ) return;
-    
+    console.log( 'useEffect run, where there is an event' );
     if ( checked.timer.onOff && checked[ event ].onOff && run - 1 === prevRun ) {
+      console.log( 'run passes' );
       // For passing if statement next time
       setPrevRun( prev => prev + 1 );
 

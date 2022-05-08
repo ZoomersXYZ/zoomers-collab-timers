@@ -10,7 +10,7 @@ const Activity = ( { name, email, manager, group, timer, activity, desc, repeatA
   let extra = '';
 
   const repeatText = repeatAuto === true ? ' <i>(auto repeating)</i> ' : '';
-  activity = ( desc !== null ) ? desc : activity;
+  activity = ( desc !== null && desc !== undefined ) ? desc : activity;
   if ( activity.slice( -4 ) !== 'room' ) {
     if ( 
       // ( !group && activity.slice( 0, 7 ) !== 'skipped' )  
