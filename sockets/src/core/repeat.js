@@ -30,6 +30,11 @@ const RepeatingTimers = function (
       return false;
     };
 
+    curr.manager = { 
+      username: aUser.nick, 
+      email: aUser.email 
+    };
+
     const theTime = new Date().getTime();
     v.HR_REPEAT ??= 1;
     curr.repeat = { 
@@ -63,6 +68,11 @@ const RepeatingTimers = function (
       endTime: 0, 
       work: 0, 
       brake: 0 
+    };
+
+    curr.manager = { 
+      username: null, 
+      email: null 
     };
   };
 

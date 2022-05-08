@@ -56,6 +56,11 @@ const Timer = function (
 
     updateTimer( inRoom, aUser );
     goneByTimer( inRoom );
+    
+    curr.manager = { 
+      username: aUser.nick, 
+      email: aUser.email 
+    };
 
     emitRoom( 'timer started', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'started' );
@@ -85,7 +90,6 @@ const Timer = function (
     emitRoom( 'timer paused', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'paused' );
   };
-
   // @param inRoom: String
   // @globals sassy
   // @anotherFile emitRoom()
