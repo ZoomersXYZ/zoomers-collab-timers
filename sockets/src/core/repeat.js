@@ -23,9 +23,9 @@ const RepeatingTimers = function (
   // @anotherFile async logItWrapper()
   // @anotherFile startTimer()
   module.repeatingStart = async ( inRoom, aUser, work, brake, length ) => {
-    const curr = sassy[ inRoom ];
+    const curr = sassy[ inRoom ];    
     const { repeat } = curr;
-    if ( repeat.on ) {
+    if ( repeat.on == true ) {
       emitRoom( 'repeat timers already begun', { room: inRoom } );
       return false;
     };
@@ -73,7 +73,7 @@ const RepeatingTimers = function (
   // @internal resetRepeating()
   module.repeatingDone = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
-    if ( repeat.off ) {
+    if ( repeat.on == false ) {
       emitRoom( 'repeating timer already off', { room: inRoom } );
       return false;
     };
@@ -91,7 +91,7 @@ const RepeatingTimers = function (
   // @anotherFile stopTimer()
   module.repeatingStop = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
-    if ( repeat.off ) {
+    if ( repeat.on == false ) {
       emitRoom( 'repeating already off', { room: inRoom } );
       return false;
     };
@@ -112,11 +112,11 @@ const RepeatingTimers = function (
   module.wrappingUpRepeating = async ( inRoom, aUser, repeat, session, skipSession, startTimer ) => {
     if ( repeat.on == true ) {
       if ( repeat.endTime < new Date().getTime() ) {
-        l.karm.debug( 'if ===', 'repeat.endTime < new Date().getTime()' );
+        l.karm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
         
         await module.repeatingDone( inRoom );
       } else {
-        l.karm.debug( 'if else', 'repeat.endTime < new Date().getTime()' );
+        l.karm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
 
         const newSesh = session === 'work' ? 'brake' : 'work';
         skipSession( inRoom, aUser, repeat.on );

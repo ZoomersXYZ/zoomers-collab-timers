@@ -21,7 +21,7 @@
   "scripts": {
     "start": "node src/server.js",
     "server": "NODE_ENV=development nodemon src/server.js",
-    "server2": "NODE_ENV=development MIN_IN_HR=2 HR_REPEAT=10 nodemon src/server.js",
+    "server2": "NODE_ENV=development MIN_IN_HR=2 HR_REPEAT=25 nodemon src/server.js",
     "debug": "NODE_ENV=development DEBUG=* nodemon src/server.js",
     "debugWSAll": "NODE_ENV=development DEBUG=engine,socket.io* nodemon src/server.js",
     "debugWS": "NODE_ENV=development DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* nodemon src/server.js"

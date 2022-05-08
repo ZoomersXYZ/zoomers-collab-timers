@@ -49,7 +49,7 @@ const group = socket => {
 
       if ( isEmpty( socket.client.server.glue.core ) ) { 
         socket.client.server.glue.core ||= InitNsp.core();
-      };      
+      };
 
       if ( isEmpty( socket.client.server.glue.groups[ nspName ].sesh ) ) {
         socket.client.server.glue.groups[ nspName ].sesh ||= InitNsp.seshie( nspName );
@@ -184,7 +184,7 @@ const group = socket => {
     repeatingDone, 
     repeatingStop 
   } = require( './repeat' )( 
-    sockId, 
+    // sockId, 
     v, 
 
     sassy, 
@@ -231,7 +231,7 @@ const group = socket => {
     socket.on( 'reset timer', resetTimer ); 
     // socket.on( 'timer done', finishedTimer );
     // timer 4th
-    socket.on( 'pause', pauseTimer ); 
+    socket.on( 'pause', pauseTimer );
     // timer 5th
     socket.on( 'unpause', resumeTimer );
     // timer 12th
@@ -250,6 +250,6 @@ const group = socket => {
   
   l.struct.info( '- fin g()', nspName );
 };
-l.struct.info( '-- -- Post-SOCKET -- --' );
+l.struct.info( '-- -- Post-SOCKET -- --' ); 
 
 module.exports = group;

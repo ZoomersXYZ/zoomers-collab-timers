@@ -72,3 +72,4 @@ node_modules/
 **/moim*/*
 
 .history
+/ecosystem.config.js

@@ -122,7 +122,7 @@ const SocketCoreAndUtils = function (
       // modifyUsers( core, sockId );
       --core.numUsers;
       core.users.splice( 
-        core.users.findIndex( arrival => arrival.id === sockId ), 1       
+        core.users.findIndex( arrival => arrival.id === sockId ), 1 
       );
       core.userCount = core.users.length;
 

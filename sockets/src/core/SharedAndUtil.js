@@ -35,12 +35,16 @@ const SharedAndUtil = function (
     const hours = Math.floor( ( remaining / ( divideBy * 60 * 60 ) ) % 24 );
     
     let formattedTime = '';
+
     formattedTime += hours > 0 && hours < 10 ? '0' + hours + ':' 
     : hours === 0 ? '' : hours + ':';
+
     formattedTime += minutes < 10 ? '0' + minutes + ':' 
     : minutes === 0 ? '00' : minutes + ':';
+
     formattedTime += seconds < 10 ? '0' + seconds 
     : seconds === 0 ? '00' : seconds;
+    
     return formattedTime;
   };
 

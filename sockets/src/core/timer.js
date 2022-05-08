@@ -116,7 +116,6 @@ const Timer = function (
   // @internal-ish setInterval()
   goneByTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];
-
     curr.goneByInterval = setInterval( () => {
       ++curr.secondsGoneBy;
     }, 1000 );
@@ -170,8 +169,7 @@ const Timer = function (
   // @param inRoom: String
   // @internal wrappingUp()
   finishedTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer finished', 'finished' );
-  // @param inRoom: String
-  // @internal wrappingUp()
+  // @param inRoom: String  // @internal wrappingUp()
   module.resetTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer reset', 'reset' );
 
   // @params inRoom: String
@@ -179,7 +177,6 @@ const Timer = function (
   // @internal-ish clearInterval()
   clearUpdateTimer = ( inRoom ) => { 
     const curr = sassy[ inRoom ];
-
     clearInterval( curr.updateTimerInterval );
   };
 
@@ -231,7 +228,7 @@ const Timer = function (
 
       } else {
         clearInterval( curr.updateTimerInterval );
-      };      
+      };
     }, 1000 );
   };
 
@@ -245,7 +242,6 @@ const Timer = function (
   // @internal-ish clearInterval()
   module.skipSession = async ( inRoom, aUser, repeat = false ) => {
     const curr = sassy[ inRoom ];
-    console.log( '2', curr );
     let { session } = curr;
     
     if ( curr.pauseFlag ) {
