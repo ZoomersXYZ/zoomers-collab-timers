@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import Submit from './Submit';
@@ -39,6 +39,7 @@ const TimerControl = ( {
   const [ showControl, setShowControl ] = useState( false );
   const [ showNormOrReap, setNormOrReap ] = useState( false );
   const onShowing = () => setShowControl( prevState => !prevState );
+  const formRef = useRef( null )
 
   const onShowingNorm = ( timeOut = 500 ) => {
     // setTimeout( () => {
@@ -59,7 +60,6 @@ const TimerControl = ( {
   useEffect( () => {
     const timerStarted = ( room ) => {
       if ( filterOutRoom( room ) ) { return; };
-      console.log( 'timerStarted() room', room );
       // setShowControl( false );
       setShowTimer( true );
     };
@@ -101,6 +101,9 @@ const TimerControl = ( {
   const handleSessionTimer = ( e ) => {
     e.preventDefault();
     emitAll( SKIP_SESSION );
+    if ( formRef && formRef.current ) {
+      formRef.current.focus();
+    };
   };
 
   const [ err, setErr ]= useState( {} );
@@ -133,7 +136,8 @@ const TimerControl = ( {
               setPush, 
               className, 
               width, 
-              height 
+              height, 
+              formRef 
             } }
           >
             <EndingDiv 

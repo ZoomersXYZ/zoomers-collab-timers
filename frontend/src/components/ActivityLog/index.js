@@ -6,14 +6,27 @@ import { formatRelative, sub } from 'date-fns';
 import { collection, onSnapshot, limit, query, where, orderBy } from "firebase/firestore";
 
 import db from './../../config/firebase';
+import { isEmpty, isArray } from './../../ancillary/helpers/general'
 
 import Activity from './../Activity';
 import './styles.scss';
 
 import { GroupContext, RoomContext } from '../Contexts';
 
-const SubActivityLog = ( activityLog, collapse, toSlice, keyInfo ) => {
-  const thisLog = collapse ? activityLog.slice( 0, toSlice ) : activityLog.slice( toSlice );
+const SubActivityLog = ( { theLog, collapse, toSlice, keyInfo } ) => {
+  const [ thisLog, setThisLog ] = useState( [] );
+  useEffect( () => { 
+    if ( !isEmpty( theLog ) && isArray( theLog ) && theLog.length > 0 ) {
+      // console.log( 'theLog', theLog );
+      if ( collapse ) {
+        setThisLog( theLog.slice( 0, toSlice ) )
+      } else {
+        setThisLog( theLog.slice( toSlice ) )
+      };
+      // collapse ? setThisLog( theLog.slice( 0, toSlice ) ) : setThisLog( theLog.slice( toSlice ) );
+      // console.log( thisLog[ 0 ].activity );
+    };
+  }, [ theLog, collapse, toSlice ] );
   return( 
     <>
     { thisLog.map( ( { username, email, manager, group, timer, activity, desc, meta, repeatAuto, formattedTime }, index ) => 
@@ -120,7 +133,7 @@ const ActivityLog = ( { userEnabled } ) => {
       <div id="activity-log">
         <Collapse isOpened={ open }>
           <SubActivityLog 
-            activityLog={ localLog } 
+            theLog={ localLog } 
             keyInfo='full-log' 
             collapse={ open } 
             toSlice={ toSlice } 
@@ -128,7 +141,7 @@ const ActivityLog = ( { userEnabled } ) => {
         </Collapse>
 
         <SubActivityLog 
-          activityLog={ localLog } 
+          theLog={ localLog } 
           keyInfo='log-clip' 
           collapse={ false } 
           toSlice={ toSlice } 

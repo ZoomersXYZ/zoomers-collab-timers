@@ -72,7 +72,9 @@ const SwoleSubmitTime = props => {
     children, 
 
     setErr, 
-    handleSuccess 
+    handleSuccess, 
+
+    formRef 
   } = props;
   const {
     status, 
@@ -108,7 +110,7 @@ const SwoleSubmitTime = props => {
           height={ height } 
         >
           <>
-          <Field autoFocus component="input" name="newTimer" className="timer-text-field" />
+          <Field autoFocus component="input" name="newTimer" className="timer-text-field" innerRef={ formRef } />
           
           <button className="casual-button" type="submit" disabled={ isSubmitting }>
             Submit
