@@ -21,7 +21,7 @@ let hourglassInterval = null;
 
 const Room = ( { 
   // isNew, 
-  userEnabled,  
+  userEnabled, 
   width, 
   height, 
   CircleClass 
@@ -52,10 +52,15 @@ const Room = ( {
   const [ curr, setCurr ] = useState( { 
     current: 0, 
     currentFormatted: '00:00', 
-    totalDuration: 0, 
+    duration: 0, 
     started: 0, 
     paused: false, 
-    pausedAt: 0, 
+    pause: { 
+      flag: false, 
+      started: null, 
+      goneBy: 0, 
+      list: []  
+    },  
     ongoingTime: 0  
   } );  
   const [ session, setSession ] = useState( { 
@@ -126,7 +131,7 @@ const Room = ( {
       setCurr( setupCurr( { 
         current: null, 
         currentFormatted: null, 
-        totalDuration: null 
+        duration: null 
       } ) );
     };
 
@@ -235,11 +240,11 @@ const Room = ( {
   };
 
   const setupCurr = ( e ) => {
-    let { current, currentFormatted, totalDuration, ...rest } = e;
+    let { current, currentFormatted, duration, ...rest } = e;
     current = ( !current || isNaN( current ) ) ? 0 : current;
-    totalDuration = ( !totalDuration || isNaN( totalDuration ) ) ? 0 : totalDuration;
+    duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
     currentFormatted = !currentFormatted ? '00:00' || '0:00:00' || '00:00:00' : currentFormatted;
-    return { current, currentFormatted, totalDuration, ...rest };
+    return { current, currentFormatted, duration, ...rest };
   };
 
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
@@ -351,7 +356,7 @@ const Room = ( {
             className={ CircleClass } 
             timer={ curr.currentFormatted } 
             secondsLeft={ curr.current } 
-            duration={ curr.totalDuration } 
+            duration={ curr.duration } 
             ongoingTime={ curr.ongoingTime } 
             { ...{ 
               width, 
@@ -430,7 +435,7 @@ const Room = ( {
 
       <TimerControl 
         time={ curr.current } 
-        duration={ curr.totalDuration } 
+        duration={ curr.duration } 
         width={ width / 2 } 
         height={ height / 2 } 
         { ...{ 

@@ -32,22 +32,22 @@ const SocketCoreAndUtils = function (
   // @globals emitRoom()
   // @anotherFile timeFormatted()
   function onRoomConnect( preciousHashie ) {
-    const { duration, pausedAt, roomie, secondsLeft, session, time, pauseFlag, secondsGoneBy } = preciousHashie;
+    const { duration, roomie, secondsLeft, session, started, pause, secondsGoneBy } = preciousHashie;
     emitRoom( 'session skipped', { room: roomie, session } );
 
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
     const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-    if ( pausedAt && !pauseFlag && currentBool && durationBool ) {
+    if ( pause.started && !pause.flag && currentBool && durationBool ) {
       const hashish = { 
         current: secondsLeft, 
         currentFormatted: timeFormatted( secondsLeft ), 
 
         totalDuration: duration, 
-        started: time, 
+        started, 
 
-        paused: !pauseFlag, 
-        pausedAt: pausedAt, 
+        paused: !pause.flag, 
+        pause, 
 
         ongoingTime: secondsGoneBy 
       };

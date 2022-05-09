@@ -9,12 +9,18 @@ const InitNsp = function() {
       }, 
       
       timerFlag: false, 
-      pauseFlag: false, 
-      pausedAt: null, 
+      pause: { 
+        flag: false, 
+        started: null, 
+        goneBy: 0, 
+        list: []  
+      }, 
+      // list: [ [ { started, ended, duration } ], [ { started, ended, duration } ] ] 
 
       duration: 0, 
       secondsLeft: 0, 
-      secondsGoneBy: 1 
+      secondsGoneBy: 0, 
+      started: null 
     };
   };
 
