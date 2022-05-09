@@ -50,9 +50,10 @@ const Timer = function (
     // @TODO refact: can this be done:
     curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
     curr.timerFlag = true;
-    curr.pauseFlag = true;
-    curr.endFlag = false;
-    curr.time = new Date().getTime();
+
+    curr.pause.flag = true;
+    curr.flags.start = true;
+    curr.started = new Date().getTime();
 
     updateTimer( inRoom, aUser );
     goneByTimer( inRoom );
@@ -74,15 +75,15 @@ const Timer = function (
   // @internal ongoingTimer()
   module.pauseTimer = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
-    const { pauseFlag } = curr;
+    const { pause } = curr;
 
-    if ( !pauseFlag ) {
+    if ( !pause.flag ) {
       emitRoom( 'timer ALREADY paused' );
       return;
     };
     
-    curr.pauseFlag = false;
-    curr.pausedAt = new Date().getTime();
+    curr.pause.flag = false;
+    curr.pause.started = new Date().getTime();
 
     clearUpdateTimer( inRoom );
     ongoingTimer( inRoom );
@@ -90,6 +91,7 @@ const Timer = function (
     emitRoom( 'timer paused', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'paused' );
   };
+
   // @param inRoom: String
   // @globals sassy
   // @anotherFile emitRoom()
@@ -98,24 +100,31 @@ const Timer = function (
   // @internal-ish clearInterval()
   module.resumeTimer = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
-    const { pauseFlag } = curr;
+    const { pause } = curr;
     
-    if ( pauseFlag ) {
+    if ( pause.flag ) {
       emitRoom( 'timer ALREADY resumed', { room: inRoom } );
       return;
     };
-    
-    curr.pauseFlag = true;
-    curr.pausedAt = null;
 
-    updateTimer( inRoom );
+    const ended = new Date().getTime();
+    curr.pause.list.push( {
+      started: curr.pause.started, 
+      ended: ended, 
+      duration: ended - curr.pause.start 
+    } );
+    curr.pause.flag = true;
+    curr.pause.started = null;
+
+    updateTimer( inRoom, aUser );
     clearInterval( curr.ongoingInterval );
     
     emitRoom( 'timer resumed', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'resumed' );
   };
 
-  // @param inRoom: String  // @globals sassy
+  // @param inRoom: String
+  // @globals sassy
   // @internal-ish setInterval()
   goneByTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];
@@ -127,17 +136,15 @@ const Timer = function (
   // @param inRoom: String
   // @globals sassy
   // @anotherFile emitRoom()
-  // @anotherFile timeFormatted()
   // @internal updateTimer()
   // @internal-ish setInterval()
   // @internal-ish clearInterval()
   ongoingTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];
     const {
-      duration,       
-      pauseFlag, 
-      time, 
-      pausedAt, 
+      duration, 
+      started, 
+      pause, 
       secondsGoneBy, 
       secondsLeft 
     } = curr;
@@ -172,7 +179,8 @@ const Timer = function (
   // @param inRoom: String
   // @internal wrappingUp()
   finishedTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer finished', 'finished' );
-  // @param inRoom: String  // @internal wrappingUp()
+  // @param inRoom: String
+  // @internal wrappingUp()
   module.resetTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer reset', 'reset' );
 
   // @params inRoom: String
@@ -186,16 +194,14 @@ const Timer = function (
   // @param inRoom: String
   // @globals sassy
   // @anotherFile emitRoom()
-  // @anotherFile timeFormatted()
   // @internal finishedTimer()
   // @internal-ish clearInterval()
-  updateTimer = ( inRoom ) => {
+  updateTimer = ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     const {
       duration,       
-      pauseFlag, 
-      time, 
-      pausedAt, 
+      started, 
+      pause, 
       secondsGoneBy 
     } = curr;
     let { secondsLeft } = curr;
@@ -247,7 +253,7 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     let { session } = curr;
     
-    if ( curr.pauseFlag ) {
+    if ( curr.pause.flag ) {
       emitRoom( 'timer still running. Stop it first.', inRoom );
       return;
     };
@@ -300,10 +306,6 @@ const Timer = function (
     clearInterval( curr.ongoingInterval );
     clearInterval( curr.goneByInterval );
 
-    curr.secondsLeft = 0;
-    curr.timerFlag = false;
-    curr.pauseFlag = false;
-
     emitRoom( msg, { room: inRoom } );
     wrappingUpRepeating( 
       inRoom, 
@@ -315,6 +317,18 @@ const Timer = function (
     );
 
     await logItWrapper( inRoom, aUser, msg, activity );
+
+    // Resettting value if not part of a repeat timer
+    if ( repeat.on == false ) {
+      curr.manager = { 
+        username: null, 
+        email: null 
+      };
+    };
+    // Resettting values
+    curr.secondsLeft = 0;
+    curr.timerFlag = false;
+    curr.pause.flag = false;
   };
 
   return module;
