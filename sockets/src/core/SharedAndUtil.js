@@ -33,8 +33,10 @@ const SharedAndUtil = function (
     const seconds = Math.floor( ( remaining / divideBy ) % 60 );
     const minutes = Math.floor( ( remaining / ( divideBy * 60 ) ) % 60 );
     const hours = Math.floor( ( remaining / ( divideBy * 60 * 60 ) ) % 24 );
+    const days = Math.floor( remaining / ( divideBy * 60 * 60 * 24 ) );
     
     let formattedTime = '';
+    formattedTime += days === 0 ? '' : days + ':';
 
     formattedTime += hours > 0 && hours < 10 ? '0' + hours + ':' 
     : hours === 0 ? '' : hours + ':';
