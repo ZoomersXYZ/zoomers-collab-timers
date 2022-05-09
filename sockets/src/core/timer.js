@@ -39,7 +39,7 @@ const Timer = function (
   // @internal goneByTimer()
   module.startTimer = async ( inRoom, aUser, timeInMin ) => {
     const curr = sassy[ inRoom ];
-    if ( curr.timerFlag ) {
+    if ( curr.flags.start && !curr.flags.triaged ) {
       emitRoom( 'timer already begun', { room: inRoom } );
       return false;
     };
@@ -49,11 +49,11 @@ const Timer = function (
     curr.secondsLeft = curr.duration;
     // @TODO refact: can this be done:
     curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
-    curr.timerFlag = true;
 
     curr.pause.flag = true;
-    curr.flags.start = true;
-    curr.started = new Date().getTime();
+    curr.flags.started = new Date().getTime();
+    curr.flags.done = false;
+    curr.flags.triaged = false;
 
     updateTimer( inRoom, aUser );
     goneByTimer( inRoom );
@@ -133,6 +133,26 @@ const Timer = function (
     }, 1000 );
   };
 
+  // @anotherFile timeFormatted()
+  updatingTimer = ( inRoom, current, duration, started, paused, pause, secondsGoneBy ) => {
+    const hashish = { 
+      current, 
+      currentFormatted: timeFormatted( current ), 
+      duration, 
+      started, 
+      paused, 
+      pause, 
+      ongoingTime: secondsGoneBy 
+    };
+    emitRoom( 'timer updated', { room: inRoom, ...hashish } );
+    return hashish;
+  };
+
+  durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
+  currentBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft > -1;
+  noTimeLeftBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft < 1;
+  commonTimerVarsExistBool = ( pauseFlag, duration ) => pauseFlag || duration;
+
   // @param inRoom: String
   // @globals sassy
   // @anotherFile emitRoom()
@@ -149,23 +169,19 @@ const Timer = function (
       secondsLeft 
     } = curr;
 
-    curr.ongoingInterval = setInterval( () => {
-      const durationBool = !isNaN( duration ) && duration > -1;
-      const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-      if ( !pauseFlag && durationBool && currentBool ) {
-        const hashish = { 
-          current: secondsLeft, 
-          currentFormatted: timeFormatted( secondsLeft ), 
-
-          totalDuration: duration, 
-          started: time, 
-
-          paused: !pauseFlag, 
-          pausedAt: pausedAt, 
-
-          ongoingTime: secondsGoneBy 
-        };
-        emitRoom( 'timer updated', { room: inRoom, ...hashish } );
+    curr.ongoingInterval = setInterval( () => {      
+      if ( 
+        !pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
+      ) {
+        const hashish = updatingTimer( 
+          inRoom, 
+          secondsLeft, 
+          duration, 
+          started, 
+          !pause.flag, 
+          pause, 
+          secondsGoneBy 
+        );
       } else {
         clearInterval( curr.ongoingInterval );
         clearInterval( curr.goneByInterval );
@@ -210,31 +226,22 @@ const Timer = function (
       --secondsLeft;
       curr.secondsLeft = secondsLeft;
 
-      const durationBool = !isNaN( duration ) && duration > -1;
-      const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-
-        const noTimeLeftBool = !isNaN( secondsLeft ) && secondsLeft < 1;
-        const commonTimerVarsExistBool = pauseFlag || duration;
-
-      if ( pauseFlag && durationBool && currentBool ) {
-        const hashish = { 
-          current: secondsLeft, 
-          currentFormatted: timeFormatted( secondsLeft ), 
-
-          totalDuration: duration, 
-          started: time, 
-
-          paused: !pauseFlag, 
-          pausedAt: pausedAt, 
-
-          ongoingTime: secondsGoneBy 
-        };
-
-        emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-
-      } else if ( noTimeLeftBool && ( commonTimerVarsExistBool ) ) {
-        finishedTimer( inRoom );
-
+      if ( 
+        pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
+      ) {
+        const hashish = updatingTimer( 
+          inRoom, 
+          secondsLeft, 
+          duration, 
+          started, 
+          !pause.flag, 
+          pause, 
+          secondsGoneBy           
+        );
+      } else if ( 
+        noTimeLeftBool( secondsLeft ) && ( commonTimerVarsExistBool( pause.flag, duration ) ) 
+      ) {
+        finishedTimer( inRoom, aUser );
       } else {
         clearInterval( curr.updateTimerInterval );
       };
@@ -327,7 +334,6 @@ const Timer = function (
     };
     // Resettting values
     curr.secondsLeft = 0;
-    curr.timerFlag = false;
     curr.pause.flag = false;
   };
 

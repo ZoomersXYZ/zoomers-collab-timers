@@ -7,8 +7,13 @@ const InitNsp = function() {
         username: null, 
         email: null 
       }, 
-      
-      timerFlag: false, 
+
+      flags: {
+        started: null, 
+        ended: null, 
+        triaged: null 
+      }, 
+
       pause: { 
         flag: false, 
         started: null, 
@@ -19,8 +24,7 @@ const InitNsp = function() {
 
       duration: 0, 
       secondsLeft: 0, 
-      secondsGoneBy: 0, 
-      started: null 
+      secondsGoneBy: 0 
     };
   };
 

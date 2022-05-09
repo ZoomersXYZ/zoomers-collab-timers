@@ -53,13 +53,17 @@ const Room = ( {
     current: 0, 
     currentFormatted: '00:00', 
     duration: 0, 
-    started: 0, 
+    flags: {
+      started: false, 
+      ended: false, 
+      triaged: false, 
+    }, 
     paused: false, 
     pause: { 
       flag: false, 
       started: null, 
       goneBy: 0, 
-      list: []  
+      list: [] 
     },  
     ongoingTime: 0  
   } );  
@@ -131,7 +135,7 @@ const Room = ( {
       setCurr( setupCurr( { 
         current: null, 
         currentFormatted: null, 
-        duration: null 
+        duration: null,         
       } ) );
     };
 
@@ -240,11 +244,11 @@ const Room = ( {
   };
 
   const setupCurr = ( e ) => {
-    let { current, currentFormatted, duration, ...rest } = e;
+    let { current, currentFormatted, duration, flags, ...rest } = e;
     current = ( !current || isNaN( current ) ) ? 0 : current;
     duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
     currentFormatted = !currentFormatted ? '00:00' || '0:00:00' || '00:00:00' : currentFormatted;
-    return { current, currentFormatted, duration, ...rest };
+    return { current, currentFormatted, duration, flags, ...rest };
   };
 
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
@@ -305,8 +309,8 @@ const Room = ( {
     clearInterval( hourglassInterval );
     setHourglass( 'start' );
   };
-  
-  // const { current, currentFormatted, totalDuration } = curr;
+
+  const [ efficiency, setEfficiency ] = useState( 0 );
 
   return (
     <div className="content">
@@ -351,6 +355,12 @@ const Room = ( {
             </h4>
           </div>
         }
+        { reap.on === false && curr.flags.started !== false && 
+          <div>
+            { efficiency }
+          </div>
+        }
+
         <div className={ `svg-parent ${ session.scheme }` }>
           <Svg 
             className={ CircleClass } 
