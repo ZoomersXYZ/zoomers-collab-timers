@@ -29,19 +29,27 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
+
+    "cypress:open": "cypress open",
+
     "go": "./node_modules/pm2/bin/pm2 start ecosystem.config.js",
     "goSemi": "cd ./../sockets && pm2 start nodemon -- src/server.js && cd ./../frontend && pm2 start react-scripts -- start",
+    
     "run": "serve -s ./build -l 4000",
     "rules": "cd .. && firebase deploy --only firestore:rules",
     "deploy": "cd .. && firebase deploy --only hosting",
     "beploy": "react-scripts build && cd .. && firebase deploy --only hosting",
+    
     "build1": "mv ./public/serviceWorker.min.js ./../../serviceWorker.min.min.js && react-scripts build",
     "build2": "rm ./public/serviceWorker.min.js && react-scripts build",
+    
     "startReg": "PORT=3100 REACT_APP_FONT_ICONS=http://localhost:3100/bassets/fs/asset/nested/css/all.css REACT_APP_NOTIF=register react-scripts start && cra-append-sw --mode dev ./src/custom-sw-import.js",
     "start3": "PORT=3200 REACT_APP_FONT_ICONS=http://localhost:3200/bassets/fs/asset/nested/css/all.css react-scripts start && cra-append-sw --mode dev ./src/custom-sw-import.js",
+    
     "debugWSclient": "DEBUG=socket.io:client* react-scripts start",
     "debugWSspecific": "DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* react-scripts start",
     "buildReg": "react-scripts build && rm -rf ./../buildRegister && mv ./build ./../buildRegister",
+
     "runReg": "serve -s ./../buildRegister -l 4100",
     "buildUnreg": "react-scripts build && rm -rf ./../buildUnregister && mv ./build ./../buildUnregister",
     "runUnreg": "serve -s ./../buildUnregister -l 4200"
@@ -67,6 +75,7 @@
     ]
   },
   "devDependencies": {
-    "pm2": "^5.2.0"
+    "pm2": "^5.2.0", 
+    "cypress": "^9.5.3"
   }
 }
