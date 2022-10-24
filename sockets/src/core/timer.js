@@ -387,8 +387,24 @@ const Timer = function (
       curr.goneBy = 0 
     } else {
       // Resettting values
-      curr.secondsLeft = 0;
-      curr.pause.flag = false;
+      curr.flags = {
+        started: null, 
+        ended: null, 
+        triaged: false 
+      }, 
+
+      curr.pause = { 
+        flag: false, 
+        started: null, 
+        goneBy: 0, 
+        list: [] 
+      }
+
+      curr.duration = 0, 
+      curr.secondsLeft = 0, 
+      curr.goneBy = 0 
+      // curr.secondsLeft = 0;
+      // curr.pause.flag = false;
     };
   };
 
