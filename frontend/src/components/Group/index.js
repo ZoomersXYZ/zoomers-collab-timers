@@ -16,7 +16,7 @@ import Delete from './../Room/Delete';
 
 import './styles.scss';
 import l from './../../config/winston';
-import { isEmpty } from './../../ancillary/helpers/general';
+import { delay, isEmpty } from './../../ancillary/helpers/general';
 
 // Specific for this file
 import io from 'socket.io-client';
@@ -39,7 +39,7 @@ const RoomsGroup = () => {
 
   const socket = io( ioUrl + urlPath );
   // Group 1b
-  const emit = ( ...restoros ) => socket.emit( ...restoros );
+  const emit = ( ...restoros ) => socket.emit( ...restoros );  
 
   // Global, Contexts
   const { gName } = useContext( GroupContext );
@@ -91,6 +91,8 @@ const RoomsGroup = () => {
       };
 
       const onConnect = () => {
+        emit( 'group entered' );
+        delay( 500 );
         handleNewUser();
       };
 

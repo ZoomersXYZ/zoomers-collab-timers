@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { Form, withFormik } from 'formik';
+import React, { useEffect, useContext } from 'react';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import './../styles.scss';
 import { ReapInput, HoursButton, SubmitButton } from './partials';
 import { isEmpty } from './../../../ancillary/helpers/general';
+
+import { RoomContext } from './../../Contexts';
 
 const validationSchema = Yup.object().shape( {
   work: Yup.number().integer().min( 1 ).max( 720 ).positive( 'Number must be positive' ).required( 'Number required' ),
@@ -13,24 +15,67 @@ const validationSchema = Yup.object().shape( {
 } );
 
 const SubmitReap = props => {
+  const ogProps = props;
+  const aRoom = useContext( RoomContext );
+
+  return(
+    <Formik
+      initialValues={ {
+          work: 32, 
+          brake: 8, 
+          length: 5 
+      } } 
+      validationSchema={ validationSchema } 
+      onSubmit={ (
+        values, 
+        { setStatus, props } 
+      ) => {
+        const { 
+          work, 
+          brake, 
+          length 
+        } = values;
+
+        setStatus( true );
+        aRoom.emitAll( 'turn on repeating timers', work, brake, length );
+        ogProps.push.set( prev => { 
+          return { 
+            ...prev, 
+            event: 'start', 
+            onOff: prev.onOff + 1, 
+            title: `${ aRoom.name } repeating timer for ${ length } hours has begun`, 
+            body: 'Let\'s go!' 
+          };
+        } );
+      } }
+      children={ props => 
+        <SwoleSubmitReap 
+          { ...props } 
+          ogProps={ ogProps } 
+        /> 
+      } 
+    />
+  );
+};
+
+const SwoleSubmitReap = props => {
+  const {
+    handleSuccess, 
+    session, 
+    setErr, 
+    className, 
+    inlineSize, 
+    blockSize, 
+    noTimerLogic, 
+
+    children 
+  } = props.ogProps;
   const {
     touched, 
     errors, 
     status, 
     isSubmitting, 
     handleSubmit 
-  } = props;
-  const {
-    className, 
-    width, 
-    height, 
-    session, 
-    children, 
-
-    setErr, 
-    handleSuccess, 
-
-    noTimerLogic 
   } = props;
 
   useEffect( () => { 
@@ -55,8 +100,10 @@ const SubmitReap = props => {
       <div className="timers-container">
         <ReapInput  
           autoFocus={ true } 
-          width={ width } 
-          height={ height } 
+          { ...{ 
+            inlineSize, 
+            blockSize, 
+          } } 
           scheme={ session.scheme } 
           otherScheme='def' 
           parentClassName={ className } 
@@ -68,8 +115,10 @@ const SubmitReap = props => {
 
         <ReapInput  
           autoFocus={ false } 
-          width={ width } 
-          height={ height } 
+          { ...{ 
+            inlineSize, 
+            blockSize, 
+          } } 
           scheme={ session.oppScheme } 
           otherScheme='defOpp' 
           parentClassName={ className } 
@@ -103,46 +152,4 @@ const SubmitReap = props => {
   );
 };
 
-const SwoleReap = withFormik( {
-  mapPropsToValues: () => ( {
-      work: 32, 
-      brake: 8, 
-      length: 5 
-  } ), 
-  validationSchema, 
-  handleSubmit: ( 
-    values, 
-    { setStatus, props } 
-  ) => {    
-    const { 
-      aptRoom, 
-      setPush, 
-      emitAll 
-    } = props;
-    const { 
-      work, 
-      brake, 
-      length 
-    } = values;
-
-    setStatus( true );
-    // socket.emit( 
-    //   'turn on repeating timers', 
-    //   aptRoom, work, brake, length 
-    // );
-    emitAll( 'turn on repeating timers', work, brake, length );
-    setPush( prev => { 
-      return {
-        ...prev, 
-        event: 'start', 
-        onOff: prev.onOff + 1, 
-        title: `${ aptRoom } repeating timer for ${ length } hours has begun`, 
-        body: 'Let\'s go!' 
-      };
-    } );
-  }, 
-
-  displayName: 'SubmitReap' 
-}, )( SubmitReap );
-
-export default SwoleReap;
+export default SubmitReap;

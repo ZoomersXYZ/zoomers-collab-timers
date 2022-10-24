@@ -8,6 +8,7 @@ const InitNsp = require( './InitNsp' )();
 
 let nspace = null;
 let nspName = null;
+const room = { name: '' };
 // shortening
 const v = process.env;
 
@@ -16,27 +17,26 @@ let seshie = null;
 let sassy = null;
 let gCore = null;
 
+let thisTimer = null;
+
 l.struct.info( '-- -- Pre-SOCKET -- --' );
 const group = socket => {
   ////
   // Initialization
   ////
-
   nspace ??= socket.nsp;
   nspName ??= nspace.name.substring( 7 );
-
-  l.struct.info( '- beg g()', nspName ); 
-
-  const oneBool = isObject( core ) 
-    && core.hasOwnProperty( 'groups' ) 
-    && !core.groups.find( han => han === nspName );
+  const sockId = socket.id;
 
   function firstRun() {
-    if ( nspName && ( isEmpty( core ) || oneBool  ) ) {
-      l.struct.info( 'firstRun' );
+    const oneBool = isObject( core ) 
+      && core.hasOwnProperty( 'groups' ) 
+      && !core.groups.find( han => han === nspName );
+
+    if ( nspName && ( isEmpty( core ) || oneBool ) ) {
+      l.struct.info( 'firstRun', sockId );
 
       // Assigning
-      
       socket.client.server.glue ||= {
         core: null, 
         groups: {} 
@@ -47,7 +47,7 @@ const group = socket => {
         core: InitNsp.gCore() 
       };
 
-      if ( isEmpty( socket.client.server.glue.core ) ) { 
+      if ( isEmpty( socket.client.server.glue.core ) ) {
         socket.client.server.glue.core ||= InitNsp.core();
       };
 
@@ -61,12 +61,16 @@ const group = socket => {
       sassy ||= socket.client.server.glue.groups[ nspName ].timers;
       seshie ||= socket.client.server.glue.groups[ nspName ].sesh;
       gCore ||= socket.client.server.glue.groups[ nspName ].core;
-
-      core.groups.push( nspName );
+      thisTimer = null;
     };
   };
   firstRun();
-  const sockId = socket.id;
+  
+  function onGroupEnter() {    
+    simpMe.initialized = true;
+    core.groups.push( nspName );
+    l.struct.info( 'onGroupEnter', sockId );
+  };
 
   ////
   // Initial, Prep Functionality 
@@ -83,7 +87,6 @@ const group = socket => {
 
   const {
     simpMe, 
-    timeFormatted, 
 
     emitRoom, 
     groupEmit, 
@@ -92,13 +95,14 @@ const group = socket => {
 
     commonUserFunc 
   } = require( './SharedAndUtil' )( 
-    sockId, 
+    socket, 
 
     nspace, 
+    nspName, 
     getGroupLog, 
 
     gCore, 
-    seshie.username 
+    seshie 
   );
 
 
@@ -108,8 +112,7 @@ const group = socket => {
 
   const {
     addUser, 
-    listUsers, 
-    // disconnectWrapper 
+    listUsers 
   } = require( './user' )( 
     sockId, 
 
@@ -127,23 +130,19 @@ const group = socket => {
   const { 
     roomEntered, 
     disconnect 
-    // disconnecting 
   } = require( './socketCoreAndUtils' )(
-    sockId, 
-
     socket, 
     sassy, 
+    thisTimer, 
     seshie, 
     core, 
     gCore, 
     nspName, 
 
     emitRoom, 
-    InitNsp.sassy, 
     logItWrapper, 
-    timeFormatted, 
     commonUserFunc, 
-    simpMe
+    simpMe 
   );
 
   const { 
@@ -172,9 +171,9 @@ const group = socket => {
     v, 
     
     sassy, 
+    thisTimer, 
     emitRoom, 
     logItWrapper, 
-    timeFormatted,
     
     wrappingUpRepeating
   );
@@ -203,17 +202,19 @@ const group = socket => {
   // 5 active
   // @globals socket.on
   function listeningSockets() {
+    // in-file
+    socket.on( 'group entered', onGroupEnter );
     // util 4th
     socket.on( 'confirm initial pong', pongId );
     // user 1st
     socket.on( 'add user', addUser );
     // user 2nd
-    socket.on( 'list users', listUsers ); 
+    socket.on( 'list users', listUsers );
     // socketCoreAndUtils 5th
-    socket.on( 'disconnect', disconnect ); 
+    socket.on( 'disconnect', disconnect );
  
     // timer 1st
-    socket.on( 'timer removed', timerDeleted ); 
+    socket.on( 'timer removed', timerDeleted );
   };
 
   // 11 active
@@ -222,13 +223,13 @@ const group = socket => {
     // socketCoreAndUtils 2nd
     socket.on( 'room entered', roomEntered );
     // timer 2nd
-    socket.on( 'timer created', timerCreated ); 
+    socket.on( 'timer created', timerCreated );
     // timer 3rd
     socket.on( 'start timer', startTimer );
     // timer 8th
-    socket.on( 'stop timer', stopTimer ); 
+    socket.on( 'stop timer', stopTimer );
     // timer 9th or 10th
-    socket.on( 'reset timer', resetTimer ); 
+    socket.on( 'reset timer', resetTimer );
     // socket.on( 'timer done', finishedTimer );
     // timer 4th
     socket.on( 'pause', pauseTimer );
@@ -236,7 +237,7 @@ const group = socket => {
     socket.on( 'unpause', resumeTimer );
     // timer 12th
     socket.on( 'skip session', skipSession );
-
+    
     // repeatingTimer 1st
     socket.on( 'turn on repeating timers', repeatingStart );
     // repeatingTimer 3rd
@@ -247,9 +248,7 @@ const group = socket => {
 
   listeningSockets();
   respondingSockets();
-  
-  l.struct.info( '- fin g()', nspName );
 };
-l.struct.info( '-- -- Post-SOCKET -- --' ); 
+l.struct.info( '-- -- Post-SOCKET -- --' );
 
 module.exports = group;

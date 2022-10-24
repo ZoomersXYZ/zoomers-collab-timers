@@ -233,3 +233,27 @@ div.room__not-available button {
 input.less-space {
   padding: 0px 1px;
 }
+
+div.nice-input {
+    input.timer-text-field {
+        text-align: center;
+        width: 100%;
+        background: none;
+        border: none;
+        outline: none;
+
+        color: #ededf4;
+        font-size: 3em;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    // input.nice-input-in-long-box {
+        // width: 20%;
+    // }
+    // input.nice-input-in-circle {}
+}

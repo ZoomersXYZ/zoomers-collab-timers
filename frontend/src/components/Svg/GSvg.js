@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const GSvg = ( { name, className, width, height, children } ) => (
+const GSvg = ( { name, className, inlineSize, blockSize, children } ) => (
   <g 
     id={ name ? `g__${ name }` : undefined } 
     className={ className } 
-    transform={ `translate( ${ width }, ${ height } )` } 
+    transform={ `translate( ${ inlineSize }, ${ blockSize } )` } 
   >
     { children } 
   </g>
@@ -13,8 +13,8 @@ const GSvg = ( { name, className, width, height, children } ) => (
 
 GSvg.propTypes = {
   name: PropTypes.string, 
-  width: PropTypes.number, 
-  height: PropTypes.number, 
+  inlineSize: PropTypes.number, 
+  blockSize: PropTypes.number, 
   className: PropTypes.oneOfType( [
     PropTypes.string, 
     PropTypes.number 
@@ -23,8 +23,8 @@ GSvg.propTypes = {
 
 GSvg.defaultProps = {
   name: undefined, 
-  width: 100, 
-  height: 100, 
+  inlineSize: 100, 
+  blockSize: 100, 
   className: undefined 
 };
 

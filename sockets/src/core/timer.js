@@ -4,9 +4,9 @@ const Timer = function (
   v, 
   
   sassy, 
+  thisTimer, 
   emitRoom, 
   logItWrapper, 
-  timeFormatted,
 
   wrappingUpRepeating
 ) {
@@ -21,7 +21,7 @@ const Timer = function (
   };
 
   // @param inRoom: String
-  // @anotherFile async logItWrapper()
+  // @anotherFile async logItWrapper() 
   module.timerCreated = async ( inRoom, aUser ) => {
     await logItWrapper( inRoom, aUser, 'created & added' );
   };
@@ -37,23 +37,30 @@ const Timer = function (
   // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal goneByTimer()
-  module.startTimer = async ( inRoom, aUser, timeInMin ) => {
+  module.startTimer = async ( inRoom, aUser, timeInMin, repeatFlag = false ) => {
     const curr = sassy[ inRoom ];
-    if ( curr.flags.start && !curr.flags.triaged ) {
+    console.log( 'start timer', thisTimer == curr );
+    // Why are two conditions here
+    // if ( curr.flags.started && !curr.flags.triaged ) {
+    if ( curr.flags.started ) {
       emitRoom( 'timer already begun', { room: inRoom } );
       return false;
     };
 
     v.MIN_IN_HR ??= 60;
     curr.duration = timeInMin * v.MIN_IN_HR;
+    // Make up for the 1 second async await delay for wrappingUpRepeating
+    if ( repeatFlag ) {
+      curr.duration = curr.duration - 1;
+    };
     curr.secondsLeft = curr.duration;
     // @TODO refact: can this be done:
-    curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
+    // curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
 
     curr.pause.flag = true;
     curr.flags.started = new Date().getTime();
     curr.flags.done = false;
-    curr.flags.triaged = false;
+    // curr.flags.triaged = false;
 
     updateTimer( inRoom, aUser );
     goneByTimer( inRoom );
@@ -72,7 +79,7 @@ const Timer = function (
   // @anotherFile emitRoom()
   // @anotherFile async logItWrapper()
   // @internal clearUpdateTimer()
-  // @internal ongoingTimer()
+  // @internal goneByTimer()
   module.pauseTimer = async ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     const { pause } = curr;
@@ -86,7 +93,7 @@ const Timer = function (
     curr.pause.started = new Date().getTime();
 
     clearUpdateTimer( inRoom );
-    ongoingTimer( inRoom );
+    goneByTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'paused' );
@@ -111,13 +118,13 @@ const Timer = function (
     curr.pause.list.push( {
       started: curr.pause.started, 
       ended: ended, 
-      duration: ended - curr.pause.start 
+      duration: ended - curr.pause.started 
     } );
     curr.pause.flag = true;
     curr.pause.started = null;
 
     updateTimer( inRoom, aUser );
-    clearInterval( curr.ongoingInterval );
+    clearInterval( curr.intervals.onGoing );
     
     emitRoom( 'timer resumed', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'resumed' );
@@ -128,21 +135,22 @@ const Timer = function (
   // @internal-ish setInterval()
   goneByTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];
-    curr.goneByInterval = setInterval( () => {
-      ++curr.secondsGoneBy;
+    curr.intervals.goneBy = setInterval( () => {
+      ++curr.goneBy;
     }, 1000 );
   };
 
-  // @anotherFile timeFormatted()
-  updatingTimer = ( inRoom, current, duration, started, paused, pause, secondsGoneBy ) => {
+  updatingTimer = ( inRoom, current, duration, started, paused, pause, flags, goneBy, repeat, session ) => {
     const hashish = { 
       current, 
-      currentFormatted: timeFormatted( current ), 
       duration, 
       started, 
       paused, 
       pause, 
-      ongoingTime: secondsGoneBy 
+      flags, 
+      goneBy, 
+      repeat, 
+      session 
     };
     emitRoom( 'timer updated', { room: inRoom, ...hashish } );
     return hashish;
@@ -159,17 +167,21 @@ const Timer = function (
   // @internal updateTimer()
   // @internal-ish setInterval()
   // @internal-ish clearInterval()
-  ongoingTimer = ( inRoom ) => {
+  goneByTimer = ( inRoom ) => {
     const curr = sassy[ inRoom ];
     const {
       duration, 
       started, 
       pause, 
-      secondsGoneBy, 
-      secondsLeft 
+      flags, 
+      goneBy, 
+      secondsLeft, 
+      intervals, 
+      repeat, 
+      session 
     } = curr;
 
-    curr.ongoingInterval = setInterval( () => {      
+    intervals.onGoing = setInterval( () => {      
       if ( 
         !pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
       ) {
@@ -180,31 +192,49 @@ const Timer = function (
           started, 
           !pause.flag, 
           pause, 
-          secondsGoneBy 
+          flags, 
+          goneBy, 
+          repeat, 
+          session 
         );
       } else {
-        clearInterval( curr.ongoingInterval );
-        clearInterval( curr.goneByInterval );
+        clearInterval( intervals.onGoing );
+        clearInterval( intervals.goneBy );
       };
     }, 2000 );
   };
 
   // @param inRoom: String
   // @internal wrappingUp()
-  module.stopTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer stopped', 'force stopped' );
+  module.stopTimer = ( inRoom, aUser ) => wrappingUp( 
+    inRoom, 
+    aUser, 
+    'timer stopped', 
+    'force stopped' 
+  );
   // @param inRoom: String
   // @internal wrappingUp()
-  finishedTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer finished', 'finished' );
+  finishedTimer = ( inRoom, aUser ) => wrappingUp( 
+    inRoom, 
+    aUser, 
+    'timer finished', 
+    'finished' 
+    );
   // @param inRoom: String
   // @internal wrappingUp()
-  module.resetTimer = ( inRoom, aUser ) => wrappingUp( inRoom, aUser, 'timer reset', 'reset' );
+  module.resetTimer = ( inRoom, aUser ) => wrappingUp( 
+    inRoom, 
+    aUser, 
+    'timer reset', 
+    'reset' 
+    );
 
   // @params inRoom: String
   // @global sassy
   // @internal-ish clearInterval()
   clearUpdateTimer = ( inRoom ) => { 
     const curr = sassy[ inRoom ];
-    clearInterval( curr.updateTimerInterval );
+    clearInterval( curr.intervals.updateTimer );
   };
 
   // @param inRoom: String
@@ -218,11 +248,15 @@ const Timer = function (
       duration,       
       started, 
       pause, 
-      secondsGoneBy 
+      flags, 
+      goneBy, 
+      repeat, 
+      session 
     } = curr;
     let { secondsLeft } = curr;
 
-    curr.updateTimerInterval = setInterval( () => {
+    // @TODO why not using intervals and secondsLeft direct. because of pointers?
+    curr.intervals.updateTimer = setInterval( () => {
       --secondsLeft;
       curr.secondsLeft = secondsLeft;
 
@@ -236,14 +270,17 @@ const Timer = function (
           started, 
           !pause.flag, 
           pause, 
-          secondsGoneBy           
+          flags, 
+          goneBy, 
+          repeat, 
+          session 
         );
       } else if ( 
         noTimeLeftBool( secondsLeft ) && ( commonTimerVarsExistBool( pause.flag, duration ) ) 
       ) {
         finishedTimer( inRoom, aUser );
       } else {
-        clearInterval( curr.updateTimerInterval );
+        clearInterval( curr.intervals.updateTimer );
       };
     }, 1000 );
   };
@@ -254,8 +291,6 @@ const Timer = function (
   // * @globals sassy
   // * @anotherFile emitRoom()
   // * @anotherFile async logItWrapper()
-  //
-  // @internal-ish clearInterval()
   module.skipSession = async ( inRoom, aUser, repeat = false ) => {
     const curr = sassy[ inRoom ];
     let { session } = curr;
@@ -272,7 +307,7 @@ const Timer = function (
     sameHashieArr = [
       inRoom, 
       aUser, 
-      'session skipped', 
+      'session skipped' 
     ];
     sameStr = `skipped to ${ session } mode`;
     if ( repeat ) { 
@@ -304,14 +339,16 @@ const Timer = function (
   // @internal-ish clearInterval()
   wrappingUp = async ( inRoom, aUser, msg, activity ) => {
     const curr = sassy[ inRoom ];
-    if ( !curr.secondsLeft ) {
+    const { secondsLeft } = curr;
+    
+    if ( !secondsLeft ) {
       emitRoom( `${ msg } already done`, { room: inRoom } );
       return false;
-    };
-    const { repeat, session } = curr;
+    };    
+    const { repeat, session, intervals } = curr;
     clearUpdateTimer( inRoom );
-    clearInterval( curr.ongoingInterval );
-    clearInterval( curr.goneByInterval );
+    clearInterval( intervals.onGoing );
+    clearInterval( intervals.goneBy );
 
     emitRoom( msg, { room: inRoom } );
     wrappingUpRepeating( 
@@ -331,10 +368,28 @@ const Timer = function (
         username: null, 
         email: null 
       };
+
+      curr.flags = {
+        started: null, 
+        ended: null, 
+        triaged: false 
+      }, 
+
+      curr.pause = { 
+        flag: false, 
+        started: null, 
+        goneBy: 0, 
+        list: [] 
+      }
+
+      curr.duration = 0, 
+      curr.secondsLeft = 0, 
+      curr.goneBy = 0 
+    } else {
+      // Resettting values
+      curr.secondsLeft = 0;
+      curr.pause.flag = false;
     };
-    // Resettting values
-    curr.secondsLeft = 0;
-    curr.pause.flag = false;
   };
 
   return module;

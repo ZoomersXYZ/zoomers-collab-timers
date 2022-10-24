@@ -11,7 +11,7 @@ const InitNsp = function() {
       flags: {
         started: null, 
         ended: null, 
-        triaged: null 
+        triaged: false 
       }, 
 
       pause: { 
@@ -20,11 +20,14 @@ const InitNsp = function() {
         goneBy: 0, 
         list: []  
       }, 
-      // list: [ [ { started, ended, duration } ], [ { started, ended, duration } ] ] 
+      // list: [ [ 
+      //   { started, ended, duration } ], 
+      //   [ { started, ended, duration } 
+      // ] ] 
 
       duration: 0, 
       secondsLeft: 0, 
-      secondsGoneBy: 0 
+      goneBy: 0 
     };
   };
 
@@ -36,19 +39,21 @@ const InitNsp = function() {
 
       session: 'work', 
 
-      updateTimerInterval: null, 
-      ongoingInterval: null, 
-      goneByInterval: null, 
+      intervals: {        
+        updateTimer: null, 
+        onGoing: null, 
+        goneBy: null 
+      }, 
 
-      roomie: roomie, 
+      roomie, 
       group: nspName, // DD
 
       repeat: { 
         on: false, 
-        length: 0,  
+        length: 0, 
         endTime: 0, 
         work: 0, 
-        brake: 0  
+        brake: 0 
       }
     };
   };
@@ -74,7 +79,8 @@ const InitNsp = function() {
   module.core = function() { 
     return { 
       ...module.gCore(), 
-      groups: [] 
+      groups: [], 
+      initialized: false 
     };
   };
 

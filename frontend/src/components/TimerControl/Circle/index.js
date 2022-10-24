@@ -5,7 +5,7 @@ import G from './../../Svg/GSvg';
 import './styles.scss';
 
 const Circle = ( props ) => {
-  const { className, width, height, children, theRef, onDoubleClick } = props;
+  const { className, inlineSize, blockSize, children, theRef, onDoubleClick } = props;
 
   const [ refCurr, setRefCurr ] = useState( null );
   useEffect( () => {
@@ -13,9 +13,9 @@ const Circle = ( props ) => {
   }, [ theRef ] );
 
   // Calculations for circles
-  const r = Math.ceil( width / 2.15 );
-  const cx = width / 2;
-  const cy = height / 2;
+  const r = Math.ceil( inlineSize / 2.15 );
+  const cx = inlineSize / 2;
+  const cy = blockSize / 2;
   const strokeWidth = 11;
 
   // Misc
@@ -24,44 +24,47 @@ const Circle = ( props ) => {
   return ( 
     <svg 
       className={ `${ className }__svg` } 
-      width={ width } 
-      height={ height } 
+      width={ inlineSize } 
+      height={ blockSize } 
       xmlns="http://www.w3.org/2000/svg" 
       onDoubleClick={ onDoubleClick || ( refCurr && refCurr.submitForm ) } 
     >
       <circle 
-        cx={ cx } 
-        cy={ cy } 
-        r={ r } 
+        { ...{            
+          cx,           
+          cy, 
+          r, 
+          strokeWidth 
+        } } 
+
         stroke="#bec9ff" 
-        strokeWidth={ strokeWidth } 
         fill={ circleFill } 
         className={ `${ className }__circle` } 
       ></circle>
       <G 
-        width={ width / 10 } 
-        height={ Math.round( height / 4.5 ) } 
+        inlineSize={ inlineSize / 10 } 
+        blockSize={ Math.round( blockSize / 4.5 ) } 
         classname={ `g__text__${ className }` } 
       >
         <foreignObject 
           x="0" 
           y="0" 
-          width={ Math.round( width / 1.25 ) } 
-          height={ Math.round( height / 1.875 ) } 
+          width={ Math.round( inlineSize / 1.25 ) } 
+          height={ Math.round( blockSize / 1.875 ) } 
           className={ `${ className }__fo` } 
         >
-          <div xmlns="http://www.w3.org/1999/xhtml" className={ `${ className }__fo-child` }>
+          <div xmlns="http://www.w3.org/1999/xhtml" className={ `${ className }__fo-child nice-input` }>
             { children }
           </div>
         </foreignObject>
       </G>
     </svg>
-  );
+  )
 };
 
 Circle.propTypes = {
-  width: PropTypes.number, 
-  height: PropTypes.number, 
+  inlineSize: PropTypes.number, 
+  blockSize: PropTypes.number, 
   // theRef: PropTypes.object, 
 
   className: PropTypes.oneOfType( [
@@ -71,8 +74,8 @@ Circle.propTypes = {
 };
 
 Circle.defaultProps = {  
-  width: 150, 
-  height: 150, 
+  inlineSize: 150, 
+  blockSize: 150, 
   className: 'control' 
 };
 

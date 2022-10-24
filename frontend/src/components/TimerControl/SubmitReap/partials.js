@@ -6,8 +6,8 @@ import Circle from './../Circle';
 const ReapInput = ( props ) => {
   const {
     autoFocus, 
-    width, 
-    height, 
+    inlineSize, 
+    blockSize, 
     scheme, 
     otherScheme, 
     parentClassName, 
@@ -19,11 +19,18 @@ const ReapInput = ( props ) => {
     <div className={ `width-5 ${ parentClassName }__div ${ scheme ? scheme : otherScheme }` }>
       <Circle 
         className={ parentClassName } 
-        width={ width } 
-        height={ height } 
+        { ...{            
+          inlineSize,           
+          blockSize 
+        } } 
         onDoubleClick={ null } 
       >
-        <input { ...field } className={ className } autoFocus={ actualFocus } />
+        <div className="nice-input">
+        <input { ...field } 
+          className={ `${ className } nice-input-in-circle` } 
+          autoFocus={ actualFocus } 
+        />
+        </div>
       </Circle>
     </div>
   );
@@ -38,9 +45,9 @@ const HoursButton = ( props ) => {
         className={ buttonClass } 
         disabled 
       >
-        <div className="button-content nice-input-in-circles">
-          <div className="button-content-left repeatLength">          
-            <input { ...field } className={ className } />
+        <div className="button-content">
+          <div className="button-content-left repeatLength nice-input">
+            <input { ...field } className={ `${ className } nice-input-in-long-box` } />
             <span>In Hours</span>
           </div>
 

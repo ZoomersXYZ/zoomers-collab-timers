@@ -6,7 +6,7 @@ import { isEmpty } from './../../ancillary/helpers/general';
 
 import './styles.scss';
 
-const Activity = ( { name, email, manager, group, timer, activity, desc, repeatAuto, formattedTime } ) => {
+const Activity = ( { name, email, manager, group, timer, activity, desc, repeatAuto, formatted } ) => {
   let extra = '';
 
   const repeatText = repeatAuto === true ? ' <i>(auto repeating)</i> ' : '';
@@ -57,7 +57,7 @@ const Activity = ( { name, email, manager, group, timer, activity, desc, repeatA
         }
          timer 
          {} <span className="seperator"> <b>|</b> </span>
-         {} <span className="lowercaseFns">{ formattedTime }</span>
+         {} <span className="lowercaseFns">{ formatted }</span>
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ Activity.propTypes = {
   group: PropTypes.string, 
   timer: PropTypes.string, 
   activity: PropTypes.string, 
-  formattedTime: PropTypes.string 
+  formatted: PropTypes.string 
 };
 
 export default Activity;

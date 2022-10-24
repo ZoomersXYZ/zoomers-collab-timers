@@ -68,26 +68,6 @@ button.as-link {
   }
 }
 
-div.control__fo-child, div.nice-input-in-circles {
-  input.timer-text-field {
-    text-align: center;
-    width: 100%;
-    background: none;
-    border: none;
-    outline: none;
-
-    // color: #ededf4;
-    color: #d3d3d3;
-    font-size: 3em;
-    font-weight: 600;
-    font-family: 'Poppins', sans-serif;
-
-    &:focus {
-      outline: none;
-    }
-  }
-}
-
 // Specific to Rooms
 p.room__not-available {
  margin-top: 0.25em; 
@@ -97,7 +77,7 @@ i.bigger-icon {
   font-size: 2.5em;
 }
 
-button.cap-it-up {  
+button.cap-it-up { 
   text-transform: capitalize;
   align-items: center;
 }

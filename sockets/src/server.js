@@ -44,9 +44,21 @@ instrument( io, {
   },
 } );
 
+// const regex = '[a-zA-Z0-9-_\.\']+';
+
 const group = require( './core/gNSP' );
-const nspGroup = io.of( /^\/group\/[a-zA-Z0-9-_\.]+$/ );
+// const groupRegexStr = `/^\/group\/${ regex }$/ )`;
+// const groupRegex = new RegExp( groupRegexStr );
+const groupRegex = /^\/group\/[a-zA-Z0-9-_\.']+$/;
+const nspGroup = io.of( groupRegex );
 nspGroup.on( 'connect', group );
+
+// const room = require( './room/gNSP' );
+// // const roomRegexStr = `/^\/group\/${ regex }\/room\/${ regex }$/ )`;
+// // const roomRegex = new RegExp( roomRegexStr );
+// const roomRegex = /^\/group\/[a-zA-Z0-9-_\.']+\/room\/[a-zA-Z0-9-_\.']+$/;
+// const nspRoom = io.of( roomRegex );
+// nspRoom.on( 'connect', room );
 
 // Express
 server.listen( port, () => {

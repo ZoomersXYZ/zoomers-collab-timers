@@ -7,7 +7,6 @@ import Circle from './../Circle';
 import './../styles.scss';
 import { isEmpty } from './../../../ancillary/helpers/general';
 
-// import { SocketContext, RoomContext, UserContext } from './../../Contexts';
 import { RoomContext } from './../../Contexts';
 
 const validationSchema = Yup.object().shape( {
@@ -16,39 +15,25 @@ const validationSchema = Yup.object().shape( {
 
 const SubmitTime = props => {
   const ogProps = props;
-  // const socket = useContext( SocketContext );
   const aRoom = useContext( RoomContext );
-  // const aUser = useContext( UserContext );
 
   return(
     <Formik
-      initialValues={ {
-        newTimer: 5, 
-      } } 
+      initialValues={ { newTimer: 5 } } 
       validationSchema={ validationSchema } 
       onSubmit={ ( 
         values, actions
       ) => {
-        const {
-          setPush, 
-          sessionScheme, 
-          emitAll 
-        } = ogProps;
+        const { session, push } = ogProps;
         actions.setStatus( true );
+        aRoom.emitAll( 'start timer', values.newTimer );
 
-        // socket.emit( 
-        //   'start timer', 
-        //   aRoom.name, aUser, values.newTimer 
-        //   // aRoom.name, values.newTimer 
-        // );
-        emitAll( 'start timer', values.newTimer );
-
-        setPush( prev => { 
+        push( prev => { 
           return {
             ...prev, 
             event: 'start', 
             onOff: prev.onOff + 1, 
-            title: `${ aRoom.name } ${ sessionScheme } timer for ${ values.newTimer } has begun`, 
+            title: `${ aRoom.name } ${ session.scheme } timer for ${ values.newTimer } has begun`, 
             body: 'Let\'s go!' 
           };
         } );
@@ -56,7 +41,7 @@ const SubmitTime = props => {
       children={ props => 
         <SwoleSubmitTime 
           { ...props } 
-          { ...ogProps } 
+          ogProps={ ogProps } 
         /> 
       } 
     />
@@ -65,24 +50,22 @@ const SubmitTime = props => {
 
 const SwoleSubmitTime = props => {
   const {
-    className, 
-    width, 
-    height, 
-    sessionScheme, 
-    children, 
-
-    setErr, 
     handleSuccess, 
+    session, 
+    setErr, 
+    className, 
+    inlineSize, 
+    blockSize, 
+    formRef, 
 
-    formRef 
-  } = props;
+    children 
+  } = props.ogProps;
   const {
     status, 
     errors, 
     isSubmitting, 
     touched 
   } = props;
-  const session = sessionScheme;
 
   useEffect( () => { 
     if ( status === true ) handleSuccess();
@@ -103,16 +86,18 @@ const SwoleSubmitTime = props => {
   return(
   <Form>
     <div className="timers-container">
-      <div className={ `${ className }__div ${ session ? session : 'def' }` }>
+      <div className={ `${ className }__div ${ session.scheme ? session.scheme : 'def' }` }>
         <Circle 
-          className={ className } 
-          width={ width } 
-          height={ height } 
+          { ...{ 
+            className, 
+            inlineSize, 
+            blockSize 
+          } } 
         >
           <>
           <Field autoFocus component="input" name="newTimer" className="timer-text-field" innerRef={ formRef } />
           
-          <button className="casual-button" type="submit" disabled={ isSubmitting }>
+          <button className="casual-button" type="submit" disabled={ isSubmitting } hidden={ true }>
             Submit
           </button>
           </>

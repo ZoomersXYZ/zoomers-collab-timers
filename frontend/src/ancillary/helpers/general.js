@@ -1,3 +1,6 @@
+const delay = ( time ) => 
+  new Promise( resolve => setTimeout( resolve, time ) );
+
 const capitalize = ( str ) => str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 
 const replaceSymbolWithSpaces = ( str, symbol ) => {
@@ -82,6 +85,7 @@ const groupBy = ( iterable, filter ) => {
 }
 
 export { 
+  delay, 
   capitalize, 
   replaceSymbolWithSpaces, 
   isEmpty, 

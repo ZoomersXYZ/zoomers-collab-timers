@@ -2,313 +2,56 @@ import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
-import Svg from './../TimerSvgs';
 import TimerControl from './../../TimerControl';
 import ActivityLog from './../../ActivityLog';
 import './styles.scss';
-
 import BrowserNotification from './../../BrowserNotification/Common';
 
-import { 
-  // GroupContext, 
-  SocketContext, 
-  RoomContext, 
-  UserContext 
-} from './../../Contexts';
+import useRoomHooks from './hooks.js';
+import useMoveInToMyRoom from './moveInToMyRoom.js';
+import Core from './core.js';
 
-let stoplightInterval = null;
-let hourglassInterval = null;
+import { RoomContext } from './../../Contexts';
 
 const Room = ( { 
-  // isNew, 
   userEnabled, 
-  width, 
-  height, 
-  CircleClass 
+  inlineSize, 
+  blockSize 
 } ) => { 
-  // const { gName } = useContext( GroupContext );
-  const socket = useContext( SocketContext );
   const aRoom = useContext( RoomContext );
-  const aUser = useContext( UserContext );
   const aptRoom = aRoom.name;
 
-  // const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, ...restoros );
-  const emitAll = ( msg, ...restoros ) => socket.emit( msg, aptRoom, aUser, ...restoros );
-  const filterOutRoom = ( room ) => {
-    if ( aptRoom !== room ) { return true; };
-  };
-
+  const {
+      curry, reap, session, push, events 
+  } = useRoomHooks();
 
   // States
   const [ showTimer, setShowTimer ] = useState( false );
-  // Push notifications
-  const [ push, setPush ] = useState( { 
-    event: false, 
-    onOff: 0, 
-    title: 'Timer Notification', 
-    body: 'You\'re notified' 
-  } );
-
-  const [ curr, setCurr ] = useState( { 
-    current: 0, 
-    currentFormatted: '00:00', 
-    duration: 0, 
-    flags: {
-      started: false, 
-      ended: false, 
-      triaged: false, 
-    }, 
-    paused: false, 
-    pause: { 
-      flag: false, 
-      started: null, 
-      goneBy: 0, 
-      list: [] 
-    },  
-    ongoingTime: 0  
-  } );  
-  const [ session, setSession ] = useState( { 
-    term: 'work', 
-    icon: 'briefcase', 
-    opp: 'brake', 
-    oppIcon: 'coffee', 
-    scheme: '', 
-    oppScheme: 'brake' 
-  } );
-  const [ reap, setReap ] = useState( { 
-    on: false, 
-    length: 0, 
-    endTime: 0, 
-    work: 32, 
-    brake: 8 
-  } );
-
-  const [ stoplight, setStoplight ] = useState( 'stop' );
-  const [ hourglass, setHourglass ] = useState( 'start' );
-
-  const TIMER_UPDATED = 'timer updated';
-  const TIMER_PAUSED = 'timer paused';
-  const TIMER_RESUMED = 'timer resumed';
-  const TIMER_STOPPED = 'timer stopped';
-  const TIMER_FINISHED = 'timer finished';
-  const TIMER_CREATED = 'timer created';
-
-  const REAP_ON = 'repeating timers on';
-  const REAP_DONE = 'repeating timers done';
-  const REAP_STOPPED = 'repeating timers stopped';
-
-  const ROOM_ENTERED = 'room entered';
-  const LEAVE_DOWN = 'leave down';
-  const STOP_TIMER = 'stop timer';  
-  const STOP_REAP = 'stop repeating timers';
-
-  const moveInToMyRoom = ( setCurr ) => {
-    const updateTimer = e => {
-      const { paused, room } = e;
-      if ( filterOutRoom( room ) ) { return; };
-
-      if ( paused ) {
-        setPauseTerm( 'unpause' );
-      } else {
-        setPauseTerm( 'pause' );
-      }
-      setCurr( setupCurr( e ) );
-    };
-
-    const timerPaused = ( room ) => { 
-      if ( filterOutRoom( room ) ) { return; };
-      // console.log( 'timerPause happening', aptRoom );
-      setPauseTerm( 'unpause' );
-    };
-
-    const timerResumed = ( room ) => {
-      if ( filterOutRoom( room ) ) { return; };
-      // console.log( 'timerResumed happening', aptRoom );
-      setPauseTerm( 'pause' );
-    };    
-
-    const __endTimer = ( room ) => {
-      if ( filterOutRoom( room ) ) { return false; };
-      setShowTimer( false );
-      // console.log( 'showtimer off' );
-
-      setCurr( setupCurr( { 
-        current: null, 
-        currentFormatted: null, 
-        duration: null,         
-      } ) );
-    };
-
-    const timerStopped = ( room ) => {
-      __endTimer( room );
-      
-      setPush( prev => {
-        return { 
-        ...prev, 
-        event: 'end', 
-        onOff: prev.onOff + 1, 
-        title: `${ room } timer stopped`,
-        body: 'Timer stopped. What up?' 
-        };
-      } );
-    };
-
-    const timerFinished = ( room ) => { 
-      if ( filterOutRoom( room ) ) { return; };
-      // Browser notification
-      setPush( prev => {
-        return { 
-        ...prev, 
-        event: 'end', 
-        onOff: prev.onOff + 1, 
-        title: `${ room } timer finished`,
-        body: 'Timer up. What\'s next?' 
-        };
-      } );
-
-      __endTimer( room );
-    };
-
-    const reapTimerOn = ( e ) => {
-      const { length, startTime, endTime, work, brake, room } = e;
-      if ( filterOutRoom( room ) ) { return; };
-      const DateObjEndTime = new Date( endTime );
-      const DateObjStartTime = new Date( startTime );
-      setReap( { 
-        on: true, 
-        length, 
-        startTime, 
-        endTime, 
-        work, 
-        brake, 
-        DateObjStartTime, 
-        DateObjEndTime
-      } );
-    };
-
-    const __endReap = ( room ) => {
-      if ( filterOutRoom( room ) ) { return false; };
-      setReap( { 
-        on: false, 
-        length: 0, 
-        startTime: 0, 
-        endTime: 0, 
-        work: 0, 
-        brake: 0 
-      } );
-      __endTimer( room );
-    };
-
-    const reapTimerDone = ( room ) => {
-      __endReap( room );
-
-      setPush( prev => {
-        return { 
-        ...prev, 
-        event: 'repeating end', 
-        onOff: prev.onOff + 1, 
-        title: `${ room } repeating timer finished`,
-        body: 'So. What\'s next?' 
-        };
-      } );
-    };
-
-    // dupe
-    const reapTimerStopped = ( room ) => {
-      __endReap( room );
-
-      setPush( prev => {
-        return { 
-        ...prev, 
-        event: 'repeating end', 
-        onOff: prev.onOff + 1, 
-        title: `${ room } repeating timer force stopped`,
-        body: 'Hm. What up?' 
-        };
-      } );
-    };
-
-    if ( aRoom.hasOwnProperty( 'new' ) && aRoom.new ) {
-      emitAll( TIMER_CREATED );
-    };
-
-    socket.on( TIMER_UPDATED, updateTimer );
-    socket.on( TIMER_PAUSED, timerPaused );
-    socket.on( TIMER_RESUMED, timerResumed );
-    socket.on( TIMER_STOPPED, timerStopped );
-    socket.on( TIMER_FINISHED, timerFinished );
-
-    socket.on( REAP_ON, reapTimerOn );
-    socket.on( REAP_DONE, reapTimerDone );
-    socket.on( REAP_STOPPED, reapTimerStopped );
-  };
-
-  const setupCurr = ( e ) => {
-    let { current, currentFormatted, duration, flags, ...rest } = e;
-    current = ( !current || isNaN( current ) ) ? 0 : current;
-    duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
-    currentFormatted = !currentFormatted ? '00:00' || '0:00:00' || '00:00:00' : currentFormatted;
-    return { current, currentFormatted, duration, flags, ...rest };
-  };
 
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
-  useEffect( () => { 
-    emitAll( ROOM_ENTERED );
 
-    moveInToMyRoom( setCurr );
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, reap, push, events );
+  useEffect( () => { 
+    aRoom.emitAll( events.ROOM_ENTERED );
+
     return () => {
-      emitAll( LEAVE_DOWN );
+      aRoom.emitAll( events.LEAVE_DOWN );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
   useEffect( () => { 
-    if ( showTimer && !curr.current ) {
+    if ( showTimer && !curry.state.current ) {
       setShowTimer( false );
-    } else if ( !showTimer && curr.current ) {
+    } else if ( !showTimer && curry.state.current ) {
       setShowTimer( true );
     };
-  }, [ curr, showTimer ] );
+  }, [ curry.state, showTimer ] );
 
-  const handlePauseResumeTimer = ( e, pauseTerm ) => {
-    emitAll( pauseTerm );
-    setPush( prev => { 
-      return { 
-        ...prev, 
-        event: 'other', 
-        title: 'Paused timer', 
-        onOff: prev.onOff + 1 
-      }; 
-    } );
-  };
-
-  const handleStopTimer = ( e ) => {
-    emitAll( STOP_TIMER );
-  };
-
-  const handleStopReap = ( e ) => {
-    emitAll( STOP_REAP );
-  };
-
-  const handleStoplightHover = () => {
-    stoplightInterval = setInterval( () => {
-      setStoplight( prevState => prevState === 'stop' ? 'go' : 'stop' );
-    }, 750 );
-  };
-  const handleStoplightOut = () => {
-    clearInterval( stoplightInterval );
-    setStoplight( 'stop' );
-  };
-
-  const handleHourglassHover = () => {
-    hourglassInterval = setInterval( () => {
-      setHourglass( prevState => prevState === 'start' ? 'end' : 'start' );
-    }, 750 );
-  };
-  const handleHourglassOut = () => {
-    clearInterval( hourglassInterval );
-    setHourglass( 'start' );
-  };
+  useEffect( () => { 
+    console.log( 'curry.session running', curry.state.session );
+    session.set( curry.state.session );
+  }, [ curry.state.session ] );
 
   const [ efficiency, setEfficiency ] = useState( 0 );
 
@@ -320,142 +63,61 @@ const Room = ( {
 
       <BrowserNotification 
         type="notifications" 
-        core={ push } 
-        // label={ aptRoom } @KBJ
-        // group={ group } @KBJ
-        // timer={ aptRoom } @KBJ
-        // run={ push.onOff } 
-        // event={ push.event } 
-        // title={ push.title } 
-        // body={ push.body } 
+        core={ push.state } 
       />
 
       <ActivityLog 
         userEnabled={ userEnabled } 
-        // group={ group } @KBJ
-        // timer={ aptRoom } @KBJ - done
       />
 
       <CSSTransition 
         in={ showTimer } 
         timeout={ 2500 } 
         classNames="coretimer" 
-        // appear={ true } 
-        // mountOnEnter 
         unmountOnExit 
       >
         <>
-        { reap.on && 
+        { reap.state.on && 
           <div className="repeat-timer-headers">
             <h4>
-              Repeat, Pomo timers started at { reap.DateObjStartTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+              Repeat, Pomo timers started at { reap.state.DateObjStartTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
             </h4>
             <h4>
-              Repeat, Pomo timers end at { reap.DateObjEndTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
+              Repeat, Pomo timers end at { reap.state.DateObjEndTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
             </h4>
           </div>
         }
-        { reap.on === false && curr.flags.started !== false && 
+        { reap.state.on === false && curry.state.flags.started !== false && 
           <div>
-            { efficiency }
+            Efficiency: { efficiency }
           </div>
         }
 
-        <div className={ `svg-parent ${ session.scheme }` }>
-          <Svg 
-            className={ CircleClass } 
-            timer={ curr.currentFormatted } 
-            secondsLeft={ curr.current } 
-            duration={ curr.duration } 
-            ongoingTime={ curr.ongoingTime } 
-            { ...{ 
-              width, 
-              height 
-            } } 
-          />
+        <Core 
+          sessionScheme={ session.state.scheme } 
+          { ...{ 
+            pauseTerm, 
+            inlineSize, 
+            blockSize, 
 
-          <div className="pause-button-parent">
-
-            <button 
-              id="pause-timer"
-              className="casual-button link-underline-fade cap-it-up" 
-              onClick={ ( e ) => 
-                handlePauseResumeTimer( e, pauseTerm ) 
-              } 
-              onMouseEnter={ handleHourglassHover } 
-              onMouseLeave={ handleHourglassOut } 
-            >
-              <div className="button-content">
-                <div className="button-content-left">
-                  <p className="no-gap">{ pauseTerm }</p>
-                  <p className="no-gap">timer</p>
-                </div>
-                <div className="button-content-right">
-                  <i className={ `bigger-icon icon-pad-left far fa-hourglass-${ pauseTerm === 'pause' ? hourglass : 'half' }` }></i>
-                </div>
-              </div>
-            </button>
-
-            <button 
-              id="stop-timer"
-              className="casual-button link-underline-fade" 
-              onClick={ handleStopTimer } 
-              onMouseEnter={ handleStoplightHover } 
-              onMouseLeave={ handleStoplightOut } 
-            >
-              {}
-              <div className="button-content">
-                <div className="button-content-left">
-                  <p className="no-gap">Stop</p>
-                  <p className="no-gap">Current</p>
-                  <p className="no-gap">Timer</p>
-                </div>
-                <div className="button-content-right">
-                  <i className={ `bigger-icon icon-pad-left far fa-traffic-light-${ stoplight }` }></i>
-                </div>
-              </div>
-            </button>
-
-            { reap.on && 
-              <button 
-                id="stop-reap" 
-                className="casual-button link-underline-fade" 
-                onClick={ handleStopReap } 
-                onMouseEnter={ handleStoplightHover } 
-                onMouseLeave={ handleStoplightOut } 
-              >
-                {} 
-                <div className="button-content">
-                  <div className="button-content-left">
-                    <p className="no-gap">Fully Stop</p>
-                    <p className="no-gap">All</p>
-                    <p className="no-gap">Repeating</p>
-                  </div>
-                  <div className="button-content-right">
-                    <i className={ `bigger-icon icon-pad-left far fa-traffic-light-${ stoplight }` }></i>
-                  </div>
-                </div>
-              </button>
-            }
-          </div> {/* .pause-button-parent */}
-        </div>
+            curry, 
+            push, 
+            reap, 
+            events 
+          } } 
+        />
         </>
         {/*  */}
       </CSSTransition>
 
       <TimerControl 
-        time={ curr.current } 
-        duration={ curr.duration } 
-        width={ width / 2 } 
-        height={ height / 2 } 
+        inlineSize={ inlineSize / 2 } 
+        blockSize={ blockSize / 2 } 
+        sessionObj={ session } 
         { ...{ 
-          emitAll, 
-          session, 
-          setSession, 
-          setPush, 
           setShowTimer, 
-          reap 
-        } }
+          push 
+        } } 
       />
 
     </div>
@@ -463,24 +125,15 @@ const Room = ( {
 };
 
 Room.propTypes = {
-  isNew: PropTypes.bool, 
   userEnabled: PropTypes.bool, 
-
-  width: PropTypes.number, 
-  height: PropTypes.number, 
-  CircleClass: PropTypes.oneOfType( [
-    PropTypes.string, 
-    PropTypes.number 
-  ] ) 
+  inlineSize: PropTypes.number, 
+  blockSize: PropTypes.number 
 };
 
-Room.defaultProps = { 
-  isNew: false, 
+Room.defaultProps = {  
   userEnabled: false, 
-
-  width: 300, 
-  height: 300, 
-  CircleClass: 'roompop' 
+  inlineSize: 300, 
+  blockSize: 300, 
 };
 
 export default Room;

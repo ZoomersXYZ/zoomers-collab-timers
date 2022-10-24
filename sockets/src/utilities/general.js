@@ -1,3 +1,6 @@
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
+const escapeRegExp = ( string ) => string.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+
 const capitalize = ( str ) => str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 
 const replaceSymbolWithSpaces = ( str, symbol ) => {
@@ -84,6 +87,7 @@ const groupBy = ( iterable, filter ) => {
 }
 
 module.exports = { 
+  escapeRegExp, 
   capitalize, 
   replaceSymbolWithSpaces, 
   isEmpty, 

@@ -17,19 +17,17 @@ const SubActivityLog = ( { theLog, collapse, toSlice, keyInfo } ) => {
   const [ thisLog, setThisLog ] = useState( [] );
   useEffect( () => { 
     if ( !isEmpty( theLog ) && isArray( theLog ) && theLog.length > 0 ) {
-      // console.log( 'theLog', theLog );
       if ( collapse ) {
         setThisLog( theLog.slice( 0, toSlice ) )
       } else {
         setThisLog( theLog.slice( toSlice ) )
       };
       // collapse ? setThisLog( theLog.slice( 0, toSlice ) ) : setThisLog( theLog.slice( toSlice ) );
-      // console.log( thisLog[ 0 ].activity );
     };
   }, [ theLog, collapse, toSlice ] );
   return( 
     <>
-    { thisLog.map( ( { username, email, manager, group, timer, activity, desc, meta, repeatAuto, formattedTime }, index ) => 
+    { thisLog.map( ( { username, email, manager, group, timer, activity, desc, meta, repeatAuto, formatted }, index ) => 
       <Activity
         key={ `${ keyInfo }-${ index }` } 
         name={ username } 
@@ -43,7 +41,7 @@ const SubActivityLog = ( { theLog, collapse, toSlice, keyInfo } ) => {
           desc, 
           meta, 
           repeatAuto, 
-          formattedTime 
+          formatted 
         } } 
       />
     ) }
@@ -99,7 +97,7 @@ const ActivityLog = ( { userEnabled } ) => {
         const current = new Date();
         doc.forEach( solo => { 
           const data = solo.data();
-          data.formattedTime = formatRelative( data.timestamp, current );
+          data.formatted = formatRelative( data.timestamp, current );
           arr.push( data );
         } );
         arr.reverse();

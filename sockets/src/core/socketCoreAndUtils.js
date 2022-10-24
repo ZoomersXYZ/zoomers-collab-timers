@@ -1,6 +1,8 @@
 const l = require( './../config/winston' );
 const { isEmpty } = require( './../utilities/general' );
 
+const InitNsp = require( './InitNsp' )();
+
 ////
 // Room/Timers utility/initial code
 ////
@@ -9,19 +11,16 @@ const { isEmpty } = require( './../utilities/general' );
 // @param initSassy -> initNsp.sassy
 // @param socket: .id, .join
 const SocketCoreAndUtils = function ( 
-  sockId, 
-  
   socket, 
   sassy, 
+  thisTimer, 
   seshie, 
   core, 
   gCore, 
   nspName, 
 
   emitRoom, 
-  initSassy, 
   logItWrapper, 
-  timeFormatted, 
   commonUserFunc, 
   simpMe 
 ) {
@@ -30,64 +29,77 @@ const SocketCoreAndUtils = function (
   // Run at start
   // @param obj
   // @globals emitRoom()
-  // @anotherFile timeFormatted()
-  function onRoomConnect( preciousHashie ) {
-    const { duration, roomie, secondsLeft, session, started, pause, secondsGoneBy } = preciousHashie;
-    emitRoom( 'session skipped', { room: roomie, session } );
+  async function onRoomConnect( preciousHashie ) {
+    // l.bbc.debug( `${ socket.id }: beg /inner/ onRoomConnect. emit`);
+    // await delay( 2500 );
+    const { duration, roomie, secondsLeft, session, started, pause, goneBy } = preciousHashie;
+    // initialSession( roomie, session, pause.flag );
 
+    emitRoom( 'session initial setty' );
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
     const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-    if ( pause.started && !pause.flag && currentBool && durationBool ) {
+    // if ( pause.started && !pause.flag && currentBool && durationBool ) {
       const hashish = { 
         current: secondsLeft, 
-        currentFormatted: timeFormatted( secondsLeft ), 
 
-        totalDuration: duration, 
+        duration, 
         started, 
 
         paused: !pause.flag, 
         pause, 
 
-        ongoingTime: secondsGoneBy 
+        goneBy, 
+        session 
       };
       const event = 'timer updated';
       emitRoom( event, { room: roomie, ...hashish } );
-      l.bbc.debug( `${ sockId }: fin /inner/ onRoomConnect. emit`, event );
-    };
+      l.bbc.debug( `${ socket.id }: fin /inner/ onRoomConnect. emit`, event );
+    // };
   };
+
+  // * @param inRoom: String
+  //
+  // * @anotherFile emitRoom()
+//   function initialSession( room, session, pauseFlag ) {
+//     if ( pauseFlag ) return;
+//     emitRoom( 'session initial set', { room, session } );
+//   };
  
   // @param String
   // @globals sassy
   // @globals sockJoin (socket.join)
   // @globals nspName
   // @anotherFile initNsp
-  module.roomEntered = function( initialRoom ) {
+  module.roomEntered = async function( initialRoom ) {
+    const roomProp = sassy.hasOwnProperty( initialRoom );
     if ( 
-      ( !sassy.hasOwnProperty( initialRoom ) )
-      || 
-      ( sassy.hasOwnProperty( initialRoom ) && isEmpty( sassy[ initialRoom ] ) ) 
+      !roomProp || ( roomProp && isEmpty( sassy[ initialRoom ] ) ) 
     ) {
-      sassy[ initialRoom ] = initSassy( initialRoom, nspName );
+      sassy[ initialRoom ] = InitNsp.sassy( initialRoom, nspName );
+      thisTimer = sassy[ initialRoom ];
+      l.karm.debug( 'init', sassy[ initialRoom ] );
     };
-    const curr = sassy[ initialRoom ];
-    const { roomie } = curr;
+    simpMe.sRoom = `${ nspName }-${ initialRoom }`;
+    socket.join( simpMe.sRoom );
+    simpMe.room = initialRoom;
 
-    onRoomConnect( curr );
-    socket.join( roomie );
-    l.bbc.debug( `${ sockId }: fin roomEntered. socket join`, roomie );
+    // await onRoomConnect( sassy[ initialRoom ]);
+    l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
-  modifyUsers = function( parentObj, sockId ) {
+  modifyUsers = function( parentObj, socket ) {
     --parentObj.numUsers;
     parentObj.users.splice( 
-      parentObj.users.findIndex( arrival => arrival.id === sockId ), 1 
+      parentObj.users.findIndex( arrival => arrival.id === socket.id ), 1 
     );
     parentObj.userCount = parentObj.users.length;
     return parentObj;
   };
 
-  disconnectAnnoyance = function( reason ) {    
+  disconnectAnnoyance = function( reason, loggy = null ) {
+    loggy = loggy === null ? l : loggy;
+    
     const TRANSPORT_CLOSE = 'transport close';
     const TRANSPORT_ERROR = 'transport error';
 
@@ -107,29 +119,32 @@ const SocketCoreAndUtils = function (
   // @globals simpMe
   // @globals core
   // @globals gCore
-  // @globals sockId (socket.id)
+  // @globals socket.id (socket.id)
   // @globals nspName
   // @anotherFile commonUserFunc
-  module.disconnect = async function( reason ) {    
+  module.disconnect = async function( reason ) {
+    // l.karm.debug( 'disconnect core', core );
+    l.karm.debug( 'init', simpMe.initialized );
+    if ( simpMe.initialized == false ) return;
     if ( !disconnectAnnoyance( reason ) ) return;
 
     if ( simpMe.addedUser ) {
-      l.karm.debug( `${ sockId }: disconnect() if`, 'simpMe.addedUser' );
+      l.karm.debug( `${ socket.id }: disconnect() if`, 'simpMe.addedUser' );
 
       // DD - chance user is still 'online' but roomEntered() didnt happen [again]?
       // DD - if so, the user wouldn't have disconnected. Doesn't seem like it
 
-      // modifyUsers( core, sockId );
+      // modifyUsers( core, socket );
       --core.numUsers;
       core.users.splice( 
-        core.users.findIndex( arrival => arrival.id === sockId ), 1 
+        core.users.findIndex( arrival => arrival.id === socket.id ), 1 
       );
       core.userCount = core.users.length;
 
-      // modifyUsers( gCore, socketId );
+      // modifyUsers( gCore, socket );
       --gCore.numUsers
       gCore.users.splice( 
-        gCore.users.findIndex( arrival => arrival.id === sockId ), 1 
+        gCore.users.findIndex( arrival => arrival.id === socket.id ), 1 
       );
       gCore.userCount = gCore.users.length;
 
@@ -145,7 +160,7 @@ const SocketCoreAndUtils = function (
       // Reset
       simpMe.addedUser = false;
       simpMe.userModuleCount = 0;
-      l.bbc.debug( `${ sockId }: fin disconnect. emit`, event );
+      l.bbc.debug( `${ socket.id }: fin disconnect. emit`, event );
 
       await disconnecting();
     };
@@ -157,8 +172,8 @@ const SocketCoreAndUtils = function (
     const event = 'left room';
     const aUser = { nick: seshie.username, email: seshie.email };
     await logItWrapper( null, aUser, event );
-    // @TODO why isn't seshie, et al being wiped? Will the seshie/sockId disappear after this?
-    l.bbc.debug( `${ sockId }: fin disconnecting. logItWrapper()`, event );
+    // @TODO why isn't seshie, et al being wiped? Will the seshie/socket.id disappear after this?
+    l.bbc.debug( `${ socket.id }: fin disconnecting. logItWrapper()`, event );
   };
 
   return module;

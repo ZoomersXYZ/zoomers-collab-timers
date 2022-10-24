@@ -113,6 +113,11 @@ const RepeatingTimers = function (
     await logItWrapper( inRoom, aUser, event, `repeating timer force stopped` );
   };
 
+  function delay( milliseconds = 1000 ) { 
+    return new Promise( resolve => {
+      setTimeout( resolve, milliseconds );
+    } );
+  };
   // @param inRoom: String
   // @param repeat: Object
   // @param session: String ('work' or 'brake')
@@ -120,19 +125,22 @@ const RepeatingTimers = function (
   // @param startTimer: func()
   // @internal module.repeatingDone()
   module.wrappingUpRepeating = async ( inRoom, aUser, repeat, session, skipSession, startTimer ) => {
-    if ( repeat.on == true ) {
-      if ( repeat.endTime < new Date().getTime() ) {
-        l.karm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
-        
-        await module.repeatingDone( inRoom, aUser );
-      } else {
-        l.karm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
+    if ( repeat.on != true ) {
+      return;
+    };
 
-        const newSesh = session === 'work' ? 'brake' : 'work';
-        skipSession( inRoom, aUser, repeat.on );
-        const newSeshInMin = repeat[ newSesh ];
-        startTimer( inRoom, aUser, newSeshInMin );
-      };
+    if ( repeat.endTime < new Date().getTime() ) {
+      l.karm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
+      await module.repeatingDone( inRoom, aUser );
+    } else {
+      // what's the point of this again?
+      await delay( 1000 );
+      l.karm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
+
+      const newSesh = session === 'work' ? 'brake' : 'work';
+      skipSession( inRoom, aUser, repeat.on );
+      const newSeshInMin = repeat[ newSesh ];
+      startTimer( inRoom, aUser, newSeshInMin, repeat.on );
     };
   };
 

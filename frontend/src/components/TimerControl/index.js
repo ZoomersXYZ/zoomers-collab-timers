@@ -10,30 +10,27 @@ import EndingDiv from './Partials/EndingDiv';
 import { SocketContext, RoomContext } from './../Contexts';
 import './styles.scss';
 
-const TimerControl = ( { 
-  emitAll, 
+// import useRoomHooks from './../Room/Room/hooks';
 
-  session, 
-  setSession, 
+const TimerControl = ( { 
+  sessionObj, 
 
   time, 
   duration, 
 
   className, 
-  width, 
-  height, 
-  
-  setPush, 
+  inlineSize, 
+  blockSize, 
 
   setShowTimer, 
-  // reap
+  push 
 } ) => {
+
   const socket = useContext( SocketContext );
   const __room = useContext( RoomContext );
-  const aptRoom = __room.name; 
   
   const filterOutRoom = ( room ) => {
-    if ( aptRoom !== room ) { return true; };
+    if ( __room.name !== room ) return true;
   };
 
   const [ showControl, setShowControl ] = useState( false );
@@ -59,37 +56,19 @@ const TimerControl = ( {
 
   useEffect( () => {
     const timerStarted = ( room ) => {
+      console.log( 'timerStarted', room );
       if ( filterOutRoom( room ) ) { return; };
       // setShowControl( false );
       setShowTimer( true );
     };
 
     const skipSession = ( { room, session } ) => {
-      if ( filterOutRoom( room ) ) { return; };
-      
-      setSession( session === 'work' ? 
-        { 
-          term: 'work', 
-          icon: 'briefcase', 
-          opp: 'brake', 
-          oppIcon: 'coffee', 
-          scheme: '', 
-          oppScheme: 'brake' 
-        } 
-        : 
-        { 
-          term: 'brake', 
-          icon: 'coffee', 
-          opp: 'work', 
-          oppIcon: 'briefcase', 
-          scheme: 'brake', 
-          oppScheme: '' 
-        } 
-      )
+      if ( filterOutRoom( room ) ) return;
+      sessionObj.set( session );
     };
 
     const metaUpdated = ( e ) => {
-      setSession( e.session );
+      sessionObj.set( e.session );
     };
     
     socket.on( TIMER_STARTED, timerStarted );
@@ -100,7 +79,7 @@ const TimerControl = ( {
 
   const handleSessionTimer = ( e ) => {
     e.preventDefault();
-    emitAll( SKIP_SESSION );
+    __room.emitAll( SKIP_SESSION );
     if ( formRef && formRef.current ) {
       formRef.current.focus();
     };
@@ -127,23 +106,20 @@ const TimerControl = ( {
         <div className={ `${ className }__parent` }>
           <Submit 
             handleSuccess={ onShowingNorm } 
-            sessionScheme={ session.scheme } 
-            { ...{ 
-              emitAll, 
-              aptRoom, 
-              socket, 
+            session={ sessionObj.state } 
+            { ...{  
               setErr, 
-              setPush, 
               className, 
-              width, 
-              height, 
-              formRef 
+              inlineSize, 
+              blockSize, 
+              formRef, 
+              push 
             } }
           >
             <EndingDiv 
               showWhich={ true } 
-              { ...{ 
-                session, 
+              session={ sessionObj.state } 
+              { ...{                  
                 time, 
                 duration, 
                 handleSessionTimer 
@@ -176,27 +152,20 @@ const TimerControl = ( {
         <div className={ `${ className }__parent repeating` }>
           <SubmitReap 
             handleSuccess={ onShowingReap } 
+            session={ sessionObj.state } 
             setErr={ setErrReap } 
             { ...{ 
-              emitAll, 
-              aptRoom, 
-              socket, 
-              setPush, 
-              session, 
               className, 
-              width, 
-              height, 
+              inlineSize, 
+              blockSize, 
               noTimerLogic, 
-
-              time, 
-              duration, 
-              handleSessionTimer 
+              push 
             } }
           >
             <EndingDiv 
               showWhich={ true } 
-              { ...{ 
-                session, 
+              session={ sessionObj.state } 
+              { ...{                 
                 time, 
                 duration, 
                 handleSessionTimer 
@@ -231,25 +200,23 @@ const TimerControl = ( {
 TimerControl.propTypes = {
   // socket: PropTypes.object.isRequired, 
   time: PropTypes.number, 
-  width: PropTypes.number, 
-  height: PropTypes.number, 
+  inlineSize: PropTypes.number, 
+  blockSize: PropTypes.number, 
 
   className: PropTypes.oneOfType( [
     PropTypes.string, 
     PropTypes.number 
   ] ), 
-  // aptRoom: PropTypes.string.isRequired, 
 
-  session: PropTypes.object.isRequired, // the hashie
-  setSession: PropTypes.func, 
+  sessionObj: PropTypes.object.isRequired, 
   duration: PropTypes.number, 
   setPush: PropTypes.func, 
   setShowTimer: PropTypes.func
 };
 
 TimerControl.defaultProps = {  
-  width: 150, 
-  height: 150, 
+  inlineSize: 150, 
+  blockSize: 150, 
   className: 'control' 
 };
 

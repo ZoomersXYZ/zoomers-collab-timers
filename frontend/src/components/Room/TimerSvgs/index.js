@@ -10,15 +10,15 @@ import { circumference } from './../../Svg/helpers';
 import './styles.scss';
 import './transition.scss';
 
-const TimerSvgs = ( props ) => {
+const TimerSvgs = ( props ) => {  
   // Props
-  const { className, width, height } = props;
-  const { timer, secondsLeft, duration, ongoingTime } = props;
+  const { className, inlineSize, blockSize } = props;
+  const { secondsLeft, duration, goneBy } = props;
 
   // Expanding circles on hover
   const [ freezeOngoing, setFreezeOngoing ] = useState( 0 );
   useEffect( () => { 
-    setFreezeOngoing( ongoingTime );
+    setFreezeOngoing( goneBy );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
@@ -47,8 +47,8 @@ const TimerSvgs = ( props ) => {
     setHeight( h );
   };
   useEffect( () => {
-    setDimensions( width, height );
-  }, [ width, height ] );
+    setDimensions( inlineSize, blockSize );
+  }, [ inlineSize, blockSize ] );
 
   // Calculations for circles
   const r = Math.ceil( sWidth * .4 );
@@ -82,7 +82,7 @@ const TimerSvgs = ( props ) => {
 
   const handleCircleExit = () => {
     if ( freezeOngoing <= 3 ) {
-      setFreezeOngoing( ongoingTime )
+      setFreezeOngoing( goneBy )
     };
     setExpand( false );
   };
@@ -106,11 +106,13 @@ const TimerSvgs = ( props ) => {
           height={ sHeight } 
         >
           <circle 
-            cx={ cx } 
-            cy={ cy } 
-            r={ r } 
+            { ...{            
+              cx,           
+              cy, 
+              r, 
+              strokeWidth 
+            } } 
             stroke="#bec9ff" 
-            strokeWidth={ strokeWidth } 
             fill={ circleFill } 
             className="circle__roompop" 
           >
@@ -129,8 +131,8 @@ const TimerSvgs = ( props ) => {
           height={ sHeight } 
         >
           <G 
-            width={ sWidth / 2 } 
-            height={ Math.round( sHeight / 2.75 ) } 
+            inlineSize={ sWidth / 2 } 
+            blockSize={ Math.round( sHeight / 2.725 ) } 
             classname={ `g__text__${ className }` } 
           >
             <Text 
@@ -140,7 +142,6 @@ const TimerSvgs = ( props ) => {
               className={ `text__${ className }`} 
             >
               <InnerText 
-                timer={ timer } 
                 secondsLeft={ secondsLeft } 
                 duration={ duration } 
               />
@@ -162,19 +163,18 @@ const TimerSvgs = ( props ) => {
           style={ overStyle } 
         >
           <TimerCircle 
-            className={ className } 
-            cx={ cx } 
-            cy={ cy } 
-            r={ r } 
-
-            secondsLeft={ secondsLeft } 
-            duration={ duration } 
-
+            { ...{            
+              className, 
+              cx, 
+              cy, 
+              r, 
+              secondsLeft, 
+              duration, 
+              strokeWidth, 
+              expandCircle 
+            } } 
             fill="none" 
             stroke="rgba( 255,255,255,.9 )" 
-            strokeWidth={ strokeWidth } 
-
-            expandCircle={ expandCircle } 
           />
         </svg>
       </CSSTransition>
@@ -199,10 +199,10 @@ const TimerSvgs = ( props ) => {
 TimerSvgs.propTypes = {
   name: PropTypes.string, 
 
-  width: PropTypes.number, 
-  height: PropTypes.number, 
+  inlineSize: PropTypes.number, 
+  blockSize: PropTypes.number, 
 
-  timer: PropTypes.string.isRequired, 
+  goneBy: PropTypes.number.isRequired, 
   secondsLeft: PropTypes.number.isRequired, 
   duration: PropTypes.number.isRequired, 
 
@@ -213,8 +213,8 @@ TimerSvgs.propTypes = {
 };
 
 TimerSvgs.defaultProps = {  
-  width: 100, 
-  height: 100, 
+  inlineSize: 100, 
+  blockSize: 100, 
 
   className: undefined 
 };
