@@ -12,6 +12,7 @@ import useMoveInToMyRoom from './moveInToMyRoom.js';
 import Core from './core.js';
 
 import { RoomContext } from './../../Contexts';
+import Notice from './notice';
 
 const Room = ( { 
   userEnabled, 
@@ -61,6 +62,11 @@ const Room = ( {
         { aptRoom }
       </h2>
 
+      <Notice 
+        msg=''
+      />
+
+
       <BrowserNotification 
         type="notifications" 
         core={ push.state } 
@@ -87,7 +93,7 @@ const Room = ( {
             </h4>
           </div>
         }
-        { reap.state.on === false && curry.state.flags.started !== false && 
+        { !reap.state.on && curry.state.flags.started && 
           <div>
             Efficiency: { efficiency }
           </div>

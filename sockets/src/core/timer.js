@@ -6,6 +6,7 @@ const Timer = function (
   sassy, 
   thisTimer, 
   emitRoom, 
+  emitUser, 
   logItWrapper, 
 
   wrappingUpRepeating
@@ -33,7 +34,7 @@ const Timer = function (
   // @param inRoom: String
   // @param timeInMin: Number
   // @globals v
-  // @anotherFile emitRoom()
+  // @anotherFile emitUser()
   // @anotherFile async logItWrapper()
   // @internal updateTimer()
   // @internal goneByTimer()
@@ -43,7 +44,7 @@ const Timer = function (
     // Why are two conditions here
     // if ( curr.flags.started && !curr.flags.triaged ) {
     if ( curr.flags.started ) {
-      emitRoom( 'timer already begun', { room: inRoom } );
+      emitUser( 'timer already begun', { user: aUser, room: inRoom } );
       return false;
     };
 

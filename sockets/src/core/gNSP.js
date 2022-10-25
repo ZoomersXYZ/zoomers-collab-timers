@@ -100,7 +100,7 @@ const group = socket => {
     nspace, 
     nspName, 
     getGroupLog, 
-
+    
     gCore, 
     seshie 
   );
@@ -114,6 +114,7 @@ const group = socket => {
     addUser, 
     listUsers 
   } = require( './user' )( 
+    socket, 
     sockId, 
 
     seshie, 
@@ -128,15 +129,17 @@ const group = socket => {
   );
 
   const { 
+    emitUser, 
     roomEntered, 
     disconnect 
-  } = require( './socketCoreAndUtils' )(
+  } = require( './socketCoreAndUtils' )( 
     socket, 
     sassy, 
     thisTimer, 
     seshie, 
     core, 
     gCore, 
+    nspace, 
     nspName, 
 
     emitRoom, 
@@ -173,6 +176,7 @@ const group = socket => {
     sassy, 
     thisTimer, 
     emitRoom, 
+    emitUser, 
     logItWrapper, 
     
     wrappingUpRepeating

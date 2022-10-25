@@ -91,6 +91,7 @@ const useRoomHooks = () => {
       TIMER_STOPPED: 'timer stopped', 
       TIMER_FINISHED: 'timer finished', 
       TIMER_CREATED: 'timer created', 
+      TIMER_ALREADY_BEGUN: 'timer already begun', 
 
       REAP_ON: 'repeating timers on', 
       REAP_DONE: 'repeating timers done', 

@@ -94,6 +94,13 @@ const useMoveInToMyRoom = (
       __endTimer( room );
     };
 
+    const timerAlreadyBegun = ( room ) => { 
+      if ( filterOutRoom( room ) ) { return; };
+      // Some overlay letting the person know
+      
+    };
+    
+
     const reapTimerOn = ( e ) => {
       const { length, startTime, endTime, work, brake, room } = e;
       if ( filterOutRoom( room ) ) { return; };
@@ -155,11 +162,13 @@ const useMoveInToMyRoom = (
       aRoom.emitAll( events.TIMER_CREATED );
     };
 
+    
     socket.on( events.TIMER_UPDATED, updateTimer );
     socket.on( events.TIMER_PAUSED, timerPaused );
     socket.on( events.TIMER_RESUMED, timerResumed );
     socket.on( events.TIMER_STOPPED, timerStopped );
     socket.on( events.TIMER_FINISHED, timerFinished );
+    socket.on( events.TIMER_ALREADY_BEGUN, timerAlreadyBegun );
 
     socket.on( events.REAP_ON, reapTimerOn );
     socket.on( events.REAP_DONE, reapTimerDone );

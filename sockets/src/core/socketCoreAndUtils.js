@@ -17,6 +17,7 @@ const SocketCoreAndUtils = function (
   seshie, 
   core, 
   gCore, 
+  nspace, 
   nspName, 
 
   emitRoom, 
@@ -25,6 +26,46 @@ const SocketCoreAndUtils = function (
   simpMe 
 ) {
   const module = {};
+
+  // a copy paste of emitRoom in SharedAndUtil. Swapped for user
+  
+  // @param String
+  // @param Object
+  // @globals nspace
+  // @global_import isEmpty
+  module.emitUser = function( msg, data = null ) {
+    // l.bbc.debug( msg, data );
+    let user = null;
+    let room = null;
+    // both room and data
+    if ( !isEmpty( data ) && typeof data === 'object' ) {
+      if ( data.hasOwnProperty( 'user' ) ) {
+        user = data.user;
+        delete data.user;
+      };
+      if ( data.hasOwnProperty( 'room' ) ) {
+        room = data.room;
+        delete data.room;
+      };
+    };
+
+    // Fine if room is null too
+    if ( !isEmpty( data ) && typeof data === 'object' ) {
+      // nspaceEmit( msg, { room, ...data } );
+      l.bbc.debug( `u 22 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+    //   l.bbc.debug( '22 ending', { room, ...data } );
+      socket.to( `${ simpMe.sUser }` ).emit( msg, { room, ...data } );
+    // just room, no data
+    } else if( isEmpty( data ) && !isEmpty( room ) ) {
+        l.bbc.debug( `u 33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+      // nspaceEmit( msg, room );
+      socket.to( `${ simpMe.sUser }` ).emit( msg, room );
+    // no room or data. plain.
+    } else if ( isEmpty( room ) ) {
+      l.bbc.debug( `u 44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+      nspace.emit( msg );
+    };
+  };
   
   // Run at start
   // @param obj

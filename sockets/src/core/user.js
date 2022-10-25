@@ -1,6 +1,7 @@
 const l = require( './../config/winston' );
 
 const User = function ( 
+  socket, 
   sockId, 
   
   seshie, 
@@ -70,6 +71,10 @@ const User = function (
         clearInterval( confirmId );
       };
     }, 1000 );
+
+    simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
+    socket.join( simpMe.sUser );
+
     const event = 'joined room';
     const aUser = { nick: handle, email: emailAcct };
     await logItWrapper( null, aUser, event );

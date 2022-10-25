@@ -22,7 +22,8 @@ const SharedAndUtil = function (
     reason: false, 
     confirmIdCount: 0, 
     initialized: false, 
-    sRoom: '' 
+    sRoom: '', 
+    sUser: '' 
   };
 
   ////
