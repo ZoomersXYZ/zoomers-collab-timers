@@ -1,8 +1,7 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState, useId } from "react";
 import PropTypes from "prop-types";
 
 import Push from "push.js";
-import { nanoid } from "nanoid";
 import { Collapse } from 'react-collapse';
 
 import Toggle from './../toggled';
@@ -122,10 +121,10 @@ const BrowserNotification = ( props ) => {
     icon, 
 
     timeout, 
-    requireInteraction, 
-    tag 
+    requireInteraction 
   } = props;
 
+  const tagId = useId();
   const [ prevRun, setPrevRun ] = useState( 0 );
   const audioRef = useRef();
   const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );  
@@ -173,7 +172,7 @@ const BrowserNotification = ( props ) => {
       {
         body, 
         icon, 
-        tag, 
+        tagId, 
         timeout, 
         requireInteraction 
       } 
@@ -181,8 +180,8 @@ const BrowserNotification = ( props ) => {
   };
 
   // eslint-disable-next-line no-unused-vars
-  const close = ( tag ) => {
-    Push.close( tag );
+  const close = ( tagId ) => {
+    Push.close( tagId );
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -276,7 +275,6 @@ BrowserNotification.propTypes = {
   ] ), 
   icon: PropTypes.string, 
   timeout: PropTypes.number, 
-  tag: PropTypes.string, 
   requireInteraction: PropTypes.string, 
   // vol: PropTypes.number 
 };
@@ -293,7 +291,6 @@ BrowserNotification.defaultProps = {
   event: false, 
 
   icon: null, 
-  tag: nanoid(), 
   timeout: null, 
   requireInteraction: null, 
   // vol: 1 
