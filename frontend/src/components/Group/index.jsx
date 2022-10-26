@@ -15,7 +15,6 @@ import Add from './../Room/Add';
 import Delete from './../Room/Delete';
 
 import './styles.scss';
-import l from './../../config/winston';
 import { delay, isEmpty } from './../../ancillary/helpers/general';
 
 // Specific for this file
@@ -34,7 +33,7 @@ const RoomsGroup = () => {
     ioUrl = 'https://ktimers.zoomers.xyz';
     // Group 1c
   } else if ( import.meta.env.DEV ) {
-    socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080
+    const socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080;
     ioUrl = window.location.hostname + ':' + socketPort;
   };
 
@@ -99,12 +98,11 @@ const RoomsGroup = () => {
 
       const onError = err => {
         console.error( ERROR, err );
-        l.gen.error( ERROR, err );
       };
 
       // #docs Group 1a
       const onDisconnect = reason => {
-        l.gen.error( 'l reason', reason );
+        console.error( 'l reason', reason );
         if ( reason === 'io server disconnect' ) {
           // the disconnection was initiated by the server, reconnect attempt here
           socket.connect();

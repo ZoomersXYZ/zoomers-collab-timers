@@ -1,11 +1,10 @@
 import React from 'react';
-import './index.scss';
 import { createRoot } from 'react-dom/client';
 import AppRouter from './AppRouter';
-import * as serviceWorker from './serviceWorker';
+import './index.scss';
+// import * as serviceWorker from './serviceWorker';
 
-const container = document.getElementById( 'root' );
-// const container = document.getElementById( 'app' );
+const container = document.getElementById( 'root' ); // 'app'
 const root = createRoot( container ); // container! if TS
 root.render( <AppRouter /> );
 
@@ -15,7 +14,7 @@ root.render( <AppRouter /> );
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// serviceWorker.unregister();
 // if ( import.meta.env.VITE_NOTIF === 'register' || import.meta.env.PROD ) {
   // serviceWorker.register( './custom-sw-import.js' );
 // } else {

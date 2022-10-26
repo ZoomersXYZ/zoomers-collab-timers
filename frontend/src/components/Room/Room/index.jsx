@@ -7,9 +7,9 @@ import ActivityLog from './../../ActivityLog';
 import './styles.scss';
 import BrowserNotification from './../../BrowserNotification/Common';
 
-import useRoomHooks from './hooks.js';
-import useMoveInToMyRoom from './moveInToMyRoom.js';
-import Core from './core.js';
+import useRoomHooks from './hooks';
+import useMoveInToMyRoom from './moveInToMyRoom';
+import Core from './core';
 
 import { RoomContext } from './../../Contexts';
 import Notice from './notice';

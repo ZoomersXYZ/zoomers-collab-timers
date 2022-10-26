@@ -6,7 +6,6 @@ import { doc, deleteDoc } from "firebase/firestore";
 import db from './../../../config/firebase';
 import { isUndefined, isObject } from './../../../ancillary/helpers/general';
 import './../styles.scss';
-import l from './../../../config/winston';
 
 import { GroupContext } from './../../Contexts';
 
@@ -15,9 +14,9 @@ const deleteFromFirestore = async ( docName, data ) => {
 
   try {
     await deleteDoc( docRef );
-    l.gen.info( 'Room successfully deleted: ', data );
+    console.info( 'Room successfully deleted: ', data );
   } catch ( err ) {
-    l.gen.error( 'Error removing document: ', err );
+    console.error( 'Error removing document: ', err );
   };
 };
 
@@ -35,11 +34,11 @@ const DeleteRoom = props => {
         values, { setSubmitting, setStatus, setErrors } 
         ) => {
         const { setRooms, thisRoom, setDelete } = ogProps;
-        l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being looked at' );
+        console.info( 'Delete handleSubmit() -- y the fudge is this being looked at' );
         const result = await deleteFromFirestore( gName, thisRoom );
 
         if ( result !== false ) {
-          l.bbc.info( 'Delete handleSubmit() -- y the fudge is this being setDelete result being true' );
+          console.info( 'Delete handleSubmit() -- y the fudge is this being setDelete result being true' );
           setTimeout( () => {
             setDelete( thisRoom );
           }, 1500 );
