@@ -16,7 +16,7 @@ root.render( <AppRouter /> );
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-// if ( process.env.REACT_APP_NOTIF === 'register' || process.env.NODE_ENV === 'production' ) {
+// if ( import.meta.env.VITE_NOTIF === 'register' || import.meta.env.PROD ) {
   // serviceWorker.register( './custom-sw-import.js' );
 // } else {
   // serviceWorker.unregister( './custom-sw-import.js' );

@@ -30,11 +30,12 @@ const RoomsGroup = () => {
 
   if ( hostName.includes( 'ci' ) ) {
     ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
-  } else if ( process.env.NODE_ENV === 'production' ) { 
+  } else if ( import.meta.env.PROD ) { 
     ioUrl = 'https://ktimers.zoomers.xyz';
     // Group 1c
-  } else if ( process.env.NODE_ENV === 'development' ) {
-    ioUrl = window.location.hostname + ':' + process.env.REACT_APP_SOCKET_PORT;
+  } else if ( import.meta.env.DEV ) {
+    socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080
+    ioUrl = window.location.hostname + ':' + socketPort;
   };
 
   const socket = io( ioUrl + urlPath );
