@@ -161,7 +161,6 @@ const useMoveInToMyRoom = (
     if ( aRoom.hasOwnProperty( 'new' ) && aRoom.new ) {
       aRoom.emitAll( events.TIMER_CREATED );
     };
-
     
     socket.on( events.TIMER_UPDATED, updateTimer );
     socket.on( events.TIMER_PAUSED, timerPaused );

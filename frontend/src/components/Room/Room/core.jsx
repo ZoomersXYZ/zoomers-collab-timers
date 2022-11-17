@@ -16,17 +16,37 @@ const RoomCore = ( props ) => {
     blockSize, 
     sessionScheme, 
 
-    circleClass
+    circleClass,
+
+    setView 
   } = props;
   const { curry, reap, push, events } = props;
   const aRoom = useContext( RoomContext );
+
+  const delay = 1500;
 
   // States
 
   const [ stoplight, setStoplight ] = useState( 'stop' );
   const [ hourglass, setHourglass ] = useState( 'start' );
+  
+  const [ submittingPauseResumeTimer, setSubmittingPauseResumeTimer ] = useState( false );
+  const [ submittingStopTimer, setSubmittingStopTimer ] = useState( false );
+  const [ submittingStopReap, setSubmittingStopReap ] = useState( false );
+
+  const delayView = ( notCallback = null ) => {
+    // notCallback( true )
+    // setTimeout( notCallback( false ), delay );
+    setView( true )
+    setTimeout( setView( false ), delay );
+  };
 
   const handlePauseResumeTimer = ( e, pauseTerm ) => {
+    setSubmittingPauseResumeTimer( true )
+    setTimeout( setSubmittingPauseResumeTimer( false ), delay );
+    // delayView( setSubmittingPauseResumeTimer );
+    delayView();
+
     aRoom.emitAll( pauseTerm );
     push.set( prev => { 
       return { 
@@ -39,10 +59,18 @@ const RoomCore = ( props ) => {
   };
 
   const handleStopTimer = ( e ) => {
+    setSubmittingStopTimer( true )
+    setTimeout( setSubmittingStopTimer( false ), delay );
+    delayView();
+
     aRoom.emitAll( events.STOP_TIMER );
   };
 
   const handleStopReap = ( e ) => {
+    setSubmittingStopReap( true )
+    setTimeout( setSubmittingStopReap( false ), delay );
+    delayView();
+
     aRoom.emitAll( events.STOP_REAP );
   };
 
@@ -66,8 +94,8 @@ const RoomCore = ( props ) => {
     setHourglass( 'start' );
   };
 
-  return (
-    <div className={ `svg-parent ${ sessionScheme }` }>
+  return (    
+    <div className={ `svg-parent ${ sessionScheme }` }>      
       <Svg 
         className={ circleClass } 
         secondsLeft={ curry.state.current } 
@@ -80,7 +108,6 @@ const RoomCore = ( props ) => {
       />
 
       <div className="pause-button-parent">
-
         <button 
           id="pause-timer"
           className="casual-button link-underline-fade cap-it-up" 
@@ -89,6 +116,7 @@ const RoomCore = ( props ) => {
           } 
           onMouseEnter={ handleHourglassHover } 
           onMouseLeave={ handleHourglassOut } 
+          disabled={ submittingPauseResumeTimer } 
         >
           <div className="button-content">
             <div className="button-content-left">
@@ -107,6 +135,7 @@ const RoomCore = ( props ) => {
           onClick={ handleStopTimer } 
           onMouseEnter={ handleStoplightHover } 
           onMouseLeave={ handleStoplightOut } 
+          disabled={ submittingStopTimer } 
         >
           {}
           <div className="button-content">
@@ -128,6 +157,7 @@ const RoomCore = ( props ) => {
             onClick={ handleStopReap } 
             onMouseEnter={ handleStoplightHover } 
             onMouseLeave={ handleStoplightOut } 
+            disabled={ submittingStopReap } 
           >
             {} 
             <div className="button-content">

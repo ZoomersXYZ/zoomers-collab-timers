@@ -12,6 +12,7 @@ import useMoveInToMyRoom from './moveInToMyRoom';
 import Core from './core';
 
 import { RoomContext } from './../../Contexts';
+import RoomOverlay from './roomOverlay';
 import Notice from './notice';
 
 const Room = ( { 
@@ -28,8 +29,8 @@ const Room = ( {
 
   // States
   const [ showTimer, setShowTimer ] = useState( false );
-
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
+  const [ view, setView ] = useState( false );
 
   useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, reap, push, events );
   useEffect( () => { 
@@ -99,6 +100,8 @@ const Room = ( {
           </div>
         }
 
+        <RoomOverlay { ...{ view } } />
+
         <Core 
           sessionScheme={ session.state.scheme } 
           { ...{ 
@@ -109,7 +112,9 @@ const Room = ( {
             curry, 
             push, 
             reap, 
-            events 
+            events, 
+
+            setView
           } } 
         />
         </>
