@@ -260,6 +260,7 @@ const Timer = function (
       curr.secondsLeft = secondsLeft;
 
       if ( 
+        // if not paused, has duration greater than 0, and has secondsLeft greater than 0
         !pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
       ) {
         const hashish = updatingTimer( 
@@ -274,10 +275,13 @@ const Timer = function (
           session 
         );
       } else if ( 
+        // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
         noTimeLeftBool( secondsLeft ) && ( commonTimerVarsExistBool( !pause.flag, duration ) ) 
       ) {
         finishedTimer( inRoom, aUser );
+        // what else is left? would this spot ever be touched?
       } else {
+        l.karm.debug( 'WHOA got to the else in updateTimer. clearInterval( curr.intervals.updateTimer )' );
         clearInterval( curr.intervals.updateTimer );
       };
     }, 1000 );

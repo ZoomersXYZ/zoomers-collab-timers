@@ -30,11 +30,17 @@ const RoomsGroup = () => {
   if ( hostName.includes( 'ci' ) ) {
     ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
   } else if ( import.meta.env.PROD ) { 
-    ioUrl = 'https://ktimers.zoomers.xyz';
+    ioUrl = 'https://ztimers.zoomers.xyz';
     // Group 1c
   } else if ( import.meta.env.DEV ) {
     const socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080;
-    ioUrl = window.location.hostname + ':' + socketPort;
+    if ( hostName.includes( '.loca.lt' ) ) {
+      // local tunneling with localtunnel -- broken. connection refused
+      ioUrl = 'ztimer' + '.loca.lt' + ':' + socketPort;
+    } else {
+      // normal local dev
+      ioUrl = window.location.hostname + ':' + socketPort;
+    };
   };
 
   const socket = io( ioUrl + urlPath );

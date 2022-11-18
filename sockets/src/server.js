@@ -25,7 +25,8 @@ const originArr = [
   'http://localhost:3000', 
   'http://localhost:8000', 
   'http://weshouldjustbefriends.local:3000', 
-  'http://wsjbf.dir:3000' 
+  'http://wsjbf.dir:3000', 
+  'http://ztimers.loca.lt'
  ];
 
 const io = require( 'socket.io' )( server, {

@@ -31,14 +31,15 @@ const useMoveInToMyRoom = (
     };
 
     const updateTimer = e => {
-      const { pause, room } = e;
+      // const { pause, room } = e;
+      const { room } = e;
       if ( filterOutRoom( room ) ) { return; };
       // @TODO 2022-11-18 16:27 | this is deprecated and should be removed
-      if ( pause.flag ) {
-        setPauseTerm( 'unpause' );
-      } else {
-        setPauseTerm( 'pause' );
-      };
+      // if ( pause.flag ) {
+      //   setPauseTerm( 'unpause' );
+      // } else {
+      //   setPauseTerm( 'pause' );
+      // };
       curry.set( setupCurr( e ) );
     };
 
