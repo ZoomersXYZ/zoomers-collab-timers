@@ -33,12 +33,12 @@ const useMoveInToMyRoom = (
     const updateTimer = e => {
       const { pause, room } = e;
       if ( filterOutRoom( room ) ) { return; };
-      // why have this if pause and resume does the job
-      // if ( pause.flag ) {
-      //   setPauseTerm( 'unpause' );
-      // } else {
-      //   setPauseTerm( 'pause' );
-      // };
+      // @TODO 2022-11-18 16:27 | this is deprecated and should be removed
+      if ( pause.flag ) {
+        setPauseTerm( 'unpause' );
+      } else {
+        setPauseTerm( 'pause' );
+      };
       curry.set( setupCurr( e ) );
     };
 
@@ -61,6 +61,8 @@ const useMoveInToMyRoom = (
         formatted: null, 
         duration: null 
       } ) );
+      // reset pause
+      setPauseTerm( 'pause' );
     };
 
     const timerStopped = ( room ) => {

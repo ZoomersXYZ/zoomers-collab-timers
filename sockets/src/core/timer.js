@@ -84,9 +84,8 @@ const Timer = function (
   module.pauseTimer = async ( inRoom, aUser ) => {
     // const curr = 
     const curr = sassy[ inRoom ];
-    const { pause } = curr;
 
-    if ( pause.flag ) {
+    if ( curr.pause.flag ) {
       emitRoom( 'timer ALREADY paused' );
       return;
     };
@@ -294,7 +293,7 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     let { session, pause } = curr;
     
-    if ( !pause.flag ) {
+    if ( pause.flag ) {
       emitRoom( 'timer still running. Stop it first.', inRoom );
       return;
     };
