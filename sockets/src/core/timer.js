@@ -58,7 +58,7 @@ const Timer = function (
     // @TODO refact: can this be done:
     // curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
 
-    curr.pause.flag = true;
+    curr.pause.flag = false;
     curr.flags.started = new Date().getTime();
     curr.flags.done = false;
     // curr.flags.triaged = false;
@@ -82,15 +82,16 @@ const Timer = function (
   // @internal clearUpdateTimer()
   // @internal goneByTimer()
   module.pauseTimer = async ( inRoom, aUser ) => {
+    // const curr = 
     const curr = sassy[ inRoom ];
     const { pause } = curr;
 
-    if ( !pause.flag ) {
+    if ( pause.flag ) {
       emitRoom( 'timer ALREADY paused' );
       return;
     };
     
-    curr.pause.flag = false;
+    curr.pause.flag = true;
     curr.pause.started = new Date().getTime();
 
     clearUpdateTimer( inRoom );
@@ -110,7 +111,7 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     const { pause } = curr;
     
-    if ( pause.flag ) {
+    if ( !pause.flag ) {
       emitRoom( 'timer ALREADY resumed', { room: inRoom } );
       return;
     };
@@ -121,7 +122,7 @@ const Timer = function (
       ended: ended, 
       duration: ended - curr.pause.started 
     } );
-    curr.pause.flag = true;
+    curr.pause.flag = false;
     curr.pause.started = null;
 
     updateTimer( inRoom, aUser );
@@ -141,12 +142,11 @@ const Timer = function (
     }, 1000 );
   };
 
-  updatingTimer = ( inRoom, current, duration, started, paused, pause, flags, goneBy, repeat, session ) => {
+  updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
     const hashish = { 
       current, 
       duration, 
       started, 
-      paused, 
       pause, 
       flags, 
       goneBy, 
@@ -184,14 +184,13 @@ const Timer = function (
 
     intervals.onGoing = setInterval( () => {      
       if ( 
-        !pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
+        pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
       ) {
         const hashish = updatingTimer( 
           inRoom, 
           secondsLeft, 
           duration, 
           started, 
-          !pause.flag, 
           pause, 
           flags, 
           goneBy, 
@@ -262,14 +261,13 @@ const Timer = function (
       curr.secondsLeft = secondsLeft;
 
       if ( 
-        pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
+        !pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
       ) {
         const hashish = updatingTimer( 
           inRoom, 
           secondsLeft, 
           duration, 
           started, 
-          !pause.flag, 
           pause, 
           flags, 
           goneBy, 
@@ -277,7 +275,7 @@ const Timer = function (
           session 
         );
       } else if ( 
-        noTimeLeftBool( secondsLeft ) && ( commonTimerVarsExistBool( pause.flag, duration ) ) 
+        noTimeLeftBool( secondsLeft ) && ( commonTimerVarsExistBool( !pause.flag, duration ) ) 
       ) {
         finishedTimer( inRoom, aUser );
       } else {
@@ -294,9 +292,9 @@ const Timer = function (
   // * @anotherFile async logItWrapper()
   module.skipSession = async ( inRoom, aUser, repeat = false ) => {
     const curr = sassy[ inRoom ];
-    let { session } = curr;
+    let { session, pause } = curr;
     
-    if ( curr.pause.flag ) {
+    if ( !pause.flag ) {
       emitRoom( 'timer still running. Stop it first.', inRoom );
       return;
     };
@@ -387,7 +385,7 @@ const Timer = function (
       curr.secondsLeft = 0, 
       curr.goneBy = 0 
     } else {
-      // Resettting values
+      // Resettting values if repeat is on
       curr.flags = {
         started: null, 
         ended: null, 

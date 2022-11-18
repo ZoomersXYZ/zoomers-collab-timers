@@ -86,8 +86,7 @@ const SocketCoreAndUtils = function (
 
         duration, 
         started, 
-
-        paused: !pause.flag, 
+        
         pause, 
 
         goneBy, 

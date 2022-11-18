@@ -31,17 +31,15 @@ const useMoveInToMyRoom = (
     };
 
     const updateTimer = e => {
-      const { paused, room } = e;
+      const { pause, room } = e;
       if ( filterOutRoom( room ) ) { return; };
-
-      if ( paused ) {
-        setPauseTerm( 'unpause' );
-      } else {
-        setPauseTerm( 'pause' );
-      };
-
+      // why have this if pause and resume does the job
+      // if ( pause.flag ) {
+      //   setPauseTerm( 'unpause' );
+      // } else {
+      //   setPauseTerm( 'pause' );
+      // };
       curry.set( setupCurr( e ) );
-
     };
 
     const timerPaused = ( room ) => { 
