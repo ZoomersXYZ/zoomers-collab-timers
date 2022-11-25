@@ -2,6 +2,11 @@
 
 ### h3. Running
 
+Need to add API keys to:
+/frontend/src/config/firebase.js
+/frontend/src/config/firebaseConfig.json
+/sockets/src/config/firebase.js
+
 For development:
 
 Frontend: Go to frontend. Run `yarn start`
