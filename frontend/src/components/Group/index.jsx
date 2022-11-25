@@ -28,7 +28,7 @@ const RoomsGroup = () => {
   let ioUrl = null;
 
   if ( hostName.includes( 'ci' ) ) {
-    ioUrl = 'https://ci.default.collab-timers-k.uc.r.appspot.com';
+    ioUrl = 'https://ci.default.collab-timers-z.uc.r.appspot.com';
   } else if ( import.meta.env.PROD ) { 
     ioUrl = 'https://ztimers.zoomers.xyz';
     // Group 1c

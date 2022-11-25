@@ -25,6 +25,32 @@ Mistakenly made this based on using Google Cloud/Firebase. I don't think there's
 
 Goal will be to move to Supabase and having more instructions in general.
 
+  Google Cloud:
+  Install Firebase CLI
+  npm install -g firebase-tools
+  Or can use Homebrew or other package managers
+
+  in /frontend/
+  `firebase login`
+  don't do `firebase init`
+  `yarn build`
+  `firebase deploy`
+
+  in /sockets/
+  Some initial commands:
+  `gcloud init`
+  `gcloud auth list`
+  `gcloud config list`
+  https://cloud.google.com/sdk/docs/install-sdk
+
+  `gcloud config set account ACCOUNT`
+  `gcloud config set project PROJECT_ID`
+  `gcloud app deploy`
+
+--
+
+Using Cloud Logging in Firebase too
+https://console.firebase.google.com/u/0/project/collab-timers-z/settings/integrations/cloudlogging
 
 ### h3. Testing
 
