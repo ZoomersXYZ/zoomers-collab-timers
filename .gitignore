@@ -66,6 +66,11 @@ node_modules/
 /frontend/public/bassets
 /frontend/public/sounds
 
+# Google Cloud API
+/frontend/src/config/firebase.js
+/frontend/src/config/firebaseConfig.json
+/sockets/src/config/firebase.js
+
 /*/secondary
 /tmp
 **/*moim*.js
