@@ -1,14 +1,14 @@
 {
   "dependencies": {
     "@google-cloud/logging-winston": "^4.2.3",
-    "@socket.io/admin-ui": "^0.2.0",
+    "@socket.io/admin-ui": "^0.5.1",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
-    "express": "^4.17.3",
+    "express": "^4.18.2",
     "firebase": "^7.6.1",
     "lodash.isequal": "^4.5.0",
-    "socket.io": "^4.5.0",
-    "winston": "^3.7.2"
+    "socket.io": "^4.5.4",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
