@@ -56,7 +56,6 @@ const TimerControl = ( {
 
   useEffect( () => {
     const timerStarted = ( room ) => {
-      console.log( 'timerStarted', room );
       if ( filterOutRoom( room ) ) { return; };
       // setShowControl( false );
       setShowTimer( true );

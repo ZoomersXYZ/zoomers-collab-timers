@@ -50,10 +50,11 @@ const Room = ( {
     };
   }, [ curry.state, showTimer ] );
 
-  useEffect( () => { 
-    console.log( 'curry.session running', curry.state.session );
-    session.set( curry.state.session );
-  }, [ curry.state.session ] );
+  // DELETE soon 2023-10-10 16:29 | 
+  // useEffect( () => { 
+  //   console.log( 'curry.session running', aptRoom, session.state.term );
+  //   // session.set( curry.state.term );
+  // }, [ session.state.term ] );
 
   const [ efficiency, setEfficiency ] = useState( 0 );
 

@@ -139,7 +139,7 @@ const useMoveInToMyRoom = (
           ...prev, 
           event: 'repeating end', 
           onOff: prev.onOff + 1, 
-          title: `${ room } repeating timer finished`,
+          title: `${ room } repeating timers finished`,
           body: 'So. What\'s next?' 
         };
       } );
@@ -153,7 +153,7 @@ const useMoveInToMyRoom = (
           ...prev, 
           event: 'repeating end', 
           onOff: prev.onOff + 1, 
-          title: `${ room } repeating timer force stopped`,
+          title: `${ room } repeating timers force stopped`,
           body: 'Hm. What up?' 
         };
       } );

@@ -100,7 +100,7 @@ const useRoomHooks = () => {
       ROOM_ENTERED: 'room entered',       
       LEAVE_DOWN: 'leave down', 
       STOP_TIMER: 'stop timer' , 
-      STOP_REAP: 'stop repeating timers' 
+      STOP_REAP: 'stop repeating timers'  
     }
   };
 };
