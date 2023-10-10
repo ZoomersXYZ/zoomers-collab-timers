@@ -18,7 +18,10 @@ const IntroDiv = ( {
           className="as-text-addon as-link color-serious smaller-middle-upper-text" 
           onClick={ handleShowing }
         >
-          <span className="button-content">
+          <span 
+            aria-busy={true}
+            className="button-content"
+          >
             { endingText } 
             <i className={ `icon-pad-left far ${ buttonIcon }` }></i>
           </span>

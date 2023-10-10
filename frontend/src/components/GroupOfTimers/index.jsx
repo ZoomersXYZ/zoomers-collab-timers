@@ -21,7 +21,11 @@ const GroupOfTimers = ( {
     return { 
       ...aRoom, 
       emitRoom: ( msg, ...restoros ) => socket.emit( msg, aRoom.name, ...restoros ), 
-      emitAll: ( msg, ...restoros ) => socket.emit( msg, aRoom.name, aUser, ...restoros ) 
+      emitAll: ( msg, ...restoros ) => socket.emit( msg, aRoom.name, aUser, ...restoros ),       
+      emitRoomEtc: (msg, restoros) => {        
+        restoros.room = aRoom.name;
+        socket.emit(msg, restoros);
+      }
     };
   };
   return( 

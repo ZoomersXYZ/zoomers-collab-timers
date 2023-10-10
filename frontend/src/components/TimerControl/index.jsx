@@ -38,8 +38,11 @@ const TimerControl = ( {
   const onShowing = () => setShowControl( prevState => !prevState );
   const formRef = useRef( null )
 
-  const onShowingNorm = ( timeOut = 500 ) => {
+  const onShowingNorm = (e) => {
     // setTimeout( () => {
+      if (e && !e.target.ariaBusy) {
+        __room.emitRoomEtc(ASK_SESSION, {session: sessionObj.state.term});
+      }
       onShowing();
       setNormOrReap( true );
     // }, timeOut );
@@ -53,6 +56,8 @@ const TimerControl = ( {
   const SESSION_SKIPPED = 'session skipped';
   const SKIP_SESSION = 'skip session';
   const META_UPDATED = 'meta_updated';
+
+  const ASK_SESSION = 'ask for session'
 
   useEffect( () => {
     const timerStarted = ( room ) => {

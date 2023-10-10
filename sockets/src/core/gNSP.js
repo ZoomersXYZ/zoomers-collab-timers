@@ -133,7 +133,8 @@ const group = socket => {
   const { 
     emitUser, 
     roomEntered, 
-    disconnect 
+    disconnect, 
+    askForSession 
   } = require( './socketCoreAndUtils' )( 
     socket, 
     sassy, 
@@ -250,6 +251,8 @@ const group = socket => {
     socket.on( 'finished repeating timers', repeatingDone );
     // repeatingTimer 4th
     socket.on( 'stop repeating timers', repeatingStop );
+
+    socket.on('ask for session', askForSession);
   };
 
   listeningSockets();

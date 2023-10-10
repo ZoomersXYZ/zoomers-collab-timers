@@ -127,6 +127,14 @@ const SocketCoreAndUtils = function (
     l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
+  module.askForSession = async function(incoming) {    
+    if (sassy[ incoming.room ].flags.started) {
+      emitUser('timer already begun', {user: aUser, room: inRoom});
+      return false;
+    };
+    sassy[ incoming.room ].session = incoming.session;
+  };
+
   modifyUsers = function( parentObj, socket ) {
     --parentObj.numUsers;
     parentObj.users.splice( 
