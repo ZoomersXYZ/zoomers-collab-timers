@@ -130,12 +130,12 @@ const RepeatingTimers = function (
     };
 
     if ( repeat.endTime < new Date().getTime() ) {
-      l.karm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
+      l.parm.debug( 'if === aka done', 'repeat.endTime < new Date().getTime()' );
       await module.repeatingDone( inRoom, aUser );
     } else {
       // what's the point of this again?
       await delay( 1000 );
-      l.karm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
+      l.parm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
 
       const newSesh = session === 'work' ? 'brake' : 'work';
       skipSession( inRoom, aUser, repeat.on );

@@ -27,7 +27,7 @@ Goal will be to move to Supabase and having more instructions in general.
 
   Google Cloud:
   Install Firebase CLI
-  npm install -g firebase-tools
+  npm install -g firebase-tools 
   Or can use Homebrew or other package managers
 
   in /frontend/

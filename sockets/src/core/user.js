@@ -32,9 +32,11 @@ const User = function (
   // @anotherFile groupEmit()
   // @anotherFile async logItWrapper()
   module.addUser = async ( handle, emailAcct ) => {
-    l.karm.debug( 'addUser()', 'beg' );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.parm.debug( 'addUser()', 'beg' );
     if ( simpMe.addedUser ) return;
-    l.karm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.parm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
     seshie.username = handle;
     seshie.email = emailAcct;
     const userHashie = { 
@@ -56,17 +58,18 @@ const User = function (
     const confirmId = setInterval( () => { 
       const event = 'confirm initial ping';
       groupEmit( event, sockId );
-      l.karm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
+      // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
+      // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
       simpMe.confirmIdCount++;
       
-      if ( simpMe.confirmIdPong ) {
-        l.karm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
+      if ( simpMe.confirmIdPong > 1 ) {
+        l.parm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
         module.listUsers();
         clearInterval( confirmId );
         
         simpMe.confirmIdCount = 0;
       } else if ( simpMe.confirmIdCount > 3 ) {
-        l.karm.debug( 'confirmIdPong did not work' );
+        l.parm.debug( 'confirmIdPong did not work' );
         module.listUsers();
         clearInterval( confirmId );
       };
@@ -78,7 +81,8 @@ const User = function (
     const event = 'joined room';
     const aUser = { nick: handle, email: emailAcct };
     await logItWrapper( null, aUser, event );
-    l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
   };
 
   // @anotherFile groupEmit()
@@ -86,10 +90,12 @@ const User = function (
     const event = 'list users';
     const hashie = commonUserFunc( event );
     groupEmit( event, hashie );
-    l.bbc.debug( `${ sockId }: fin listUsers() emit`, hashie.hasOwnProperty( 'count' ) && hashie.count );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.bbc.debug( `${ sockId }: fin listUsers() emit`, hashie.hasOwnProperty( 'count' ) && hashie.count );
   };
 
-  l.karm.debug( `${ sockId }: userModuleCount`, simpMe.userModuleCount );
+  // MASS COMMENTING OF LOGS 2023-10-09
+  // l.parm.debug( `${ sockId }: userModuleCount`, simpMe.userModuleCount );
   
   return module;
 };

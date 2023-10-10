@@ -45,17 +45,17 @@ const SharedAndUtil = function (
     // Fine if room is null too
     if ( !isEmpty( data ) && typeof data === 'object' ) {
       // nspaceEmit( msg, { room, ...data } );
-      l.bbc.debug( `22 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+      l.bbc.debug( `22 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
     //   l.bbc.debug( '22 ending', { room, ...data } );
       socket.to( `${ nspName }-${ room }` ).emit( msg, { room, ...data } );
     // just room, no data
     } else if( isEmpty( data ) && !isEmpty( room ) ) {
-        l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+        l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       // nspaceEmit( msg, room );
       socket.to( `${ nspName }-${ room }` ).emit( msg, room );
     // no room or data. plain.
     } else if ( isEmpty( room ) ) {
-      l.bbc.debug( `44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }, room: ${ room }` );
+      l.bbc.debug( `44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       nspace.emit( msg );
     };
   };
@@ -70,12 +70,14 @@ const SharedAndUtil = function (
     module.simpMe.confirmIdPong = true;
     try {
       const res = await getGroupLog();
-      l.bbc.info( 'pongId() getGroupLog success', res );
+      // MASS COMMENTING OF LOGS 2023-10-09
+      // l.bbc.info( 'pongId() getGroupLog success', res );
       // undefined
     } catch ( err ) {
       l.bbc.error( `${ socket.id }: pongId() getGroupLog fail`, err );
     };
-    l.karm.debug( `${ socket.id }: pongId()`, 'fin' );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.parm.debug( `${ socket.id }: pongId()`, 'fin' );
   };
 
   ////
@@ -95,7 +97,8 @@ const SharedAndUtil = function (
       count: users.length 
     } );
     module.groupEmit( event, hashie );
-    l.bbc.debug( `${ socket.id }: fin commonUserFunc(). emit`, event );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.bbc.debug( `${ socket.id }: fin commonUserFunc(). emit`, event );
     return hashie;
   };
 

@@ -4,7 +4,7 @@ const Timer = function (
   v, 
   
   sassy, 
-  thisTimer, 
+  // thisTimer, 
   emitRoom, 
   emitUser, 
   logItWrapper, 
@@ -40,7 +40,7 @@ const Timer = function (
   // @internal goneByTimer()
   module.startTimer = async ( inRoom, aUser, timeInMin, repeatFlag = false ) => {
     const curr = sassy[ inRoom ];
-    console.log( 'start timer', thisTimer == curr );
+    // console.log( 'start timer', thisTimer );
     // Why are two conditions here
     // if ( curr.flags.started && !curr.flags.triaged ) {
     if ( curr.flags.started ) {
@@ -244,7 +244,7 @@ const Timer = function (
   updateTimer = ( inRoom, aUser ) => {
     const curr = sassy[ inRoom ];
     const {
-      duration,       
+      duration, 
       started, 
       pause, 
       flags, 
@@ -281,7 +281,7 @@ const Timer = function (
         finishedTimer( inRoom, aUser );
         // what else is left? would this spot ever be touched?
       } else {
-        l.karm.debug( 'WHOA got to the else in updateTimer. clearInterval( curr.intervals.updateTimer )' );
+        l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( curr.intervals.updateTimer )' );
         clearInterval( curr.intervals.updateTimer );
       };
     }, 1000 );

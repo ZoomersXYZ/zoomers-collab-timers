@@ -17,7 +17,7 @@ let seshie = null;
 let sassy = null;
 let gCore = null;
 
-let thisTimer = null;
+// let thisTimer = null;
 
 l.struct.info( '-- -- Pre-SOCKET -- --' );
 const group = socket => {
@@ -34,7 +34,8 @@ const group = socket => {
       && !core.groups.find( han => han === nspName );
 
     if ( nspName && ( isEmpty( core ) || oneBool ) ) {
-      l.struct.info( 'firstRun', sockId );
+      // MASS COMMENTING OF LOGS 2023-10-09
+      // l.struct.info( 'firstRun', sockId );
 
       // Assigning
       socket.client.server.glue ||= {
@@ -61,7 +62,7 @@ const group = socket => {
       sassy ||= socket.client.server.glue.groups[ nspName ].timers;
       seshie ||= socket.client.server.glue.groups[ nspName ].sesh;
       gCore ||= socket.client.server.glue.groups[ nspName ].core;
-      thisTimer = null;
+      // thisTimer = null;
     };
   };
   firstRun();
@@ -69,7 +70,8 @@ const group = socket => {
   function onGroupEnter() {    
     simpMe.initialized = true;
     core.groups.push( nspName );
-    l.struct.info( 'onGroupEnter', sockId );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.struct.info( 'onGroupEnter', sockId );
   };
 
   ////
@@ -135,7 +137,7 @@ const group = socket => {
   } = require( './socketCoreAndUtils' )( 
     socket, 
     sassy, 
-    thisTimer, 
+    // thisTimer, 
     seshie, 
     core, 
     gCore, 
@@ -174,7 +176,7 @@ const group = socket => {
     v, 
     
     sassy, 
-    thisTimer, 
+    // thisTimer, 
     emitRoom, 
     emitUser, 
     logItWrapper, 

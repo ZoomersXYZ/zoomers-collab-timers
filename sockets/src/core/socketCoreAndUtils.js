@@ -13,7 +13,7 @@ const InitNsp = require( './InitNsp' )();
 const SocketCoreAndUtils = function ( 
   socket, 
   sassy, 
-  thisTimer, 
+  // thisTimer, 
   seshie, 
   core, 
   gCore, 
@@ -75,8 +75,7 @@ const SocketCoreAndUtils = function (
     // await delay( 2500 );
     const { duration, roomie, secondsLeft, session, started, pause, goneBy } = preciousHashie;
     // initialSession( roomie, session, pause.flag );
-
-    emitRoom( 'session initial setty' );
+    
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
     const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
@@ -117,8 +116,8 @@ const SocketCoreAndUtils = function (
       !roomProp || ( roomProp && isEmpty( sassy[ initialRoom ] ) ) 
     ) {
       sassy[ initialRoom ] = InitNsp.sassy( initialRoom, nspName );
-      thisTimer = sassy[ initialRoom ];
-      l.karm.debug( 'init', sassy[ initialRoom ] );
+      // thisTimer = sassy[ initialRoom ];
+      l.parm.debug( 'init', sassy[ initialRoom ] );
     };
     simpMe.sRoom = `${ nspName }-${ initialRoom }`;
     socket.join( simpMe.sRoom );
@@ -144,13 +143,13 @@ const SocketCoreAndUtils = function (
     const TRANSPORT_ERROR = 'transport error';
 
     if ( reason === TRANSPORT_ERROR ) {
-      l.karm.debug( 'disconnect():', reason );
+      l.parm.debug( 'disconnect():', reason );
       if ( simpMe.reason ) return false;
     } else if ( reason === TRANSPORT_CLOSE ) {
-      l.karm.debug( 'disconnect():', reason );
+      l.parm.debug( 'disconnect():', reason );
       simpMe.reason = true;
     } else if ( reason !== TRANSPORT_CLOSE && reason !== TRANSPORT_ERROR ) {
-      l.karm.debug( 'disconnect() reason', reason );
+      l.parm.debug( 'disconnect() reason', reason );
       simpMe.reason = false;
     };
     return true;
@@ -163,13 +162,14 @@ const SocketCoreAndUtils = function (
   // @globals nspName
   // @anotherFile commonUserFunc
   module.disconnect = async function( reason ) {
-    // l.karm.debug( 'disconnect core', core );
-    l.karm.debug( 'init', simpMe.initialized );
+    // l.parm.debug( 'disconnect core', core );
+    // MASS COMMENTING OF LOGS 2023-10-09
+    // l.parm.debug( 'init', simpMe.initialized );
     if ( simpMe.initialized == false ) return;
     if ( !disconnectAnnoyance( reason ) ) return;
 
     if ( simpMe.addedUser ) {
-      l.karm.debug( `${ socket.id }: disconnect() if`, 'simpMe.addedUser' );
+      l.parm.debug( `${ socket.id }: disconnect() if`, 'simpMe.addedUser' );
 
       // DD - chance user is still 'online' but roomEntered() didnt happen [again]?
       // DD - if so, the user wouldn't have disconnected. Doesn't seem like it

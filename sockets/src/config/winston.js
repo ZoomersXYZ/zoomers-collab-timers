@@ -43,7 +43,7 @@ const logger = () => ( {
   struct: getLogger( 'struct' ), 
   gen: getLogger( 'gen' ), 
   bbc: getLogger( 'bbc' ), 
-  karm: getLogger( 'karm' ), 
+  parm: getLogger( 'parm' ), 
 } );
 
 module.exports = logger();
