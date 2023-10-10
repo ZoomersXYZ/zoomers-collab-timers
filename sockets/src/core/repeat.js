@@ -84,14 +84,14 @@ const RepeatingTimers = function (
   module.repeatingDone = async ( inRoom, aUser ) => {
     const { repeat } = sassy[ inRoom ];
     if ( repeat.on == false ) {
-      emitRoom( 'repeating timer already off', { room: inRoom } );
+      emitRoom( 'repeating timers already off', { room: inRoom } );
       return false;
     };
 
     resetRepeating( inRoom );
-    const event = 'repeating timer done';
+    const event = 'repeating timers done';
     emitRoom( event, { room: inRoom } );
-    await logItWrapper( inRoom, aUser, event, `repeating timer done after ${ repeat.length } hours` );
+    await logItWrapper( inRoom, aUser, event, `repeating timers done after ${ repeat.length } hours` );
   };
 
   // @param inRoom: String
@@ -108,9 +108,10 @@ const RepeatingTimers = function (
 
     resetRepeating( inRoom );
     stopTimer( inRoom, aUser );
-    const event = 'repeating timer stopped';
+
+    const event = 'repeating timers stopped';
     emitRoom( event, { room: inRoom } );
-    await logItWrapper( inRoom, aUser, event, `repeating timer force stopped` );
+    await logItWrapper( inRoom, aUser, event, `repeating timers force stopped` );
   };
 
   function delay( milliseconds = 1000 ) { 
