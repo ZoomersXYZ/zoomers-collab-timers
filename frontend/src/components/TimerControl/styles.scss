@@ -257,3 +257,27 @@ div.nice-input {
     // }
     // input.nice-input-in-circle {}
 }
+
+.weird-submit {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  background-color: rgb(234, 219, 235);
+  border: 0;
+
+  background-color: #5153c1;
+  // background-color: #f4eff5;
+  color: #FFFFFF;
+  color: #3fa0e7;
+  text-align: center;
+  font-size: 1.1em;
+  padding: 10px 20px;
+
+  margin: 3px 5px;
+
+  border: none;
+
+  -webkit-border-radius: 15;
+  -moz-border-radius: 15;
+  border-radius: 15px;
+}

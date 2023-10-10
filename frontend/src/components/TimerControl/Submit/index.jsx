@@ -28,7 +28,7 @@ const SubmitTime = props => {
         actions.setStatus( true );
         aRoom.emitAll( 'start timer', values.newTimer );
 
-        push( prev => { 
+        push.set( prev => { 
           return {
             ...prev, 
             event: 'start', 
@@ -96,7 +96,6 @@ const SwoleSubmitTime = props => {
         >
           <>
           <Field autoFocus component="input" name="newTimer" className="timer-text-field" innerRef={ formRef } />
-          
           <button className="casual-button" type="submit" disabled={ isSubmitting } hidden={ true }>
             Submit
           </button>
@@ -104,6 +103,11 @@ const SwoleSubmitTime = props => {
         </Circle>
       </div>
       { children } 
+      <div className="">
+        <button className="weird-submit" type="submit" disabled={ isSubmitting } hidden={ false }>
+          Go!
+        </button>
+      </div>
     </div>
   </Form>
   );
