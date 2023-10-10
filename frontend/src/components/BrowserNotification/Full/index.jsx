@@ -147,18 +147,15 @@ const BrowserNotification = ( props ) => {
   };
 
   useEffect( () => { 
-    console.log( 'push useEffect run' );
     if ( !event ) return;
-    console.log( 'push, there is an event' );
-    if ( checked.timer.onOff && checked[ event ].onOff && run - 1 === prevRun ) {
-      console.log( 'push, run passes' );
+    if ( (checked.timer.onOff || checked[ event ].onOff) && run - 1 === prevRun ) {
       // For passing if statement next time
       setPrevRun( prev => prev + 1 );
 
       // Run browser notification
       show();
 
-      if ( checked.timer.sound && checked[ event ].sound ) {
+      if ( checked.timer.sound || checked[ event ].sound ) {
         audioRef.current.play();
       };
     };
