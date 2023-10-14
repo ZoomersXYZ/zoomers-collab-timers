@@ -75,7 +75,7 @@ const SocketCoreAndUtils = function (
     // await delay( 2500 );
     const { duration, roomie, secondsLeft, session, started, pause, goneBy } = preciousHashie;
     // initialSession( roomie, session, pause.flag );
-    
+
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
     const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
@@ -133,6 +133,7 @@ const SocketCoreAndUtils = function (
       return false;
     };
     sassy[ incoming.room ].session = incoming.session;
+    // console.log('askForSession', sassy[ incoming.room ].session, incoming.session);
   };
 
   modifyUsers = function( parentObj, socket ) {

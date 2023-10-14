@@ -295,16 +295,23 @@ const Timer = function (
   // * @anotherFile async logItWrapper()
   module.skipSession = async ( inRoom, aUser, repeat = false ) => {
     const curr = sassy[ inRoom ];
-    let { session, pause } = curr;
-    
+    let { flags, session, pause } = curr;
+
+    if ( flags.started ) {
+      emitUser( 'timer already begun', { user: aUser, room: inRoom } );
+      return false;
+    };    
+
     if ( pause.flag ) {
       emitRoom( 'timer still running. Stop it first.', inRoom );
       return;
     };
 
+    // console.log('skipSession initial', session)
     session = session === 'work' ? 'brake' : 'work';
     curr.session = session;
     emitRoom( 'session skipped', { room: inRoom, session } );
+    // console.log('skipSession final', curr.session, sassy[inRoom].session, session)
 
     sameHashieArr = [
       inRoom, 
