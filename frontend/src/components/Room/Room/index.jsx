@@ -68,7 +68,6 @@ const Room = ( {
         msg=''
       />
 
-
       <BrowserNotification 
         type="notifications" 
         core={ push.state } 
@@ -126,6 +125,8 @@ const Room = ( {
         inlineSize={ inlineSize / 2 } 
         blockSize={ blockSize / 2 } 
         sessionObj={ session } 
+        time={ curry.state.current } 
+        duration={ curry.state.duration } 
         { ...{ 
           setShowTimer, 
           push 

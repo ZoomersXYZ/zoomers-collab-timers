@@ -81,6 +81,11 @@ const TimerControl = ( {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
+  // const [ timerOn, setTimerOn ] = useState( false );
+  // useEffect(() => {
+  //   // flags.started here
+  // }, [flags.started here])
+
   const handleSessionTimer = ( e ) => {
     e.preventDefault();
     __room.emitAll( SKIP_SESSION );

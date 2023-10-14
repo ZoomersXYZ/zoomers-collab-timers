@@ -117,6 +117,7 @@ const useMoveInToMyRoom = (
         DateObjStartTime, 
         DateObjEndTime
       } );
+      console.log('check');
     };
 
     const __endReap = ( room ) => {
@@ -147,7 +148,9 @@ const useMoveInToMyRoom = (
 
     // dupe
     const reapTimerStopped = ( room ) => {
+      console.log('this is hitting2?');
       __endReap( room );
+      console.log('this is hitting5?');
       push.set( prev => {
         return { 
           ...prev, 
