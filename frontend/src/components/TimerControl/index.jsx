@@ -61,7 +61,7 @@ const TimerControl = ( {
   const ASK_SESSION = 'ask for session'
 
   useEffect( () => {
-    const timerStarted = ( room, duration ) => {
+    const timerStarted = ( { room, duration } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
       flags.set({
@@ -81,7 +81,7 @@ const TimerControl = ( {
       } );
     };
 
-    const repeatStarted = ( room, duration ) => {
+    const repeatStarted = ( { room, duration } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
       flags.set({
@@ -101,7 +101,7 @@ const TimerControl = ( {
       } );
     };
 
-    const repeatCont = ( room, duration ) => {
+    const repeatCont = ( { room, duration } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
       flags.set({

@@ -70,7 +70,7 @@ const Timer = function (
       username: aUser.nick, 
       email: aUser.email 
     };
-
+    
     if (!repeatFlag) {
       emitRoom( 'timer started', { room: inRoom, duration: timeInMin } );
       await logItWrapper( inRoom, aUser, 'started' );
@@ -304,7 +304,7 @@ const Timer = function (
   // * @globals sassy
   // * @anotherFile emitRoom()
   // * @anotherFile async logItWrapper()
-  module.skipSession = async ( inRoom, aUser, repeat = false ) => {
+  module.skipSession = async ( inRoom, aUser, repeatFlag = false ) => {
     const curr = sassy[ inRoom ];
     let { flags, session, pause } = curr;
 
@@ -330,14 +330,14 @@ const Timer = function (
       'session skipped' 
     ];
     sameStr = `skipped to ${ session } mode`;
-    if ( repeat ) { 
+    if ( repeatFlag ) { 
       await logItWrapper( 
         ...sameHashieArr, 
         'repeat timer auto ' + sameStr, 
         session, 
         true  
       );
-    } else if ( !repeat ) {
+    } else if ( !repeatFlag ) {
       await logItWrapper( 
         ...sameHashieArr, 
         sameStr, 
