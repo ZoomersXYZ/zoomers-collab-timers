@@ -37,6 +37,9 @@ const RoomsGroup = () => {
     if ( hostName.includes( '.loca.lt' ) ) {
       // local tunneling with localtunnel -- broken. connection refused
       ioUrl = 'ztimer' + '.loca.lt' + ':' + socketPort;
+    } else if ( hostName.includes( 'atextbooksituation' ) ) {
+      // for Cloudflare tunneling
+      ioUrl = import.meta.env.CF_SOCKET_DOMAIN ? import.meta.env.CF_SOCKET_DOMAIN : 'https://timer-dev.atextbooksituation.com';
     } else {
       // normal local dev
       ioUrl = window.location.hostname + ':' + socketPort;

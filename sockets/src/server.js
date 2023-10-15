@@ -19,14 +19,26 @@ const server = require( 'http' ).createServer( app );
 
 const originArr = [ 
   // /\.zoomers\.xyz$/, // this regex doesnt include protocol or wildcard for subdomains?
+  'https://capotimers.xyz', 
   'https://timers.zoomers.xyz', 
   'https://ci.timers.zoomers.xyz', 
   'https://citimers.zoomers.xyz', 
+
+  'https://timer.atextbooksituation.com', 
+  'https://timer-dev.atextbooksituation.com', 
+  'https://timer-web.atextbooksituation.com', 
+  
   'http://localhost:3000', 
+  'http://localhost:3001', 
   'http://localhost:8000', 
+
   'http://weshouldjustbefriends.local:3000', 
   'http://wsjbf.dir:3000', 
-  'http://ztimers.loca.lt'
+  'http://ztimers.loca.lt', 
+
+  'http://timer.atextbooksituation.com', 
+  'http://timer-dev.atextbooksituation.com', 
+  'http://timer-web.atextbooksituation.com' 
  ];
 
 const io = require( 'socket.io' )( server, {
