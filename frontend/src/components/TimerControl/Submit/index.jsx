@@ -24,19 +24,11 @@ const SubmitTime = props => {
       onSubmit={ ( 
         values, actions
       ) => {
-        const { session, push } = ogProps;
-        actions.setStatus( true );
-        aRoom.emitAll( 'start timer', values.newTimer );
-
-        push.set( prev => { 
-          return {
-            ...prev, 
-            event: 'start', 
-            onOff: prev.onOff + 1, 
-            title: `${ aRoom.name } ${ session.scheme } timer for ${ values.newTimer } has begun`, 
-            body: 'Let\'s go!' 
-          };
-        } );
+        const { flags } = ogProps;
+        if (!flags.started) {
+          actions.setStatus( true );
+          aRoom.emitAll( 'start timer', values.newTimer );
+        }
       } } 
       children={ props => 
         <SwoleSubmitTime 

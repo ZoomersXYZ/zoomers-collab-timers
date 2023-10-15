@@ -55,7 +55,7 @@ const RepeatingTimers = function (
     if ( session === 'brake' ) {
       emitRoom( 'session skipped', { room: inRoom, session: session } );
     };
-    startTimer( inRoom, aUser, work );
+    startTimer( inRoom, aUser, work, 'repeating started' );
   };
 
   // @param inRoom: String
@@ -141,7 +141,7 @@ const RepeatingTimers = function (
       const newSesh = session === 'work' ? 'brake' : 'work';
       skipSession( inRoom, aUser, repeat.on );
       const newSeshInMin = repeat[ newSesh ];
-      startTimer( inRoom, aUser, newSeshInMin, repeat.on );
+      startTimer( inRoom, aUser, newSeshInMin, 'repeating continued' );
     };
   };
 

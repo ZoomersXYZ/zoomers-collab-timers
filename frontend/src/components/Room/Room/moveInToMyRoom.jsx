@@ -138,7 +138,7 @@ const useMoveInToMyRoom = (
       push.set( prev => {
         return { 
           ...prev, 
-          event: 'repeating end', 
+          event: 'repeat', 
           onOff: prev.onOff + 1, 
           title: `${ room } repeating timers finished`,
           body: 'So. What\'s next?' 
@@ -148,13 +148,11 @@ const useMoveInToMyRoom = (
 
     // dupe
     const reapTimerStopped = ( room ) => {
-      console.log('this is hitting2?');
       __endReap( room );
-      console.log('this is hitting5?');
       push.set( prev => {
         return { 
           ...prev, 
-          event: 'repeating end', 
+          event: 'repeat', 
           onOff: prev.onOff + 1, 
           title: `${ room } repeating timers force stopped`,
           body: 'Hm. What up?' 

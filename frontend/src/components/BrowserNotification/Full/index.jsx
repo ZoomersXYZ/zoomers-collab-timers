@@ -23,6 +23,16 @@ const initialBlob = {
     sound: false, 
     vol: 1 
   },
+  repeat: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  }, 
+  continuing: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  }, 
   other: {
     onOff: false, 
     sound: false, 
@@ -148,7 +158,7 @@ const BrowserNotification = ( props ) => {
 
   useEffect( () => { 
     if ( !event ) return;
-    if ( (checked.timer.onOff || checked[ event ].onOff) && run - 1 === prevRun ) {
+    if ( (checked.timer.onOff && checked[ event ].onOff) && run - 1 === prevRun ) {
       // For passing if statement next time
       setPrevRun( prev => prev + 1 );
 
@@ -224,6 +234,22 @@ const BrowserNotification = ( props ) => {
           checked={ checked.end } 
           label="Timer End" 
           name="end" 
+          root={ checked.timer } 
+        />
+
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.repeat } 
+          label="Repeating Start/End" 
+          name="repeat" 
+          root={ checked.timer } 
+        />
+
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.continuing } 
+          label="Repeating Cont" 
+          name="continuing" 
           root={ checked.timer } 
         />
 

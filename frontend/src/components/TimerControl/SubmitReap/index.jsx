@@ -30,23 +30,16 @@ const SubmitReap = props => {
         values, 
         { setStatus, props } 
       ) => {
-        const { 
-          work, 
-          brake, 
-          length 
-        } = values;
+        if (ogProps.noTimerLogic) {
+          const { 
+            work, 
+            brake, 
+            length 
+          } = values;
 
-        setStatus( true );
-        aRoom.emitAll( 'turn on repeating timers', work, brake, length );
-        ogProps.push.set( prev => { 
-          return { 
-            ...prev, 
-            event: 'start', 
-            onOff: prev.onOff + 1, 
-            title: `${ aRoom.name } repeating timer for ${ length } hours has begun`, 
-            body: 'Let\'s go!' 
-          };
-        } );
+          setStatus( true );
+          aRoom.emitAll( 'turn on repeating timers', work, brake, length );
+        };
       } }
       children={ props => 
         <SwoleSubmitReap 

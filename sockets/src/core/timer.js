@@ -51,7 +51,7 @@ const Timer = function (
     v.MIN_IN_HR ??= 60;
     curr.duration = timeInMin * v.MIN_IN_HR;
     // Make up for the 1 second async await delay for wrappingUpRepeating
-    if ( repeatFlag ) {
+    if ( repeatFlag == 'repeating continued' ) {
       curr.duration = curr.duration - 1;
     };
     curr.secondsLeft = curr.duration;
@@ -71,8 +71,16 @@ const Timer = function (
       email: aUser.email 
     };
 
-    emitRoom( 'timer started', { room: inRoom } );
-    await logItWrapper( inRoom, aUser, 'started' );
+    if (!repeatFlag) {
+      emitRoom( 'timer started', { room: inRoom, duration: timeInMin } );
+      await logItWrapper( inRoom, aUser, 'started' );
+    } else if (repeatFlag == 'repeating continued') {
+      emitRoom( 'repeating continued', { room: inRoom, duration: timeInMin } );
+      await logItWrapper( inRoom, aUser, 'repeating continued' );
+    } else if (repeatFlag == 'repeating started') {
+      emitRoom( 'repeating started', { room: inRoom, duration: timeInMin } );
+      await logItWrapper( inRoom, aUser, 'repeating started' );
+    };
   };
 
   // @param inRoom: String
@@ -205,12 +213,15 @@ const Timer = function (
 
   // @param inRoom: String
   // @internal wrappingUp()
-  module.stopTimer = ( inRoom, aUser ) => wrappingUp( 
-    inRoom, 
-    aUser, 
-    'timer stopped', 
-    'force stopped' 
-  );
+  module.stopTimer = ( inRoom, aUser ) => {
+
+    wrappingUp( 
+      inRoom, 
+      aUser, 
+      'timer stopped', 
+      'force stopped' 
+    );
+  };
   // @param inRoom: String
   // @internal wrappingUp()
   finishedTimer = ( inRoom, aUser ) => wrappingUp( 
@@ -359,7 +370,9 @@ const Timer = function (
     clearInterval( intervals.onGoing );
     clearInterval( intervals.goneBy );
 
-    emitRoom( msg, { room: inRoom } );
+    if (repeat.on == false) {
+      emitRoom( msg, { room: inRoom } );
+    }
     wrappingUpRepeating( 
       inRoom, 
       aUser, 

@@ -125,8 +125,8 @@ const Room = ( {
         inlineSize={ inlineSize / 2 } 
         blockSize={ blockSize / 2 } 
         sessionObj={ session } 
-        time={ curry.state.current } 
-        duration={ curry.state.duration } 
+        flags={ flags } 
+        started={flags.state.started}
         { ...{ 
           setShowTimer, 
           push 

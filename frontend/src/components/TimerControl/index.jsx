@@ -15,9 +15,8 @@ import './styles.scss';
 const TimerControl = ( { 
   sessionObj, 
 
-  time, 
-  duration, 
-
+  flags, 
+  started, 
   className, 
   inlineSize, 
   blockSize, 
@@ -56,14 +55,70 @@ const TimerControl = ( {
   const SESSION_SKIPPED = 'session skipped';
   const SKIP_SESSION = 'skip session';
   const META_UPDATED = 'meta_updated';
+  const REPEAT_START = 'repeating started';
+  const REPEAT_CONT = 'repeating continued';
 
   const ASK_SESSION = 'ask for session'
 
   useEffect( () => {
-    const timerStarted = ( room ) => {
+    const timerStarted = ( room, duration ) => {
       if ( filterOutRoom( room ) ) { return; };
-      // setShowControl( false );
       setShowTimer( true );
+      flags.set({
+        started: true, 
+        ended: null, 
+        triaged: null 
+      });
+
+      push.set( prev => { 
+        return {
+          ...prev, 
+          event: 'start', 
+          onOff: prev.onOff + 1, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } timer for ${ duration } has begun`, 
+          body: 'Let\'s go!' 
+        };
+      } );
+    };
+
+    const repeatStarted = ( room, duration ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      setShowTimer( true );
+      flags.set({
+        started: true, 
+        ended: null, 
+        triaged: null 
+      });
+
+      push.set( prev => { 
+        return {
+          ...prev, 
+          event: 'repeat', 
+          onOff: prev.onOff + 1, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } 1st repeating timer for ${ duration } has begun`, 
+          body: 'Let\'s go!' 
+        };
+      } );
+    };
+
+    const repeatCont = ( room, duration ) => {
+      if ( filterOutRoom( room ) ) { return; };
+      setShowTimer( true );
+      flags.set({
+        started: true, 
+        ended: null, 
+        triaged: null 
+      });
+      
+      push.set( prev => { 
+        return {
+          ...prev, 
+          event: 'continuing', 
+          onOff: prev.onOff + 1, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } next repeating timer for ${ duration } is continuing`, 
+          body: 'Let\'s go!' 
+        };
+      } );
     };
 
     const skipSession = ( { room, session } ) => {
@@ -78,6 +133,8 @@ const TimerControl = ( {
     socket.on( TIMER_STARTED, timerStarted );
     socket.on( SESSION_SKIPPED, skipSession );
     socket.on( META_UPDATED, metaUpdated );
+    socket.on( REPEAT_START, repeatStarted );
+    socket.on( REPEAT_CONT, repeatCont );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
@@ -97,15 +154,12 @@ const TimerControl = ( {
   const [ err, setErr ]= useState( {} );
   const [ errReap, setErrReap ]= useState( {} );
 
-  // const onlyLogIfValued = ( value ) => { if ( !isEmpty( value ) ) console.log( value.name, value ); };
-
-  const noTimerLogic = !time && !duration;
+  // const onlyLogIfValued = ( value ) => { if ( !isEmpty( value ) ) console.log( value.name, value ); };  
 
   return (
     <div className={ `${ className }__root` }>
-    { showControl && showNormOrReap && 
+    { !started && showControl && showNormOrReap && 
       <>
-
         <IntroDiv
           handleShowing={ onShowingNorm } 
           introText="Add Timer"
@@ -116,21 +170,20 @@ const TimerControl = ( {
           <Submit 
             handleSuccess={ onShowingNorm } 
             session={ sessionObj.state } 
-            { ...{  
+            flags={ flags.state } 
+            { ...{ 
               setErr, 
               className, 
               inlineSize, 
               blockSize, 
-              formRef, 
-              push 
+              formRef 
             } }
           >
             <EndingDiv 
               showWhich={ true } 
               session={ sessionObj.state } 
-              { ...{                  
-                time, 
-                duration, 
+              flags={ flags.state } 
+              { ...{ 
                 handleSessionTimer 
               } }
             />
@@ -163,20 +216,19 @@ const TimerControl = ( {
             handleSuccess={ onShowingReap } 
             session={ sessionObj.state } 
             setErr={ setErrReap } 
+            noTimerLogic={!flags.started}
             { ...{ 
               className, 
               inlineSize, 
               blockSize, 
-              noTimerLogic, 
               push 
             } }
           >
             <EndingDiv 
               showWhich={ true } 
               session={ sessionObj.state } 
+              flags={ flags.state }
               { ...{                 
-                time, 
-                duration, 
                 handleSessionTimer 
               } }
             />
@@ -196,7 +248,7 @@ const TimerControl = ( {
       </>
     }
 
-    { !showControl && 
+    { !started && !showControl && 
       <ClickToTimerCreation
         showNorm={ onShowingNorm } 
         showReap={ onShowingReap } 
@@ -208,7 +260,6 @@ const TimerControl = ( {
 
 TimerControl.propTypes = {
   // socket: PropTypes.object.isRequired, 
-  time: PropTypes.number, 
   inlineSize: PropTypes.number, 
   blockSize: PropTypes.number, 
 
