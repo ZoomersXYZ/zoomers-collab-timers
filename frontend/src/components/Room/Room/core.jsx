@@ -18,7 +18,9 @@ const RoomCore = ( props ) => {
 
     circleClass,
 
-    setView 
+    setView, 
+
+    repeat
   } = props;
   const { curry, reap, push, events } = props;
   const aRoom = useContext( RoomContext );
@@ -150,7 +152,7 @@ const RoomCore = ( props ) => {
           </div>
         </button>
 
-        { reap.state.on && 
+        { repeat && 
           <button 
             id="stop-reap" 
             className="casual-button link-underline-fade" 

@@ -4,16 +4,12 @@ import PropTypes from 'prop-types';
 const EndingDiv = ( { 
   showWhich, 
   session, 
-  time, 
-  duration, 
+  flags, 
   handleSessionTimer 
 } ) => {
-
-  const logic = ( !isNaN( time ) && time > 0 ) && ( !isNaN( duration ) && duration > 0 );
-  const noTimerLogic = !time && !duration;
   return (
     <>
-    { showWhich && noTimerLogic && 
+    { showWhich && !flags.started && 
       <div className={ `width-8 session-button-parent ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
         <button 
           className="casual-button link-underline-fade cap-it-up" 
@@ -33,7 +29,7 @@ const EndingDiv = ( {
       </div>
     }
 
-    { logic && 
+    { flags.started && 
       <div className={ `session-oops-parent ${ session.oppScheme ? session.oppScheme : 'defOpp' }` }>
         <p className="session-oops">
           { showWhich ?

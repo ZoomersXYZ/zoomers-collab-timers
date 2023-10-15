@@ -12,21 +12,23 @@ const useRoomHooks = () => {
   const [ curr, setCurr ] = useState( { 
     current: 0, 
     formatted: '00:00', 
-    duration: 0, 
-    flags: {
+    duration: 0,     
+    paused: false, 
+    goneBy: 0 
+  } );
+
+  const [flags, setFlags] = useState( { 
       started: false, 
       ended: false, 
-      triaged: false, 
-    }, 
-    paused: false, 
-    pause: { 
+      triaged: false 
+    } );
+
+  const [pause, setPause] = useState( { 
       flag: false, 
       started: null, 
       goneBy: 0, 
       list: [] 
-    },  
-    goneBy: 0  
-  } );
+    } );
 
   const [ session, setSession ] = useState( { 
     term: 'work', 
@@ -82,7 +84,10 @@ const useRoomHooks = () => {
     reap: { state: reap, set: setReap }, 
     session: { state: session, set: wrapperSetSession }, 
 
-    push: { state: push, set: setPush }, 
+    push: { state: push, set: setPush },
+    
+    flags: { state: flags, set: setFlags }, 
+    pause: {state: pause, set: setPause}, 
     
     events: {
       TIMER_UPDATED: 'timer updated', 

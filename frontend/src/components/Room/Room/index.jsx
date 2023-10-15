@@ -24,7 +24,7 @@ const Room = ( {
   const aptRoom = aRoom.name;
 
   const {
-      curry, reap, session, push, events 
+      curry, flags, reap, session, push, events 
   } = useRoomHooks();
 
   // States
@@ -32,7 +32,7 @@ const Room = ( {
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
   const [ view, setView ] = useState( false );
 
-  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, reap, push, events );
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
 
@@ -94,7 +94,7 @@ const Room = ( {
             </h4>
           </div>
         }
-        { !reap.state.on && curry.state.flags.started && 
+        { !reap.state.on && flags.state.started && 
           <div>
             Efficiency: { efficiency }
           </div>
@@ -104,6 +104,7 @@ const Room = ( {
 
         <Core 
           sessionScheme={ session.state.scheme } 
+          repeat={reap.state.on}
           { ...{ 
             pauseTerm, 
             inlineSize, 

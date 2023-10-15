@@ -11,6 +11,7 @@ const useMoveInToMyRoom = (
     setShowTimer, 
     
     curry, 
+    flags, 
     reap, 
     push, 
     events 
@@ -24,15 +25,15 @@ const useMoveInToMyRoom = (
 
   useEffect( () => { 
     const setupCurr = ( e ) => {
-      let { current, duration, flags, ...rest } = e;
+      let { current, duration, ...rest } = e;
       current = ( !current || isNaN( current ) ) ? 0 : current;
       duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
-      return { current, duration, flags, ...rest };
+      return { current, duration, ...rest };
     };
 
     const updateTimer = e => {
       // const { pause, room } = e;
-      const { room } = e;
+      const { room, session, repeat, flags, pause } = e;
       if ( filterOutRoom( room ) ) { return; };
       // @TODO 2022-11-18 16:27 | this is deprecated and should be removed
       // if ( pause.flag ) {
@@ -40,7 +41,24 @@ const useMoveInToMyRoom = (
       // } else {
       //   setPauseTerm( 'pause' );
       // };
-      curry.set( setupCurr( e ) );
+      const forCurr = { current: e.current, duration: e.duration, goneBy: e.goneBy };
+      curry.set( setupCurr( forCurr ) );
+
+      const { length, startTime, endTime, work, brake } = repeat;
+      const DateObjEndTime = new Date( endTime );
+      const DateObjStartTime = new Date( startTime );
+      if (repeat.on && !reap.state.on) {
+        reap.set({ 
+          on: true, 
+          length, 
+          startTime, 
+          endTime, 
+          work, 
+          brake, 
+          DateObjStartTime, 
+          DateObjEndTime
+        });
+      };
     };
 
     const timerPaused = ( room ) => { 
@@ -62,6 +80,12 @@ const useMoveInToMyRoom = (
         formatted: null, 
         duration: null 
       } ) );
+      flags.set({
+        started: false, 
+        ended: false, 
+        triaged: false  
+      });
+
       // reset pause
       setPauseTerm( 'pause' );
     };
