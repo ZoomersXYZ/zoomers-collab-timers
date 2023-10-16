@@ -24,8 +24,8 @@ const group = socket => {
   ////
   // Initialization
   ////
-  nspace ??= socket.nsp;
-  nspName ??= nspace.name.substring( 7 );
+  nspace = socket.nsp;
+  nspName = nspace.name.substring( 7 );
   const sockId = socket.id;
 
   function firstRun() {
@@ -142,7 +142,7 @@ const group = socket => {
     seshie, 
     core, 
     gCore, 
-    nspace, 
+    groupEmit, 
     nspName, 
 
     emitRoom, 

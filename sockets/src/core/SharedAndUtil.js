@@ -54,14 +54,20 @@ const SharedAndUtil = function (
       // nspaceEmit( msg, room );
       socket.to( `${ nspName }-${ room }` ).emit( msg, room );
     // no room or data. plain.
-    } else if ( isEmpty( room ) ) {
+    } else if ( isEmpty( room ) && !isEmpty(data) ) {
       l.bbc.debug( `44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
-      nspace.emit( msg );
+      // socket.to(nspName).emit(msg, data)
+    } else if ( isEmpty( room ) && isEmpty( data) ) {
+      l.bbc.debug( `55 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
+      // socket.to(nspName).emit(msg)
     };
   };
 
   // @globals nspace
-  module.groupEmit = ( event, msg = null ) => nspace.emit( event, msg );
+  module.groupEmit = ( event, msg = null ) => {
+    socket.broadcast.emit( event, msg );
+    socket.emit( event, msg );
+  };
 
   // @internal simpMe
   // @anotherFile getGroupLog()
@@ -96,7 +102,7 @@ const SharedAndUtil = function (
       users, 
       count: users.length 
     } );
-    module.groupEmit( event, hashie );
+    // module.groupEmit( event, hashie );
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.bbc.debug( `${ socket.id }: fin commonUserFunc(). emit`, event );
     return hashie;

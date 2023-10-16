@@ -17,7 +17,7 @@ const SocketCoreAndUtils = function (
   seshie, 
   core, 
   gCore, 
-  nspace, 
+  groupEmit, 
   nspName, 
 
   emitRoom, 
@@ -204,7 +204,8 @@ const SocketCoreAndUtils = function (
       };
       
       const event = 'user left';
-      commonUserFunc( event );
+      hashie = commonUserFunc( event );
+      // groupEmit(event, hashie);
 
       // Reset
       simpMe.addedUser = false;
