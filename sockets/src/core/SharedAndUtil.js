@@ -16,7 +16,7 @@ const SharedAndUtil = function (
 
   module.simpMe = { 
     room: '', 
-    confirmIdPong: false, 
+    confirmIdPong: 0, 
     addedUser: null, 
     userModuleCount: 0, 
     reason: false, 
@@ -76,7 +76,7 @@ const SharedAndUtil = function (
   // @anotherFile getGroupLog()
   // @anotherFile socket.id
   module.pongId = async () => {
-    module.simpMe.confirmIdPong = true;
+    ++module.simpMe.confirmIdPong;
     try {
       const res = await getGroupLog();
       // MASS COMMENTING OF LOGS 2023-10-09

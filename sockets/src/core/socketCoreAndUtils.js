@@ -171,6 +171,7 @@ const SocketCoreAndUtils = function (
   // @globals nspName
   // @anotherFile commonUserFunc
   module.disconnect = async function( reason ) {
+    console.log('disconnect start');
     // l.parm.debug( 'disconnect core', core );
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.parm.debug( 'init', simpMe.initialized );
@@ -202,6 +203,9 @@ const SocketCoreAndUtils = function (
       //     core.groups.findIndex( arrival => arrival === nspName ), 1 
       //   );
       // };
+      if ( core.users[nspName].length === 0 ) {
+        delete core.groups[nspName];
+      };
       
       const event = 'user left';
       hashie = commonUserFunc( event );

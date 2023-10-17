@@ -34,7 +34,10 @@ const User = function (
   module.addUser = async ( handle, emailAcct ) => {
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.parm.debug( 'addUser()', 'beg' );
-    if ( simpMe.addedUser ) return;
+    if ( simpMe.addedUser ) {
+      console.log('BROKE addedUser already added');
+      return;
+    };
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.parm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
     seshie.username = handle;
@@ -53,7 +56,7 @@ const User = function (
     
     simpMe.addedUser = true;
 
-    simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
+    // simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
     // socket.join( simpMe.sUser );
     socket.join(`group-${nspName}`);
     
@@ -63,16 +66,17 @@ const User = function (
       socket.emit( event, sockId );
       // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
       // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
-      simpMe.confirmIdCount++;
-      
+      ++simpMe.confirmIdCount;
       if ( simpMe.confirmIdPong > 0 ) {
-        l.parm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
+        l.parm.debug('confirmIdPong if worked. count:', {id: simpMe.confirmIdCount, ping: simpMe.confirmIdPong});
+        simpMe.confirmIdCount = 0;
+        simpMe.confirmIdPong = 0;
         module.listUsers();
         clearInterval( confirmId );
         
-        simpMe.confirmIdCount = 0;
       } else if ( simpMe.confirmIdCount > 3 ) {
         l.parm.debug( 'confirmIdPong did not work' );
+        simpMe.confirmIdCount = 0;
         module.listUsers();
         clearInterval( confirmId );
       };

@@ -81,7 +81,7 @@ const InitNsp = function() {
     return { 
       users: {}, 
       userCount: 0, 
-      groups: [], 
+      groups: {}, 
       initialized: false 
     };
   };

@@ -106,7 +106,7 @@ const DbFuncs = function (
         timestamp: new Date().getTime() 
       };
      
-      l.bbc.debug( 'logIt hashie', JSON.stringify( hashie ) );
+      // l.bbc.debug( 'logIt hashie', JSON.stringify( hashie ) );
 
       const reversedCached = seshie.loggy.reverse();
       // don't log

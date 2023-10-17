@@ -31,9 +31,10 @@ const group = socket => {
   function firstRun() {
     const oneBool = isObject( core ) 
       && core.hasOwnProperty( 'groups' ) 
-      && !core.groups.find( han => han === nspName );
+      && (!core.groups[nspName] === undefined);
 
-    if ( nspName && ( isEmpty( core ) || oneBool ) ) {
+
+    if ( nspName && ( isEmpty( core ) || oneBool ) ) {      
       // MASS COMMENTING OF LOGS 2023-10-09
       // l.struct.info( 'firstRun', sockId );
 
@@ -69,7 +70,12 @@ const group = socket => {
   
   function onGroupEnter() {    
     simpMe.initialized = true;
-    core.groups.push( nspName );
+    // core.groups.push( nspName );
+    if (core.groups[nspName] === undefined) {
+      core.groups[nspName] = true;
+    };
+    socket.emit('group went thru');
+    console.log('onGroupEnter');
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.struct.info( 'onGroupEnter', sockId );
   };
