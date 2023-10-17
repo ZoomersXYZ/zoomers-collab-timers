@@ -139,9 +139,10 @@ const RepeatingTimers = function (
       l.parm.debug( 'if else aka continuing', 'repeat.endTime >= new Date().getTime()' );
 
       const newSesh = session === 'work' ? 'brake' : 'work';
-      skipSession( inRoom, aUser, repeat.on );
+      skipSession( inRoom, aUser, repeat.on );      
       const newSeshInMin = repeat[ newSesh ];
       startTimer( inRoom, aUser, newSeshInMin, 'repeating continued' );
+      // emitRoom('unpause button');
     };
   };
 

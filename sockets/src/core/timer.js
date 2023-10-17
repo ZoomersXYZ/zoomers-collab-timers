@@ -142,12 +142,16 @@ const Timer = function (
   // @param inRoom: String
   // @globals sassy
   // @internal-ish setInterval()
-  goneByTimer = ( inRoom ) => {
-    const curr = sassy[ inRoom ];
-    curr.intervals.goneBy = setInterval( () => {
-      ++curr.goneBy;
-    }, 1000 );
-  };
+
+  // this was never used. it is dupe name
+  // goneByTimer = ( inRoom ) => {
+  //   console.log('1st');
+  //   const curr = sassy[ inRoom ];
+  //   curr.intervals.goneBy = setInterval( () => {
+  //     ++curr.goneBy;
+  //     console.log('3rd');
+  //   }, 1000 );
+  // };
 
   updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
     const hashish = { 
@@ -163,7 +167,6 @@ const Timer = function (
     emitRoom( 'timer updated', { room: inRoom, ...hashish } );
     return hashish;
   };
-
   durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
   currentBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft > -1;
   noTimeLeftBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft < 1;
@@ -189,7 +192,7 @@ const Timer = function (
       session 
     } = curr;
 
-    intervals.onGoing = setInterval( () => {      
+    curr.intervals.onGoing = setInterval( () => {    
       if ( 
         pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
       ) {
@@ -205,8 +208,8 @@ const Timer = function (
           session 
         );
       } else {
-        clearInterval( intervals.onGoing );
-        clearInterval( intervals.goneBy );
+        clearInterval( curr.intervals.onGoing );
+        // clearInterval( intervals.goneBy );
       };
     }, 2000 );
   };
@@ -367,20 +370,15 @@ const Timer = function (
     };    
     const { repeat, session, intervals } = curr;
     clearUpdateTimer( inRoom );
-    clearInterval( intervals.onGoing );
-    clearInterval( intervals.goneBy );
+    clearInterval( curr.intervals.onGoing );
+    // clearInterval( intervals.goneBy );
 
-    if (repeat.on == false) {
-      emitRoom( msg, { room: inRoom } );
-    }
-    wrappingUpRepeating( 
-      inRoom, 
-      aUser, 
-      repeat, 
-      session, 
-      module.skipSession, 
-      module.startTimer 
-    );
+    emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
+    // if (repeat.on == false) {
+    //   emitRoom( msg, { room: inRoom } );
+    // } else {
+    //   emitRoom('unpause button');
+    // };
 
     await logItWrapper( inRoom, aUser, msg, activity );
 
@@ -428,6 +426,15 @@ const Timer = function (
       // curr.secondsLeft = 0;
       // curr.pause.flag = false;
     };
+
+    wrappingUpRepeating( 
+      inRoom, 
+      aUser, 
+      repeat, 
+      session, 
+      module.skipSession, 
+      module.startTimer 
+    );
   };
 
   return module;

@@ -7,6 +7,7 @@ import {
 } from './../../Contexts';
 
 const useMoveInToMyRoom = ( 
+    // pauseTerm, 
     setPauseTerm, 
     setShowTimer, 
     
@@ -14,7 +15,8 @@ const useMoveInToMyRoom = (
     flags, 
     reap, 
     push, 
-    events 
+    events, 
+    // pause 
  ) => { 
   const socket = useContext( SocketContext );
   const aRoom = useContext( RoomContext );  
@@ -69,7 +71,7 @@ const useMoveInToMyRoom = (
     const timerResumed = ( room ) => {
       if ( filterOutRoom( room ) ) { return; };
       setPauseTerm( 'pause' );
-    };    
+    };
 
     const __endTimer = ( room ) => {
       if ( filterOutRoom( room ) ) { return false; };
@@ -83,38 +85,44 @@ const useMoveInToMyRoom = (
       flags.set({
         started: false, 
         ended: false, 
-        triaged: false  
+        triaged: false 
       });
 
       // reset pause
       setPauseTerm( 'pause' );
     };
 
-    const timerStopped = ( room ) => {
+    const timerStopped = ( props ) => {
+      const {room, reapOn} = props;
       __endTimer( room );
-      push.set( prev => {
-        return { 
-          ...prev, 
-          event: 'end', 
-          onOff: prev.onOff + 1, 
-          title: `${ room } timer stopped`,
-          body: 'Timer stopped. What up?' 
-        };
-      } );
+      if (!reapOn) {
+        push.set( prev => {
+          return { 
+            ...prev, 
+            event: 'end', 
+            onOff: prev.onOff + 1, 
+            title: `${ room } timer stopped`,
+            body: 'Timer stopped. What up?' 
+          };
+        } );
+      };
     };
 
-    const timerFinished = ( room ) => { 
+    const timerFinished = ( props ) => { 
+      const {room, reapOn} = props;
       if ( filterOutRoom( room ) ) { return; };
       // Browser notification
-      push.set( prev => {
-        return { 
-          ...prev, 
-          event: 'end', 
-          onOff: prev.onOff + 1, 
-          title: `${ room } timer finished`,
-          body: 'Timer up. What\'s next?' 
-        };
-      } );
+      if (!reapOn) {
+        push.set( prev => {
+          return { 
+            ...prev, 
+            event: 'end', 
+            onOff: prev.onOff + 1, 
+            title: `${ room } timer finished`,
+            body: 'Timer up. What\'s next?' 
+          };
+        } );
+      };
 
       __endTimer( room );
     };
@@ -141,7 +149,7 @@ const useMoveInToMyRoom = (
         DateObjStartTime, 
         DateObjEndTime
       } );
-      console.log('check');
+      console.log('check reap on');
     };
 
     const __endReap = ( room ) => {
@@ -187,6 +195,13 @@ const useMoveInToMyRoom = (
     if ( aRoom.hasOwnProperty( 'new' ) && aRoom.new ) {
       aRoom.emitAll( events.TIMER_CREATED );
     };
+
+    // const reapUnpause = () => {
+    //   console.log('reapUnpause')
+    //   if (pauseTerm == 'unpause') {
+    //     setPauseTerm('pause');
+    //   };
+    // };
     
     socket.on( events.TIMER_UPDATED, updateTimer );
     socket.on( events.TIMER_PAUSED, timerPaused );
@@ -198,6 +213,7 @@ const useMoveInToMyRoom = (
     socket.on( events.REAP_ON, reapTimerOn );
     socket.on( events.REAP_DONE, reapTimerDone );
     socket.on( events.REAP_STOPPED, reapTimerStopped );
+    // socket.on('unpause button', reapUnpause);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 };
