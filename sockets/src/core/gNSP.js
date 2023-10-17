@@ -12,6 +12,7 @@ const room = { name: '' };
 // shortening
 const v = process.env;
 
+let overall = null;
 let core = null;
 let seshie = null;
 let sassy = null;
@@ -39,30 +40,28 @@ const group = socket => {
       // l.struct.info( 'firstRun', sockId );
 
       // Assigning
-      socket.client.server.glue ||= {
-        core: null, 
-        groups: {} 
-      };
-      socket.client.server.glue.groups[ nspName ] ||= {
+
+      overall ||= {};
+      overall[nspName] ||= {
         timers: {}, 
         sesh: null, 
-        core: InitNsp.gCore(nspName) 
+        core: InitNsp.gCore(nspName)
       };
 
-      if ( isEmpty( socket.client.server.glue.core ) ) {
-        socket.client.server.glue.core ||= InitNsp.core();
+      if ( isEmpty( core ) ) {
+        core ||= InitNsp.core();
       };
 
-      if ( isEmpty( socket.client.server.glue.groups[ nspName ].sesh ) ) {
-        socket.client.server.glue.groups[ nspName ].sesh ||= InitNsp.seshie( nspName );
+      if ( isEmpty( overall[ nspName ].sesh ) ) {
+        overall[ nspName ].sesh ||= InitNsp.seshie( nspName );
       };
 
       // Shortening
       // glue ||= socket.client.server.glue;
-      core ||= socket.client.server.glue.core;
-      sassy ||= socket.client.server.glue.groups[ nspName ].timers;
-      seshie ||= socket.client.server.glue.groups[ nspName ].sesh;
-      gCore ||= socket.client.server.glue.groups[ nspName ].core;
+      // core ||= socket.client.server.glue.core;
+      sassy ||= overall[ nspName ].timers;
+      seshie ||= overall[ nspName ].sesh;
+      gCore ||= overall[ nspName ].core;
       // thisTimer = null;
     };
   };
