@@ -48,25 +48,31 @@ const SharedAndUtil = function (
       l.bbc.debug( `22 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
     //   l.bbc.debug( '22 ending', { room, ...data } );
       socket.to( `${ nspName }-${ room }` ).emit( msg, { room, ...data } );
+      socket.emit( msg, { room, ...data } );
     // just room, no data
     } else if( isEmpty( data ) && !isEmpty( room ) ) {
         l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
-      // nspaceEmit( msg, room );
       socket.to( `${ nspName }-${ room }` ).emit( msg, room );
+      socket.emit( msg, room );
     // no room or data. plain.
     } else if ( isEmpty( room ) && !isEmpty(data) ) {
       l.bbc.debug( `44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       // socket.to(nspName).emit(msg, data)
+      socket.to(nspName).emit(msg, data);
+      socket.emit(msg, data);
     } else if ( isEmpty( room ) && isEmpty( data) ) {
       l.bbc.debug( `55 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       // socket.to(nspName).emit(msg)
+      socket.to(nspName).emit(msg)
+      socket.emit(msg);
     };
   };
 
   // @globals nspace
   module.groupEmit = ( event, msg = null ) => {
-    socket.broadcast.emit( event, msg );
+    socket.to(`group-${nspName}`).emit(event, msg);
     socket.emit( event, msg );
+    // socket.broadcast.emit( event, msg );
   };
 
   // @internal simpMe

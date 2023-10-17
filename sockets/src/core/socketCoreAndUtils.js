@@ -205,7 +205,7 @@ const SocketCoreAndUtils = function (
       
       const event = 'user left';
       hashie = commonUserFunc( event );
-      // groupEmit(event, hashie);
+      groupEmit(event, hashie);
 
       // Reset
       simpMe.addedUser = false;

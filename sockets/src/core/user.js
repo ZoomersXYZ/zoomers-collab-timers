@@ -55,6 +55,7 @@ const User = function (
 
     simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
     // socket.join( simpMe.sUser );
+    socket.join(`group-${nspName}`);
     
     // Not sure confirmIdPong is needed, even as extra precaution. It sometimes doesn't work
     // const confirmId = setInterval( () => { 
