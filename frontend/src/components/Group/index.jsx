@@ -18,7 +18,7 @@ import './styles.scss';
 import { delay, isEmpty } from './../../ancillary/helpers/general';
 
 // Specific for this file
-import io from 'socket.io-client';
+import useSocket from '../Contexts/useSocket';
 import { getData, getLocal, setLocal } from './utilities';
 
 // Main component
@@ -36,7 +36,7 @@ const RoomsGroup = () => {
     const socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080;
     if ( hostName.includes( '.loca.lt' ) ) {
       // local tunneling with localtunnel -- broken. connection refused
-      ioUrl = 'ztimer' + '.loca.lt' + ':' + socketPort;
+      ioUrl = 'http://ztimer' + '.loca.lt' + ':' + socketPort;
     } else if ( hostName.includes( 'atextbooksituation' ) ) {
       // for Cloudflare tunneling
       ioUrl = import.meta.env.CF_SOCKET_DOMAIN ? import.meta.env.CF_SOCKET_DOMAIN : 'https://timer-dev.atextbooksituation.com';
@@ -46,9 +46,10 @@ const RoomsGroup = () => {
     };
   };
 
-  const socket = io( ioUrl + urlPath );
+  const [socket] = useSocket(ioUrl + urlPath);
+    
   // Group 1b
-  const emit = ( ...restoros ) => socket.emit( ...restoros );  
+  const emit = ( ...restoros ) => socket.emit( ...restoros );
 
   // Global, Contexts
   const { gName } = useContext( GroupContext );
@@ -80,18 +81,20 @@ const RoomsGroup = () => {
     const ADD_USER = 'add user'
 
     const ownSocketInitial = ( name ) => {
+      // console.log(socket);
       const handleNewUser = () => {
-        const confirmInitialPing = id => {
-          if ( isEmpty( id ) ) return false;
-          emit( 'confirm initial pong' );
-          console.log( 'confirmInitialPing 2nd + 3rd' );
-        };
+        // const confirmInitialPing = id => {
+        //   if ( isEmpty( id ) ) return false;
+        //   emit( 'confirm initial pong' );
+        //   console.log( 'confirmInitialPing 2nd + 3rd' );
+        // };
         emit( ADD_USER, nick, email );
         console.log( 'handleNewUser 1st' );
-        socket.on( 'confirm initial ping', confirmInitialPing );
+        // socket.on( 'confirm initial ping', confirmInitialPing );
       };
 
       const listUsers = ( e ) => {
+        console.log('got user list');
         setUsers( e.users );
       };
 
@@ -100,6 +103,7 @@ const RoomsGroup = () => {
       };
 
       const onConnect = () => {
+        console.log('check')
         emit( 'group entered' );
         delay( 500 );
         handleNewUser();
@@ -140,12 +144,13 @@ const RoomsGroup = () => {
     fetchData( gName );
     ownSocketInitial( gName );
 
-    return () => {
-      console.log( 'returning to disconnect' );
-      socket.disconnect();
-    };
+    // return () => {
+      // console.log( 'returning to disconnect' );
+      // socket.disconnect();
+    // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ gName, nick, email ] );
+  }, [] );
+  // }, [ gName, nick, email ] );
 
   const fetchData = async ( name ) => {
     const data = await getData( name );
@@ -174,7 +179,7 @@ const RoomsGroup = () => {
   const [ userEnabled, setUserEnabled ] = useState( false );
   useEffect( () => { 
     ReactGA.initialize( 'G-MZDK05NDHT', {
-      debug: true,
+      debug: false,
       titleCase: false,
       gaOptions: {
         userId: socket.id, 
