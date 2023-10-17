@@ -7,8 +7,7 @@
   "settings": {
     "files.exclude": {
       ".history": true,
-      "build": true,
-      "logs": true
+      "build": true
     }
   }
 }

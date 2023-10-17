@@ -81,16 +81,14 @@ const RoomsGroup = () => {
     const ADD_USER = 'add user'
 
     const ownSocketInitial = ( name ) => {
-      // console.log(socket);
       const handleNewUser = () => {
-        // const confirmInitialPing = id => {
-        //   if ( isEmpty( id ) ) return false;
-        //   emit( 'confirm initial pong' );
-        //   console.log( 'confirmInitialPing 2nd + 3rd' );
-        // };
+        const confirmInitialPing = id => {
+          if ( isEmpty( id ) ) return false;
+          emit( 'confirm initial pong' );
+          console.log( 'confirmInitialPing 2nd + 3rd' );
+        };
         emit( ADD_USER, nick, email );
-        console.log( 'handleNewUser 1st' );
-        // socket.on( 'confirm initial ping', confirmInitialPing );
+        socket.on( 'confirm initial ping', confirmInitialPing );
       };
 
       const listUsers = ( e ) => {
@@ -120,7 +118,7 @@ const RoomsGroup = () => {
           // the disconnection was initiated by the server, reconnect attempt here
           socket.connect();
         } else {
-          // return;
+          // useSocket takes care of disconnecting now
         };
         // else the socket will automatically try to reconnect
       };

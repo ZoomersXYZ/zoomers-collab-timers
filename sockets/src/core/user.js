@@ -58,28 +58,25 @@ const User = function (
     socket.join(`group-${nspName}`);
     
     // Not sure confirmIdPong is needed, even as extra precaution. It sometimes doesn't work
-    // const confirmId = setInterval( () => { 
-    //   const event = 'confirm initial ping';
-    //   groupEmit( event, sockId );
-    //   // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
-    //   // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
-    //   simpMe.confirmIdCount++;
+    const confirmId = setInterval( () => { 
+      const event = 'confirm initial ping';
+      socket.emit( event, sockId );
+      // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
+      // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
+      simpMe.confirmIdCount++;
       
-    //   if ( simpMe.confirmIdPong > 1 ) {
-    //     l.parm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
-    //     module.listUsers();
-    //     clearInterval( confirmId );
+      if ( simpMe.confirmIdPong > 0 ) {
+        l.parm.debug( 'confirmIdPong if worked. count:', simpMe.confirmIdCount );
+        module.listUsers();
+        clearInterval( confirmId );
         
-    //     simpMe.confirmIdCount = 0;
-    //   } else if ( simpMe.confirmIdCount > 3 ) {
-    //     l.parm.debug( 'confirmIdPong did not work' );
-    //     module.listUsers();
-    //     clearInterval( confirmId );
-    //   };
-    // }, 1000 );
-
-    module.listUsers();
-    // }, 1000);
+        simpMe.confirmIdCount = 0;
+      } else if ( simpMe.confirmIdCount > 3 ) {
+        l.parm.debug( 'confirmIdPong did not work' );
+        module.listUsers();
+        clearInterval( confirmId );
+      };
+    }, 1000 );
 
     const event = 'joined group';
     const aUser = { nick: handle, email: emailAcct };

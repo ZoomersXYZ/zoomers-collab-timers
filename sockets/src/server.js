@@ -6,7 +6,6 @@ if ( v.NODE_ENV === 'development' ) {
   l.bbc.info( 'dev' );
   require( 'dotenv' ).config(); //( { path: './.env.dev' } )
 };
-l.bbc.info( 'TESTIE', v.TESTIE );
 
 const express = require( 'express' );
 const cors = require( 'cors' );
@@ -14,7 +13,7 @@ const app = express();
 
 app.use( cors() );
 
-const port = process.env.PORT || 8080;
+const port = v.PORT || 8080;
 const server = require( 'http' ).createServer( app );
 
 const originArr = [ 
@@ -57,21 +56,10 @@ instrument( io, {
   },
 } );
 
-// const regex = '[a-zA-Z0-9-_\.\']+';
-
 const group = require( './core/gNSP' );
-// const groupRegexStr = `/^\/group\/${ regex }$/ )`;
-// const groupRegex = new RegExp( groupRegexStr );
 const groupRegex = /^\/group\/[a-zA-Z0-9-_\.']+$/;
 const nspGroup = io.of( groupRegex );
 nspGroup.on( 'connect', group );
-
-// const room = require( './room/gNSP' );
-// // const roomRegexStr = `/^\/group\/${ regex }\/room\/${ regex }$/ )`;
-// // const roomRegex = new RegExp( roomRegexStr );
-// const roomRegex = /^\/group\/[a-zA-Z0-9-_\.']+\/room\/[a-zA-Z0-9-_\.']+$/;
-// const nspRoom = io.of( roomRegex );
-// nspRoom.on( 'connect', room );
 
 // Express
 server.listen( port, () => {
