@@ -38,21 +38,23 @@ const User = function (
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.parm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
     seshie.username = handle;
-    seshie.email = emailAcct;
-    const userHashie = { 
+    seshie.email = emailAcct;    
+    const coreHashie = { 
       id: sockId, 
 
       group: nspName, 
       username: seshie.username, 
       email: seshie.email 
     };
-    core.users.push( userHashie );
-    delete userHashie.group;
-    gCore.users.push( userHashie );
-    ++core.numUsers;
-    ++gCore.numUsers;
+
+    core.users[nspName] ??= []
+    core.users[nspName].push( coreHashie );
+    // ++core.numUsers;
     
-    simpMe.addedUser = true;    
+    simpMe.addedUser = true;
+
+    simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
+    // socket.join( simpMe.sUser );
     
     // Not sure confirmIdPong is needed, even as extra precaution. It sometimes doesn't work
     // const confirmId = setInterval( () => { 
@@ -74,13 +76,9 @@ const User = function (
     //     clearInterval( confirmId );
     //   };
     // }, 1000 );
-    module.listUsers();
 
-    simpMe.sUser = `${ nspName }-${ handle }-${ emailAcct }`;
-    // socket.join( simpMe.sUser );
-    socket.join(`group-${ nspName }`);
-    console.log( socket.rooms );
-    
+    module.listUsers();
+    // }, 1000);
 
     const event = 'joined group';
     const aUser = { nick: handle, email: emailAcct };

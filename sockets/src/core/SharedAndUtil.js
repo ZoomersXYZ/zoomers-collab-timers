@@ -8,7 +8,7 @@ const SharedAndUtil = function (
   nspName, 
   getGroupLog, 
 
-  gCore, 
+  core, 
   seshie 
   // handle 
 ) {
@@ -95,7 +95,7 @@ const SharedAndUtil = function (
   // @anotherFile socket.id
   // @internal groupEmit()
   module.commonUserFunc = ( event ) => {
-    const users = gCore.users;
+    const users = core.users[nspName];
     const hashie = ( { 
       // username: handle, 
       username: seshie.username, 

@@ -184,24 +184,24 @@ const SocketCoreAndUtils = function (
       // DD - if so, the user wouldn't have disconnected. Doesn't seem like it
 
       // modifyUsers( core, socket );
-      --core.numUsers;
-      core.users.splice( 
-        core.users.findIndex( arrival => arrival.id === socket.id ), 1 
+      // --core.numUsers;
+      core.users[nspName].splice( 
+        core.users[nspName].findIndex( arrival => arrival.id === socket.id ), 1 
       );
-      core.userCount = core.users.length;
+      // core.userCount = core.users.length;
 
       // modifyUsers( gCore, socket );
-      --gCore.numUsers
-      gCore.users.splice( 
-        gCore.users.findIndex( arrival => arrival.id === socket.id ), 1 
-      );
-      gCore.userCount = gCore.users.length;
+      // --gCore.numUsers
+      // gCore.users.splice( 
+      //   gCore.users.findIndex( arrival => arrival.id === socket.id ), 1 
+      // );
+      // gCore.userCount = gCore.users.length;
 
-      if ( gCore.users.length === 0 ) {
-        core.groups.splice( 
-          core.groups.findIndex( arrival => arrival === nspName ), 1 
-        );
-      };
+      // if ( gCore.users.length === 0 ) {
+      //   core.groups.splice( 
+      //     core.groups.findIndex( arrival => arrival === nspName ), 1 
+      //   );
+      // };
       
       const event = 'user left';
       hashie = commonUserFunc( event );

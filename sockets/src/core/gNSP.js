@@ -45,7 +45,7 @@ const group = socket => {
       socket.client.server.glue.groups[ nspName ] ||= {
         timers: {}, 
         sesh: null, 
-        core: InitNsp.gCore() 
+        core: InitNsp.gCore(nspName) 
       };
 
       if ( isEmpty( socket.client.server.glue.core ) ) {
@@ -103,7 +103,7 @@ const group = socket => {
     nspName, 
     getGroupLog, 
     
-    gCore, 
+    core, 
     seshie 
   );
 

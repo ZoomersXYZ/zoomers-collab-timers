@@ -68,17 +68,19 @@ const InitNsp = function() {
     };
   };
   
-  module.gCore = function() { 
+  module.gCore = function( nspName ) { 
     return {  
       users: [], 
       userCount: 0, 
-      numUsers: 0 // delete soon 
+      numUsers: 0, // delete soon
+      group: nspName
     };
   };
 
   module.core = function() { 
     return { 
-      ...module.gCore(), 
+      users: {}, 
+      userCount: 0, 
       groups: [], 
       initialized: false 
     };
