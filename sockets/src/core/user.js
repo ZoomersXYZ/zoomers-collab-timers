@@ -93,6 +93,7 @@ const User = function (
     const event = 'list users';
     const hashie = commonUserFunc( event );
     groupEmit( event, hashie );
+
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.bbc.debug( `${ sockId }: fin listUsers() emit`, hashie.hasOwnProperty( 'count' ) && hashie.count );
   };

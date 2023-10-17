@@ -93,7 +93,7 @@ const SocketCoreAndUtils = function (
       };
       const event = 'timer updated';
       emitRoom( event, { room: roomie, ...hashish } );
-      l.bbc.debug( `${ socket.id }: fin /inner/ onRoomConnect. emit`, event );
+      // l.bbc.debug( `${ socket.id }: fin /inner/ onRoomConnect. emit`, event );
     // };
   };
 
@@ -117,14 +117,14 @@ const SocketCoreAndUtils = function (
     ) {
       sassy[ initialRoom ] = InitNsp.sassy( initialRoom, nspName );
       // thisTimer = sassy[ initialRoom ];
-      l.parm.debug( 'init', sassy[ initialRoom ] );
+      // l.parm.debug( 'init', sassy[ initialRoom ] );
     };
     simpMe.sRoom = `${ nspName }-${ initialRoom }`;
     socket.join( simpMe.sRoom );
     simpMe.room = initialRoom;
 
     // await onRoomConnect( sassy[ initialRoom ]);
-    l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
+    // l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
   module.askForSession = async function(incoming) {    
@@ -178,7 +178,7 @@ const SocketCoreAndUtils = function (
     if ( !disconnectAnnoyance( reason ) ) return;
 
     if ( simpMe.addedUser ) {
-      l.parm.debug( `${ socket.id }: disconnect() if`, 'simpMe.addedUser' );
+      // l.parm.debug( `${ socket.id }: disconnect() if`, 'simpMe.addedUser' );
 
       // DD - chance user is still 'online' but roomEntered() didnt happen [again]?
       // DD - if so, the user wouldn't have disconnected. Doesn't seem like it
@@ -210,7 +210,7 @@ const SocketCoreAndUtils = function (
       // Reset
       simpMe.addedUser = false;
       simpMe.userModuleCount = 0;
-      l.bbc.debug( `${ socket.id }: fin disconnect. emit`, event );
+      // l.bbc.debug( `${ socket.id }: fin disconnect. emit`, event );
 
       await disconnecting();
     };
@@ -223,7 +223,7 @@ const SocketCoreAndUtils = function (
     const aUser = { nick: seshie.username, email: seshie.email };
     await logItWrapper( null, aUser, event );
     // @TODO why isn't seshie, et al being wiped? Will the seshie/socket.id disappear after this?
-    l.bbc.debug( `${ socket.id }: fin disconnecting. logItWrapper()`, event );
+    // l.bbc.debug( `${ socket.id }: fin disconnecting. logItWrapper()`, event );
   };
 
   return module;
