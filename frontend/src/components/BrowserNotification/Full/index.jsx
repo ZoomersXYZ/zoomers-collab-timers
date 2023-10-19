@@ -23,6 +23,16 @@ const initialBlob = {
     sound: false, 
     vol: 1 
   },
+  paused: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  },
+  resumed: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  },
   repeat: {
     onOff: false, 
     sound: false, 
@@ -38,7 +48,11 @@ const initialBlob = {
     sound: false, 
     vol: 1 
   }, 
-  testy: 'lol' 
+  extra: {
+    onOff: false, 
+    sound: false, 
+    vol: 1 
+  }, 
 };
 
 function init( { group, label, type } ) { 
@@ -67,12 +81,23 @@ function init( { group, label, type } ) {
     flag = true;
   };
 
+  if (storage.hasOwnProperty(label) && storage[label].hasOwnProperty(type)) {
+    for (let key in initialBlob) {
+      if (!storage[label][type].hasOwnProperty(key)) {
+        storage[label][type][key] = initialBlob[key]
+        if (!flag) {
+          flag = true;
+        };
+      };
+    };
+  };
+
   if ( flag ) {
     localStorage.setItem( group, JSON.stringify( storage ) );
   };
 
   const data = storage[ label ][ type ];
-
+ 
   return { storage, data, label, type };
 };
 
@@ -216,14 +241,14 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.timer } 
+          checked={ checked.timer || false } 
           label="All" 
           name="timer" 
         />
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.start } 
+          checked={ checked.start || false } 
           label="Timer Start" 
           name="start" 
           root={ checked.timer } 
@@ -231,7 +256,7 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.end } 
+          checked={ checked.end || false } 
           label="Timer End" 
           name="end" 
           root={ checked.timer } 
@@ -239,7 +264,15 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.repeat } 
+          checked={ checked.paused || false } 
+          label="Paused/Resumed" 
+          name="end" 
+          root={ checked.timer } 
+        />
+
+        <Toggle 
+          onChange={ handleCheckbox } 
+          checked={ checked.repeat || false } 
           label="Repeating Start/End" 
           name="repeat" 
           root={ checked.timer } 
@@ -247,7 +280,7 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.continuing } 
+          checked={ checked.continuing || false } 
           label="Repeating Cont" 
           name="continuing" 
           root={ checked.timer } 
@@ -255,7 +288,7 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
-          checked={ checked.other } 
+          checked={ checked.other || false } 
           label="Other" 
           name="other" 
           root={ checked.timer } 
