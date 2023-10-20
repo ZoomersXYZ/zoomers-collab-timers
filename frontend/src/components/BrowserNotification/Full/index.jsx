@@ -7,51 +7,40 @@ import { Collapse } from 'react-collapse';
 import Toggle from './../toggled';
 import './../styles.scss';
 
+const eachBlob = {
+  onOff: false, 
+  sound: false, 
+  vol: 1, 
+  noise: null 
+};
+
 const initialBlob = { 
   timer: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   },
   start: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   },
   end: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   },
   paused: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   },
   resumed: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   },
   repeat: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   }, 
   continuing: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   }, 
   other: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   }, 
   extra: {
-    onOff: false, 
-    sound: false, 
-    vol: 1 
+    ...eachBlob
   }, 
 };
 
@@ -232,6 +221,11 @@ const BrowserNotification = ( props ) => {
       <Collapse isOpened={ open }>
       <div className="notifications-list">
 
+        <label class="switch">
+          <input type="checkbox" />
+          On/Off <span class="slider"></span>
+        </label>
+
         <div className="notifications-container title">
           <div className="width-7">Type</div>
           <div className="width-3">On/Off</div>
@@ -278,6 +272,15 @@ const BrowserNotification = ( props ) => {
           root={ checked.timer } 
         />
 
+        { runBool &&
+        <div className={ `audio ${ type }` }>
+          <audio id="sound" preload="auto" ref={ audioRef }>
+            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
+            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
+          </audio>
+        </div>
+        }
+
         <Toggle 
           onChange={ handleCheckbox } 
           checked={ checked.continuing || false } 
@@ -285,6 +288,15 @@ const BrowserNotification = ( props ) => {
           name="continuing" 
           root={ checked.timer } 
         />
+
+        { runBool &&
+        <div className={ `audio ${ type }` }>
+          <audio id="sound" preload="auto" ref={ audioRef }>
+            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
+            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
+          </audio>
+        </div>
+        }
 
         <Toggle 
           onChange={ handleCheckbox } 
