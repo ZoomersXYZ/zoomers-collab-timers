@@ -1,11 +1,14 @@
-import React, { useEffect, useReducer, useRef, useState, useId } from "react";
+import React, { useEffect, useReducer, useState, useId } from "react";
 import PropTypes from "prop-types";
 
 import Push from "push.js";
 import { Collapse } from 'react-collapse';
 
 import Toggle from './../toggled';
+import Noise from './../noise'
 import './../styles.scss';
+
+import { isObject } from './../../../ancillary/helpers/general';
 
 const eachBlob = {
   onOff: false, 
@@ -16,31 +19,40 @@ const eachBlob = {
 
 const initialBlob = { 
   timer: {
-    ...eachBlob
+    ...eachBlob, 
+    noise: "[3] waterdrop"
   },
   start: {
-    ...eachBlob
+    ...eachBlob, 
+    noise: "[2][b] military-new-message"
   },
   end: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[2][b] military-new-message"
   },
   paused: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[3][b] gun-silencer"
   },
   resumed: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[3][b] gun-silencer"
   },
   repeat: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[1] the-purge-siren"
   }, 
   continuing: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[3] waterdrop"
   }, 
   other: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[3] waterdrop"
   }, 
   extra: {
-    ...eachBlob
+    ...eachBlob,
+    noise: "[3] waterdrop"
   }, 
 };
 
@@ -90,22 +102,21 @@ function init( { group, label, type } ) {
   return { storage, data, label, type };
 };
 
-function reducer( state, action ) {
-  const { label, type, storage } = state;
+function reducer( state, action ) {  
+  const { label, type, storage } = state;  
+  let newType = { ...storage[ label ][ type ] };
 
-  const newType = { ...storage[ label ][ type ] };
-  let newVal = null;
-  if ( action.includes( ' ' ) ) {
-    const arr = action.split( ' ' );
-    const first = arr[ 0 ];
-    const second = arr[ 1 ];
-
-    newVal = !state.storage[ label ][ type ][ first ][ second ];
-    newType[ first ][ second ] = newVal;
-  } else {
-    newVal = !state.storage[ label ][ type ][ action ];
-    newType[ action ] = newVal;
+  if (action.kind == 'check') {
+    console.log('check', newType);
+    newType = checkOffData(action.name, storage, label, type);
+    console.log('hi');
+  } else if (action.kind == 'noise') {
+    console.log('noise', newType);
+    newType = checkNoise(action.name, action.noise, storage, label, type);
   };
+
+  console.log('act', action);
+  console.log('wat', newType);
 
   const newStorage = {
     [ label ]: {
@@ -127,6 +138,41 @@ function reducer( state, action ) {
       ...newType 
     }
   };
+};
+
+const checkOffData = ( name, storage, label, type ) => {
+  const newType = { ...storage[ label ][ type ] };
+  let newVal = null;
+
+  if ( name.includes( ' ' ) ) {
+    const arr = name.split( ' ' );
+    const first = arr[ 0 ];
+    const second = arr[ 1 ];
+
+    newVal = !storage[ label ][ type ][ first ][ second ];
+    newType[ first ][ second ] = newVal;
+  } else {
+    newVal = !storage[ label ][ type ][ name ];
+    newType[ action ] = newVal;
+  };
+  
+  return newType
+};
+
+const checkNoise = ( name, noise, storage, label, type ) => {
+  const newType = { ...storage[ label ][ type ] };
+
+  if ( name.includes( ' ' ) ) {
+    const arr = action.split( ' ' );
+    const first = arr[ 0 ];
+    const second = arr[ 1 ];
+
+    newType[ first ][ second ] = noise;
+  } else {
+    newType[ name ] = noise;
+  };
+  
+  return newType
 };
 
 const BrowserNotification = ( props ) => {
@@ -165,9 +211,14 @@ const BrowserNotification = ( props ) => {
     setChecked( state.data )
   }, [ state.data ] );
 
-  const handleCheckbox = ( e ) => {
-    const name = e.target.name;
-    dispatch( name );
+  const handleCheckbox = (e) => {
+    const action = {name: e.target.name, kind: 'check'};
+    dispatch(action);
+  };
+
+  const handleOnChangeNoise = (e) => {
+    const action = {name: e.target.name, kind: 'noise', noise: e.target.value};
+    dispatch(action);
   };
 
   useEffect( () => { 
@@ -221,7 +272,7 @@ const BrowserNotification = ( props ) => {
       <Collapse isOpened={ open }>
       <div className="notifications-list">
 
-        <label class="switch onoff">
+        <label className="switch onoff">
           <input
             type="checkbox" 
             name="timer onOff"
@@ -229,7 +280,7 @@ const BrowserNotification = ( props ) => {
             checked={ checked.timer.onOff }
             className="toggle"
           />
-          On/Off <span class="slider"></span>
+          On/Off <span className="slider"></span>
         </label>
 
         <div className="notifications-container title">
@@ -242,16 +293,23 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise }
           checked={ checked.start || false } 
           label="Timer Start" 
           name="start" 
           root={ checked.timer } 
+          runBool={ runBool } 
+          type={ type } 
+        />
+
+        <Noise
+          timer={ checked.timer } 
+          noise={ checked.start.noise }
           { ...{ 
             runBool, 
             type, 
             run, 
             event, 
-            timer
           } } 
         />
 
@@ -261,28 +319,18 @@ const BrowserNotification = ( props ) => {
           label="Timer End" 
           name="end" 
           root={ checked.timer } 
-          { ...{ 
-            runBool, 
-            type, 
-            run, 
-            event, 
-            timer
-          } } 
+          runBool={ runBool } 
+          type={ type } 
         />
 
         <Toggle 
           onChange={ handleCheckbox } 
           checked={ checked.paused || false } 
           label="Paused/Resumed" 
-          name="end" 
+          name="paused" 
           root={ checked.timer } 
-          { ...{ 
-            runBool, 
-            type, 
-            run, 
-            event, 
-            timer
-          } } 
+          runBool={ runBool } 
+          type={ type } 
         />
 
         <Toggle 
@@ -291,13 +339,8 @@ const BrowserNotification = ( props ) => {
           label="Repeating Start/End" 
           name="repeat" 
           root={ checked.timer } 
-          { ...{ 
-            runBool, 
-            type, 
-            run, 
-            event, 
-            timer
-          } } 
+          runBool={ runBool }
+          type={ type } 
         />
 
         { runBool &&
