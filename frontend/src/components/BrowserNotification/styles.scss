@@ -101,6 +101,10 @@ div.notifications-list {
     width: 50%
   };
 
+label.onoff {
+  background-color: rgb(235, 217, 238);
+}
+
 // Grid for notification input
 div.notifications-container {
   // display: -ms-grid;

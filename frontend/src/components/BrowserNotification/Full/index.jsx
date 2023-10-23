@@ -150,7 +150,7 @@ const BrowserNotification = ( props ) => {
 
   const tagId = useId();
   const [ prevRun, setPrevRun ] = useState( 0 );
-  const audioRef = useRef();
+  // const audioRef = useRef();
   const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );  
   const [ checked, setChecked ] = useState( state.data );
   
@@ -179,9 +179,9 @@ const BrowserNotification = ( props ) => {
       // Run browser notification
       show();
 
-      if ( checked.timer.sound || checked[ event ].sound ) {
-        audioRef.current.play();
-      };
+      // if ( checked.timer.sound || checked[ event ].sound ) {
+      //   audioRef.current.play();
+      // };
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ run ] );
@@ -221,8 +221,14 @@ const BrowserNotification = ( props ) => {
       <Collapse isOpened={ open }>
       <div className="notifications-list">
 
-        <label class="switch">
-          <input type="checkbox" />
+        <label class="switch onoff">
+          <input
+            type="checkbox" 
+            name="timer onOff"
+            onChange={ handleCheckbox }
+            checked={ checked.timer.onOff }
+            className="toggle"
+          />
           On/Off <span class="slider"></span>
         </label>
 
@@ -231,14 +237,8 @@ const BrowserNotification = ( props ) => {
           <div className="width-3">On/Off</div>
           <div className="width-3">Sound</div>
           <div className="width-5">Vol</div>
+          <div className="width-5">Audio</div>
         </div>
-
-        <Toggle 
-          onChange={ handleCheckbox } 
-          checked={ checked.timer || false } 
-          label="All" 
-          name="timer" 
-        />
 
         <Toggle 
           onChange={ handleCheckbox } 
@@ -246,6 +246,13 @@ const BrowserNotification = ( props ) => {
           label="Timer Start" 
           name="start" 
           root={ checked.timer } 
+          { ...{ 
+            runBool, 
+            type, 
+            run, 
+            event, 
+            timer
+          } } 
         />
 
         <Toggle 
@@ -254,6 +261,13 @@ const BrowserNotification = ( props ) => {
           label="Timer End" 
           name="end" 
           root={ checked.timer } 
+          { ...{ 
+            runBool, 
+            type, 
+            run, 
+            event, 
+            timer
+          } } 
         />
 
         <Toggle 
@@ -262,6 +276,13 @@ const BrowserNotification = ( props ) => {
           label="Paused/Resumed" 
           name="end" 
           root={ checked.timer } 
+          { ...{ 
+            runBool, 
+            type, 
+            run, 
+            event, 
+            timer
+          } } 
         />
 
         <Toggle 
@@ -270,6 +291,13 @@ const BrowserNotification = ( props ) => {
           label="Repeating Start/End" 
           name="repeat" 
           root={ checked.timer } 
+          { ...{ 
+            runBool, 
+            type, 
+            run, 
+            event, 
+            timer
+          } } 
         />
 
         { runBool &&
