@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState, useId } from "react";
+import React, { useEffect, useReducer, useRef, useState, useId } from "react";
 import PropTypes from "prop-types";
 
 import Push from "push.js";
@@ -7,8 +7,6 @@ import { Collapse } from 'react-collapse';
 import Toggle from './../toggled';
 import Noise from './../noise'
 import './../styles.scss';
-
-import { isObject } from './../../../ancillary/helpers/general';
 
 const eachBlob = {
   onOff: false, 
@@ -20,39 +18,39 @@ const eachBlob = {
 const initialBlob = { 
   timer: {
     ...eachBlob, 
-    noise: "[3] waterdrop"
+    noise: "3--waterdrop"
   },
   start: {
     ...eachBlob, 
-    noise: "[2][b] military-new-message"
+    noise: "2b--military-new-message"
   },
   end: {
     ...eachBlob,
-    noise: "[2][b] military-new-message"
+    noise: "2b--military-new-message"
   },
   paused: {
     ...eachBlob,
-    noise: "[3][b] gun-silencer"
+    noise: "3b--gun-silencer"
   },
   resumed: {
     ...eachBlob,
-    noise: "[3][b] gun-silencer"
+    noise: "3b--gun-silencer"
   },
   repeat: {
     ...eachBlob,
-    noise: "[1] the-purge-siren"
+    noise: "1--the-purge-siren"
   }, 
   continuing: {
     ...eachBlob,
-    noise: "[3] waterdrop"
+    noise: "3--waterdrop"
   }, 
   other: {
     ...eachBlob,
-    noise: "[3] waterdrop"
+    noise: "3--waterdrop"
   }, 
   extra: {
     ...eachBlob,
-    noise: "[3] waterdrop"
+    noise: "3--waterdrop"
   }, 
 };
 
@@ -163,7 +161,7 @@ const checkNoise = ( name, noise, storage, label, type ) => {
   const newType = { ...storage[ label ][ type ] };
 
   if ( name.includes( ' ' ) ) {
-    const arr = action.split( ' ' );
+    const arr = name.split( ' ' );
     const first = arr[ 0 ];
     const second = arr[ 1 ];
 
@@ -231,6 +229,7 @@ const BrowserNotification = ( props ) => {
       show();
 
       // if ( checked.timer.sound || checked[ event ].sound ) {
+      //   console.log('play')
       //   audioRef.current.play();
       // };
     };
@@ -283,6 +282,17 @@ const BrowserNotification = ( props ) => {
           On/Off <span className="slider"></span>
         </label>
 
+        <label className="switch onoff">
+          <input
+            type="checkbox" 
+            name="timer sound"
+            onChange={ handleCheckbox }
+            checked={ checked.timer.sound }
+            className="toggle"
+          />
+          Sound On/Off <span className="slider"></span>
+        </label>
+
         <div className="notifications-container title">
           <div className="width-7">Type</div>
           <div className="width-3">On/Off</div>
@@ -304,9 +314,10 @@ const BrowserNotification = ( props ) => {
 
         <Noise
           timer={ checked.timer } 
-          noise={ checked.start.noise }
+          checked={ checked.start || false }
           { ...{ 
             runBool, 
+            prevRun, 
             type, 
             run, 
             event, 
@@ -323,6 +334,18 @@ const BrowserNotification = ( props ) => {
           type={ type } 
         />
 
+        <Noise
+          timer={ checked.timer } 
+          checked={ checked.end || false }
+          { ...{ 
+            runBool, 
+            prevRun, 
+            type, 
+            run, 
+            event, 
+          } } 
+        />
+
         <Toggle 
           onChange={ handleCheckbox } 
           checked={ checked.paused || false } 
@@ -331,6 +354,18 @@ const BrowserNotification = ( props ) => {
           root={ checked.timer } 
           runBool={ runBool } 
           type={ type } 
+        />
+
+        <Noise
+          timer={ checked.timer } 
+          checked={ checked.paused || false }
+          { ...{ 
+            runBool, 
+            prevRun, 
+            type, 
+            run, 
+            event, 
+          } } 
         />
 
         <Toggle 
@@ -343,14 +378,17 @@ const BrowserNotification = ( props ) => {
           type={ type } 
         />
 
-        { runBool &&
-        <div className={ `audio ${ type }` }>
-          <audio id="sound" preload="auto" ref={ audioRef }>
-            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
-            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
-          </audio>
-        </div>
-        }
+        <Noise
+          timer={ checked.timer } 
+          checked={ checked.repeat || false }
+          { ...{ 
+            runBool, 
+            prevRun, 
+            type, 
+            run, 
+            event, 
+          } } 
+        />
 
         <Toggle 
           onChange={ handleCheckbox } 
@@ -360,14 +398,17 @@ const BrowserNotification = ( props ) => {
           root={ checked.timer } 
         />
 
-        { runBool &&
-        <div className={ `audio ${ type }` }>
-          <audio id="sound" preload="auto" ref={ audioRef }>
-            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
-            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
-          </audio>
-        </div>
-        }
+        <Noise
+          timer={ checked.timer } 
+          checked={ checked.continuing || false }
+          { ...{ 
+            runBool, 
+            prevRun, 
+            type, 
+            run, 
+            event, 
+          } } 
+        />
 
         <Toggle 
           onChange={ handleCheckbox } 
@@ -377,14 +418,17 @@ const BrowserNotification = ( props ) => {
           root={ checked.timer } 
         />
 
-        { runBool &&
-        <div className={ `audio ${ type }` }>
-          <audio id="sound" preload="auto" ref={ audioRef }>
-            <source src="/sounds/[4] ting.mp3" type="audio/mpeg" />
-            <source src="/sounds/[4] ting.ogg" type="audio/ogg" />
-          </audio>
-        </div>
-        }
+        <Noise
+          timer={ checked.timer } 
+          checked={ checked.other || false }
+          { ...{ 
+            runBool, 
+            prevRun, 
+            type, 
+            run, 
+            event, 
+          } } 
+        />
 
       </div>
       </Collapse>

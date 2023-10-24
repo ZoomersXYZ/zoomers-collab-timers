@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 // import PropTypes from "prop-types";
 
-const NoiseToggle = ( { runBool, type, run, event, timer, noise } ) => {
+const NoiseToggle = ( { runBool, type, run, prevRun, event, timer, checked } ) => {
+  // console.log(checked);
   if ( !root ) {
     root = {
       onOff: true, 
@@ -17,6 +18,7 @@ const NoiseToggle = ( { runBool, type, run, event, timer, noise } ) => {
 
       // if ( checked.sound || checked[ event ].sound ) {
       if ( checked.sound ) {
+        console.log(checked.noise);
         audioRef.current.play();
       };
     };
@@ -27,9 +29,9 @@ const NoiseToggle = ( { runBool, type, run, event, timer, noise } ) => {
   <>
     { runBool && 
     <div className={ `audio ${ type }` }>
-      <audio id="sound" preload="auto" ref={ audioRef }>
-        <source src={`/sounds/${noise}.mp3" type="audio/mpeg`} />
-        {/* <source src="/sounds/[4] ting.ogg" type="audio/ogg" /> */}
+      <audio id="soundy" preload="auto" ref={ audioRef }>
+        <source src={`/sounds/${checked.noise}.mp3`} type="audio/mpeg" />
+        <source src={`/sounds/${checked.noise}.ogg`} type="audio/ogg" />
       </audio>
     </div>
     }
