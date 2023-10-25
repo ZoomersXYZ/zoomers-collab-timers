@@ -19,7 +19,9 @@ const eachBlob = {
 const initialBlob = { 
   timer: {
     ...eachBlob, 
-    noise: "3--waterdrop"
+    noise: "3--waterdrop", 
+    onOff: true, 
+    sound: true 
   },
   start: {
     ...eachBlob, 
