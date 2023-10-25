@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import Push from "push.js";
 import { Collapse } from 'react-collapse';
 
+import ParentNotifications from "./../../Common/ParentNotifications";
 import Toggle from './../toggled';
 import Noise from './../noise'
 import './../styles.scss';
@@ -271,33 +272,17 @@ const BrowserNotification = ( props ) => {
       <Collapse isOpened={ open }>
       <div className="notifications-list">
 
-        <label className="switch onoff">
-          <input
-            type="checkbox" 
-            name="timer onOff"
-            onChange={ handleCheckbox }
-            checked={ checked.timer.onOff }
-            className="toggle"
-          />
-          On/Off <span className="slider"></span>
-        </label>
-
-        <label className="switch onoff">
-          <input
-            type="checkbox" 
-            name="timer sound"
-            onChange={ handleCheckbox }
-            checked={ checked.timer.sound }
-            className="toggle"
-          />
-          Sound On/Off <span className="slider"></span>
-        </label>
+        <ParentNotifications
+          onChange={ handleCheckbox } 
+          onOffBool={ checked.timer.onOff } 
+          soundBool={ checked.timer.sound } 
+        />
 
         <div className="notifications-container title">
-          <div className="width-7">Type</div>
-          <div className="width-3">On/Off</div>
-          <div className="width-3">Sound</div>
-          <div className="width-5">Vol</div>
+          <div className="width-6">Type</div>
+          <div className="width-2">On/Off</div>
+          <div className="width-2">Sound</div>
+          <div className="width-3">Vol</div>
           <div className="width-5">Audio</div>
         </div>
 
@@ -326,12 +311,11 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.end || false } 
           label="Timer End" 
           name="end" 
           root={ checked.timer } 
-          runBool={ runBool } 
-          type={ type } 
         />
 
         <Noise
@@ -348,12 +332,11 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.paused || false } 
           label="Paused/Resumed" 
           name="paused" 
           root={ checked.timer } 
-          runBool={ runBool } 
-          type={ type } 
         />
 
         <Noise
@@ -370,12 +353,11 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.repeat || false } 
           label="Repeating Start/End" 
           name="repeat" 
           root={ checked.timer } 
-          runBool={ runBool }
-          type={ type } 
         />
 
         <Noise
@@ -392,6 +374,7 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.continuing || false } 
           label="Repeating Cont" 
           name="continuing" 
@@ -412,6 +395,7 @@ const BrowserNotification = ( props ) => {
 
         <Toggle 
           onChange={ handleCheckbox } 
+          onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.other || false } 
           label="Other" 
           name="other" 

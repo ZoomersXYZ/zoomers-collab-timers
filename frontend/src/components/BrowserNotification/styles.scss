@@ -138,8 +138,14 @@ div.notifications-container {
   .width-7 {
     grid-column: span 7;
   };
+  .width-6 {
+    grid-column: span 6;
+  };
   .width-5 {
     grid-column: span 5;
+  };
+  .width-4 {
+    grid-column: span 4;
   };
   .width-3 {
     grid-column: span 3;

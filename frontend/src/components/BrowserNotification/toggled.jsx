@@ -11,18 +11,18 @@ const NotifyToggle = ( { parent, checked, name, label, className, onChange, root
   };
   return(
   <div className="notifications-container">
-    <div name={ name } className="type width-7">
+    <div name={ name } className="type width-6">
       { label } 
     </div>
 
-    <div className="width-3">
+    <div className="width-2">
       <input type="checkbox" name={ `${ name } onOff` } onChange={ onChange } checked={ checked.onOff } disabled={ !root.onOff } className="toggle" />
     </div>
     <div className="width-2">
       {/* <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.onOff || !root.sound } className="toggle" /> */}
-      <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.onOff } className="toggle" />
+      <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.sound  } className="toggle" />
     </div >
-    <div className="width-4">
+    <div className="width-3">
       <input type="checkbox" name={ `${ name } vol` } onChange={ onChange } checked={ false } disabled={ true } className="toggle" />
     </div>
     <div className="width-5">
