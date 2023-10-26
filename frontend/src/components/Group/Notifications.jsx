@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useRef, useState, useId } from "react";
+import React, { useContext, useEffect, useReducer, useRef, useState, useId } from "react";
 import PropTypes from "prop-types";
 import { Collapse } from 'react-collapse';
 
+import { GroupContext } from '../Contexts';
 import ParentNotifications from '../Common/ParentNotifications';
 import { isObject } from '../../ancillary/helpers/general';
 
@@ -17,6 +18,7 @@ const GroupNotifications = ( props ) => {
     gName, 
   } = props;
 
+  const { setGroupOnOff, setGroupSound } = useContext( GroupContext );
   const [ state, setState ] = useState( null );
   const [ onOff, setOnOff ] = useState( false );
   const [ sound, setSound ] = useState( false );
@@ -56,6 +58,8 @@ const GroupNotifications = ( props ) => {
     if ( state != null ) {
       setOnOff(state.notifications.onOff);
       setSound(state.notifications.sound);
+      setGroupOnOff(state.notifications.onOff);
+      setGroupSound(state.notifications.sound);
     };
   }, [ state ] );
 
@@ -77,8 +81,10 @@ const GroupNotifications = ( props ) => {
       const second = arr[ 1 ];
       if ( second == 'onOff' ) {
         setOnOff( prev => !prev );
+        setGroupOnOff( prev => !prev );
       } else if ( second == 'sound' ) {
         setSound( prev => !prev );
+        setGroupSound( prev => !prev );
       };
     };
   };
@@ -92,6 +98,7 @@ const GroupNotifications = ( props ) => {
           onChange={ handleCheckbox } 
           onOffBool={ onOff } 
           soundBool={ sound } 
+          parent={ true } 
         />
       </Collapse>
     </div>

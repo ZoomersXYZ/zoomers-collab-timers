@@ -8,9 +8,18 @@ import { GroupContext } from '../../components/Contexts';
 const FRoomsGroup = ( props ) => { 
   const groupName = props.match.params.name;
   const [ gName, setGroupName ] = useState( groupName );
+  const [ groupOnOff, setGroupOnOff ] = useState( false );
+  const [ groupSound, setGroupSound ] = useState( false );
+  const [ checkAll, setCheckAll ] = useState( false );
   const groupObj = {
     gName, 
-    setGroupName 
+    setGroupName, 
+    groupOnOff, 
+    setGroupOnOff, 
+    groupSound, 
+    setGroupSound, 
+    checkAll, 
+    setCheckAll 
   };
 
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const NotifyToggle = ( { parent, checked, name, label, className, onChange, root, onChangeNoise } ) => {
+const NotifyToggle = ( { checked, name, label, onChange, onChangeNoise, root, groupOnOff, groupSound } ) => {
   if ( !root ) {
     root = {
       onOff: true, 
@@ -16,11 +16,11 @@ const NotifyToggle = ( { parent, checked, name, label, className, onChange, root
     </div>
 
     <div className="width-2">
-      <input type="checkbox" name={ `${ name } onOff` } onChange={ onChange } checked={ checked.onOff } disabled={ !root.onOff } className="toggle" />
+      <input type="checkbox" name={ `${ name } onOff` } onChange={ onChange } checked={ checked.onOff } disabled={ !groupOnOff || !root.onOff || !root.onOff } className="toggle" />
     </div>
     <div className="width-2">
       {/* <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.onOff || !root.sound } className="toggle" /> */}
-      <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !root.sound  } className="toggle" />
+      <input type="checkbox" name={ `${ name } sound` } onChange={ onChange } checked={ checked.sound } disabled={ !groupSound || !root.sound  } className="toggle" />
     </div >
     <div className="width-3">
       <input type="checkbox" name={ `${ name } vol` } onChange={ onChange } checked={ false } disabled={ true } className="toggle" />

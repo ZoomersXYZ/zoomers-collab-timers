@@ -20,7 +20,7 @@ import { delay, isEmpty } from './../../ancillary/helpers/general';
 // Specific for this file
 import useSocket from '../Contexts/useSocket';
 import { getData, getLocal, setLocal } from './utilities';
-import GroupNotifications from './Notifications';
+import GroupNotifications from './notifications';
 
 // Main component
 const RoomsGroup = () => {
