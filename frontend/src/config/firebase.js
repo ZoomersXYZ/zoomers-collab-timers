@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY, 
@@ -14,10 +14,9 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID 
 };
 
-
 initializeApp( firebaseConfig );
 const db = getFirestore();
-const analytics = getAnalytics( db );
+// const analytics = getAnalytics( db );
 
 // firebase.firestore().enablePersistence()
 //   .catch( function( err ) {
@@ -33,4 +32,5 @@ const analytics = getAnalytics( db );
 //   } );
 // Subsequent queries will use persistence, if it was enabled successfully
 
-export { db as default, analytics };
+// export { db as default, analytics };
+export default db;

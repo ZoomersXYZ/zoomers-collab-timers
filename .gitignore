@@ -67,7 +67,7 @@ node_modules/
 /frontend/public/sounds
 
 # Google Cloud API
-/frontend/src/config/firebase.js
+# /frontend/src/config/firebase.js
 /frontend/src/config/firebaseConfig.json
 /sockets/src/config/firebase.js
 
