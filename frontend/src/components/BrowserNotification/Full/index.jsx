@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useRef, useState, useId } from "react";
+import React, { useContext, useEffect, useId, useReducer, useState } from "react";
 import PropTypes from "prop-types";
 
 import Push from "push.js";
 import { Collapse } from 'react-collapse';
 
+import { GroupContext } from './../../Contexts';
 import ParentNotifications from "./../../Common/ParentNotifications";
 import Toggle from './../toggled';
 import Noise from './../noise'
@@ -105,39 +106,58 @@ function init( { group, label, type } ) {
 
 function reducer( state, action ) {  
   const { label, type, storage } = state;  
-  let newType = { ...storage[ label ][ type ] };
 
-  if (action.kind == 'check') {
-    console.log('check', newType);
-    newType = checkOffData(action.name, storage, label, type);
-    console.log('hi');
-  } else if (action.kind == 'noise') {
-    console.log('noise', newType);
-    newType = checkNoise(action.name, action.noise, storage, label, type);
-  };
+  if ( action.kind == 'check' || action.kind == 'noise' ) {
+    let newType = { ...storage[ label ][ type ] };
 
-  console.log('act', action);
-  console.log('wat', newType);
+    if (action.kind == 'check') {
+      console.log('check', newType);
+      newType = checkOffData(action.name, storage, label, type);
+      console.log('hi');
+    } else if (action.kind == 'noise') {
+      console.log('noise', newType);
+      newType = checkNoise(action.name, action.noise, storage, label, type);
+    };
 
-  const newStorage = {
-    [ label ]: {
-      ...storage[ label ], 
-      [ type ]: {
-        ...storage[ label ][ type ], 
-        ...newType
+    console.log('act', action);
+    console.log('wat', newType);
+
+    const newStorage = {
+      [ label ]: {
+        ...storage[ label ], 
+        [ type ]: {
+          ...storage[ label ][ type ], 
+          ...newType
+        }
       }
-    }
+    };
+
+    return { 
+      ...state, 
+      storage: {
+        ...storage,
+        ...newStorage 
+      }, 
+      data: { 
+        ...newType 
+      }
+    };
   };
 
-  return { 
-    ...state, 
-    storage: {
-      ...storage,
-      ...newStorage 
-    }, 
-    data: { 
-      ...newType 
-    }
+  if ( action.kind == 'all' ) {
+    let newStorage = null
+    if ( action.name == 'all' ) {
+      newStorage = checkAllKeys( action.name, storage, label, type, action.checkAll )
+    } else if ( action.name == 'sound' ) {
+      newStorage = checkAllKeys( action.name, storage, label, type, action.checkAll )
+    };
+
+    return { 
+      ...state, 
+      storage: {
+        ...newStorage 
+      }
+    };
   };
 };
 
@@ -176,6 +196,24 @@ const checkNoise = ( name, noise, storage, label, type ) => {
   return newType
 };
 
+const checkAllKeys = ( kind, storage, label, type, checkAll ) => {
+  const newStorage = { ...storage };
+  if ( kind == 'all' ) {
+    for ( const [ key, value ] of Object.entries( storage[ label ][ type ] ) ) {
+      if ( key != 'timer' ) {
+        newStorage[ label ][ type ][ key ].onOff = !checkAll;
+      };
+    };
+  } else if ( kind == 'sound' ) {
+    for ( const [ key, value ] of Object.entries( storage[ label ][ type ] ) ) {
+      if ( key != 'timer' ) {
+        newStorage[ label ][ type ][ key ].sound = !checkAll;
+      };
+    };
+  };
+  return newStorage;
+};
+
 const BrowserNotification = ( props ) => {
   const { 
     run, 
@@ -200,6 +238,11 @@ const BrowserNotification = ( props ) => {
   // const audioRef = useRef();
   const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );  
   const [ checked, setChecked ] = useState( state.data );
+
+  const [ checkAll, setCheckAll ] = useState( false );
+  const [ checkAllSound, setCheckAllSound ] = useState( false );
+
+  const { groupOnOff, groupSound } = useContext( GroupContext );
   
   useEffect( () => { 
     const localSet = () => {
@@ -219,6 +262,18 @@ const BrowserNotification = ( props ) => {
 
   const handleOnChangeNoise = (e) => {
     const action = {name: e.target.name, kind: 'noise', noise: e.target.value};
+    dispatch(action);
+  };
+
+  const handleOnCheckAll = (e) => {
+    let action = null
+    if ( e.target.name == 'all' ) {
+      setCheckAll( prev => !prev );
+      action = { name: e.target.name, kind: 'all', checkAll };
+    } else if ( e.target.name == 'sound' ) {
+      setCheckAllSound( prev => !prev );
+      action = { name: e.target.name, kind: 'all', checkAll: checkAllSound };
+    };
     dispatch(action);
   };
 
@@ -278,6 +333,10 @@ const BrowserNotification = ( props ) => {
           onChange={ handleCheckbox } 
           onOffBool={ checked.timer.onOff } 
           soundBool={ checked.timer.sound } 
+          parent={ false } 
+          onCheckAll={ handleOnCheckAll } 
+          checkAll={ checkAll } 
+          checkAllSound={ checkAllSound } 
         />
 
         <div className="notifications-container title">
@@ -288,15 +347,13 @@ const BrowserNotification = ( props ) => {
           <div className="width-5">Audio</div>
         </div>
 
-        <Toggle 
+        {/* <Toggle 
           onChange={ handleCheckbox } 
           onChangeNoise={ handleOnChangeNoise }
           checked={ checked.start || false } 
           label="Timer Start" 
           name="start" 
           root={ checked.timer } 
-          runBool={ runBool } 
-          type={ type } 
         />
 
         <Noise
@@ -309,30 +366,40 @@ const BrowserNotification = ( props ) => {
             run, 
             event, 
           } } 
-        />
+        /> */}
 
-        <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise } 
-          checked={ checked.end || false } 
-          label="Timer End" 
-          name="end" 
-          root={ checked.timer } 
-        />
+      { 
+      [ [ checked.start, "Timer Start", "start" ], [ checked.end, "Timer End", "end" ], [ checked.paused, "Paused/Resumed", "paused" ], [ checked.repeat, "Repeating Start/End", "repeat" ], [ checked.continuing, "Repeating Cont", "continuing" ], [ checked.other, "Other", "other" ] ].map( ( trioEach, index ) =>
+        <React.Fragment key={index }>
+          <Toggle 
+            key={ `Toggle-${ index }` } 
+            onChange={ handleCheckbox } 
+            onChangeNoise={ handleOnChangeNoise } 
+            checked={ trioEach[ 0 ] || false } 
+            label={ trioEach[ 1 ] } 
+            name={ trioEach[ 2 ] } 
+            root={ checked.timer } 
+            groupOnOff={ groupOnOff } 
+            groupSound={ groupSound } 
+          />
 
-        <Noise
-          timer={ checked.timer } 
-          checked={ checked.end || false }
-          { ...{ 
-            runBool, 
-            prevRun, 
-            type, 
-            run, 
-            event, 
-          } } 
-        />
+          <Noise
+            key={ `Noise-${ index }` } 
+            timer={ checked.timer } 
+            checked={ trioEach[ 0 ] || false }
+            { ...{ 
+              runBool, 
+              prevRun, 
+              type, 
+              run, 
+              event, 
+            } } 
+          />
+        </React.Fragment>
+        )
+      }
 
-        <Toggle 
+        {/* <Toggle 
           onChange={ handleCheckbox } 
           onChangeNoise={ handleOnChangeNoise } 
           checked={ checked.paused || false } 
@@ -414,14 +481,14 @@ const BrowserNotification = ( props ) => {
             run, 
             event, 
           } } 
-        />
+        /> */}
 
       </div>
       </Collapse>
 
       <button className="smaller-button" onClick={ handleCollapse }>
         { !open ? 'Open Notification Settings' : 'Collapse Settings' } 
-        <i className={ `icon-pad-left fas fa-bell${ checked.timer ? '-slash' : '' }` }></i>
+        <i className={ `icon-pad-left fas fa-bell${ !checked.timer.onOff ? '-slash' : '' }` }></i>
       </button>
     </div>
     </>

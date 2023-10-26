@@ -6,11 +6,13 @@ const ParentNotifications = ( props ) => {
     onChange, 
     onOffBool, 
     soundBool, 
+    parent 
   } = props;
+  const bool = ( parent ) ? 'parent-notification' : 'room-notification'
 
   return (
     <>
-    <div className="width-8 label-outer-container">
+    <div className={ `width-8 ${ bool } label-outer-container` }>
       <div className="left-container label-container">
         <label className="texty">On/Off</label>
         <label className="switching onOff">
@@ -34,11 +36,42 @@ const ParentNotifications = ( props ) => {
             onChange={ onChange }
             checked={ soundBool }
             className="toggle"
-            // disabled={ !onOff }
           />
           <span className="slider"></span>          
-        </label>        
+        </label>
       </div>
+
+      { !parent && 
+      <>
+      <div className="right-container label-container">
+        <span className="texty">Check All</span>
+        <label className="switching all">
+          <input
+            type="checkbox" 
+            name="all"
+            onChange={ props.onCheckAll }
+            checked={ props.checkAll }
+            className="toggle"
+          />
+          <span className="slider"></span>          
+        </label>
+      </div>
+
+      <div className="last-right-container label-container">
+        <span className="texty">Check All Sound</span>
+        <label className="switching allsound">
+          <input
+            type="checkbox" 
+            name="sound"
+            onChange={ props.onCheckAll }
+            checked={ props.checkAllSound }
+            className="toggle"
+          />
+          <span className="slider"></span>          
+        </label>
+      </div>
+      </>
+      }
     </div>
     </>
   );

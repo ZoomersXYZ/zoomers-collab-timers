@@ -2,56 +2,103 @@
   float: right;
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
+// Fancier button
+.room-notification.label-outer-container {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  grid-gap: 1em;
 
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+  .left-container {
+    grid-column: span 4;
+    // grid-template-columns: auto auto auto;
+  }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  .right-container {
+    grid-column: span 4;
+  }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  .last-right-container {
+    grid-column: span 5;
+  }
 
-input:checked + .slider {
-  background-color: #2196F3;
-}
+  .label-container {
+    // grid-template-columns: auto 1fr;
+    grid-template-rows: auto 10rem;
+    // display: flex;
+    // grid-template-columns: auto auto auto;
+  }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
+  // copy pasted
+  .switching {
+    position: relative;
+    display: grid;
+    width: 60px;
+    height: 34px;
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    grid-row: 2 / 2;
+
+    // grid-column-start: 1;
+    // grid-column-end: 2;
+  }
+
+  .label-container .texty {
+    // padding: 10;
+    // flex: 1;
+    grid-row: 1 / 2;
+
+    // grid-column-start: 3;
+    // grid-column-start: 4;
+  }
+
+  .switching input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .switching .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    padding-bottom: 10px;
+  }
+
+  .switching .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input:checked+.slider {
+    background-color: #2196F3;
+  }
+
+  input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
 }
+// End Fancier button
 
 // div.log-collapse {
 //   position: relative;
