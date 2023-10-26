@@ -1,0 +1,18 @@
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 200
+
+[build]
+  # This is the directory to change to before starting a build.
+  # NOTE: This is where we will look for package.json/.nvmrc/etc, not root.
+  base    = "frontend/"
+  # This is the directory that you are publishing from (relative to root of your repo)
+  publish = "frontend/build/"
+  # This will be your default build command
+  #command = "build"
+  # This is where we will look for your lambda functions
+  # functions = ""
+  # Ignore build command if exit 0
+  # ignore = "git diff --quiet HEAD^ HEAD sub_dir/"
+  

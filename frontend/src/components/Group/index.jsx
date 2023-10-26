@@ -31,7 +31,8 @@ const RoomsGroup = () => {
   if ( hostName.includes( 'ci' ) ) {
     ioUrl = 'https://ci.default.collab-timers-z.uc.r.appspot.com';
   } else if ( import.meta.env.PROD ) { 
-    ioUrl = 'https://mtimers.zoomers.xyz';
+    // ioUrl = 'https://mtimers.zoomers.xyz';
+    ioUrl = ''
     // Group 1c
   } else if ( import.meta.env.DEV ) {
     const socketPort = import.meta.env.VITE_SOCKET_PORT ? import.meta.env.VITE_SOCKET_PORT : 8080;
