@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import Push from "push.js";
 import { Collapse } from 'react-collapse';
 
+import { isObject } from './../../../ancillary/helpers/general';
 import { GroupContext } from './../../Contexts';
 import ParentNotifications from "./../../Common/ParentNotifications";
 import Toggle from './../toggled';
@@ -111,16 +112,10 @@ function reducer( state, action ) {
     let newType = { ...storage[ label ][ type ] };
 
     if (action.kind == 'check') {
-      console.log('check', newType);
       newType = checkOffData(action.name, storage, label, type);
-      console.log('hi');
     } else if (action.kind == 'noise') {
-      console.log('noise', newType);
       newType = checkNoise(action.name, action.noise, storage, label, type);
     };
-
-    console.log('act', action);
-    console.log('wat', newType);
 
     const newStorage = {
       [ label ]: {
@@ -200,13 +195,13 @@ const checkAllKeys = ( kind, storage, label, type, checkAll ) => {
   const newStorage = { ...storage };
   if ( kind == 'all' ) {
     for ( const [ key, value ] of Object.entries( storage[ label ][ type ] ) ) {
-      if ( key != 'timer' ) {
+      if ( key != 'timer' && isObject( newStorage[ label ][ type ][ key ] ) && newStorage[ label ][ type ][ key ].hasOwnProperty( 'onOff' ) ) {
         newStorage[ label ][ type ][ key ].onOff = !checkAll;
       };
     };
   } else if ( kind == 'sound' ) {
     for ( const [ key, value ] of Object.entries( storage[ label ][ type ] ) ) {
-      if ( key != 'timer' ) {
+      if ( key != 'timer' && isObject( newStorage[ label ][ type ][ key ] ) && newStorage[ label ][ type ][ key ].hasOwnProperty( 'onOff' ) ) {
         newStorage[ label ][ type ][ key ].sound = !checkAll;
       };
     };
