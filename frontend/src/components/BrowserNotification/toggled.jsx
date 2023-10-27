@@ -27,17 +27,17 @@ const NotifyToggle = ( { checked, name, label, onChange, onChangeNoise, root, gr
     </div>
     <div className="width-5">
       <select name={ `${ name } noise` } id="audio" onChange={ onChangeNoise } value={ checked.noise }>
-        <option value="1--the-purge-siren">The Purge</option>
-        <option value="3b--gun-silencer">Gun Silencer</option>
-        <option value="2b--military-new-message">Military Msg</option>
-        <option value="3b--metal-gear-solid">Metal Gear Solid</option>
-        <option value="3--xbox-one">Xbox One</option>
-        <option value="2b--CardiB-OWW_alert-others">Cardi B</option>
-        <option value="2b--cartoon-noise">Cartoon Noise</option>
-        <option value="4--coin-drop">Coin Drop</option>
-        <option value="2--rooster-alert-others">Rooster</option>
-        <option value="4--ting">Ting</option>
-        <option value="3--waterdrop">Waterdrop</option>
+        <option value="1">The Purge</option>
+        <option value="8">Gun Silencer</option>
+        <option value="3">Military Msg</option>
+        <option value="9">Metal Gear Solid</option>
+        <option value="7">Xbox One</option>
+        <option value="5">Cardi B</option>
+        <option value="10">Cartoon Noise</option>
+        <option value="11">Coin Drop</option>
+        <option value="2">Rooster</option>
+        <option value="4">Ting</option>
+        <option value="6">Waterdrop</option>
       </select>
     </div>
   </div>

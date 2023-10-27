@@ -53,7 +53,7 @@ const RoomCore = ( props ) => {
     push.set( prev => { 
       return { 
         ...prev, 
-        event: 'other', 
+        event: 'paused', 
         title: 'Paused timer', 
         onOff: prev.onOff + 1 
       }; 

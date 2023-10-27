@@ -21,41 +21,41 @@ const eachBlob = {
 const initialBlob = { 
   timer: {
     ...eachBlob, 
-    noise: "3--waterdrop", 
+    noise: "6", 
     onOff: true, 
     sound: true 
   },
   start: {
     ...eachBlob, 
-    noise: "2b--military-new-message"
+    noise: "3"
   },
   end: {
     ...eachBlob,
-    noise: "2b--military-new-message"
+    noise: "3"
   },
   paused: {
     ...eachBlob,
-    noise: "3b--gun-silencer"
+    noise: "8"
   },
   resumed: {
     ...eachBlob,
-    noise: "3b--gun-silencer"
+    noise: "8"
   },
   repeat: {
     ...eachBlob,
-    noise: "1--the-purge-siren"
+    noise: "1"
   }, 
   continuing: {
     ...eachBlob,
-    noise: "3--waterdrop"
+    noise: "6"
   }, 
   other: {
     ...eachBlob,
-    noise: "3--waterdrop"
+    noise: "11"
   }, 
   extra: {
     ...eachBlob,
-    noise: "3--waterdrop"
+    noise: "11"
   }, 
 };
 

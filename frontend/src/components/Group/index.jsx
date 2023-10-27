@@ -44,6 +44,7 @@ const RoomsGroup = () => {
       ioUrl = import.meta.env.CF_SOCKET_DOMAIN ? import.meta.env.CF_SOCKET_DOMAIN : 'https://timer-dev.atextbooksituation.com';
     } else {
       // normal local dev
+      // ioUrl = '';
       ioUrl = window.location.hostname + ':' + socketPort;
     };
   };
