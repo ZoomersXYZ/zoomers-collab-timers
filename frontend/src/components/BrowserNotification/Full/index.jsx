@@ -228,9 +228,10 @@ const BrowserNotification = ( props ) => {
     requireInteraction 
   } = props;
 
+  // console.log( 'run', run, type, group, label );
+
   const tagId = useId();
   const [ prevRun, setPrevRun ] = useState( 0 );
-  // const audioRef = useRef();
   const [ state,  dispatch ] = useReducer( reducer, { group, label, type }, init );  
   const [ checked, setChecked ] = useState( state.data );
 
@@ -342,30 +343,8 @@ const BrowserNotification = ( props ) => {
           <div className="width-5">Audio</div>
         </div>
 
-        {/* <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise }
-          checked={ checked.start || false } 
-          label="Timer Start" 
-          name="start" 
-          root={ checked.timer } 
-        />
-
-        <Noise
-          timer={ checked.timer } 
-          checked={ checked.start || false }
-          { ...{ 
-            runBool, 
-            prevRun, 
-            type, 
-            run, 
-            event, 
-          } } 
-        /> */}
-
-      { 
-      [ [ checked.start, "Timer Start", "start" ], [ checked.end, "Timer End", "end" ], [ checked.paused, "Paused/Resumed", "paused" ], [ checked.repeat, "Repeating Start/End", "repeat" ], [ checked.continuing, "Repeating Cont", "continuing" ], [ checked.other, "Other", "other" ] ].map( ( trioEach, index ) =>
-        <React.Fragment key={index }>
+        { 
+        [ [ checked.start, "Timer Start", "start" ], [ checked.end, "Timer End", "end" ], [ checked.paused, "Pause/Resume", "paused" ], [ checked.repeat, "Repeat Go/End", "repeat" ], [ checked.continuing, "Repeat Cont", "continuing" ], [ checked.other, "Other", "other" ] ].map( ( trioEach, index ) =>
           <Toggle 
             key={ `Toggle-${ index }` } 
             onChange={ handleCheckbox } 
@@ -377,35 +356,11 @@ const BrowserNotification = ( props ) => {
             groupOnOff={ groupOnOff } 
             groupSound={ groupSound } 
           />
-
-          <Noise
-            key={ `Noise-${ index }` } 
-            timer={ checked.timer } 
-            checked={ trioEach[ 0 ] || false }
-            { ...{ 
-              runBool, 
-              prevRun, 
-              type, 
-              run, 
-              event, 
-            } } 
-          />
-        </React.Fragment>
-        )
-      }
-
-        {/* <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise } 
-          checked={ checked.paused || false } 
-          label="Paused/Resumed" 
-          name="paused" 
-          root={ checked.timer } 
-        />
-
+          )
+        }
         <Noise
           timer={ checked.timer } 
-          checked={ checked.paused || false }
+          checked={ checked[ event ] }
           { ...{ 
             runBool, 
             prevRun, 
@@ -414,70 +369,6 @@ const BrowserNotification = ( props ) => {
             event, 
           } } 
         />
-
-        <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise } 
-          checked={ checked.repeat || false } 
-          label="Repeating Start/End" 
-          name="repeat" 
-          root={ checked.timer } 
-        />
-
-        <Noise
-          timer={ checked.timer } 
-          checked={ checked.repeat || false }
-          { ...{ 
-            runBool, 
-            prevRun, 
-            type, 
-            run, 
-            event, 
-          } } 
-        />
-
-        <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise } 
-          checked={ checked.continuing || false } 
-          label="Repeating Cont" 
-          name="continuing" 
-          root={ checked.timer } 
-        />
-
-        <Noise
-          timer={ checked.timer } 
-          checked={ checked.continuing || false }
-          { ...{ 
-            runBool, 
-            prevRun, 
-            type, 
-            run, 
-            event, 
-          } } 
-        />
-
-        <Toggle 
-          onChange={ handleCheckbox } 
-          onChangeNoise={ handleOnChangeNoise } 
-          checked={ checked.other || false } 
-          label="Other" 
-          name="other" 
-          root={ checked.timer } 
-        />
-
-        <Noise
-          timer={ checked.timer } 
-          checked={ checked.other || false }
-          { ...{ 
-            runBool, 
-            prevRun, 
-            type, 
-            run, 
-            event, 
-          } } 
-        /> */}
-
       </div>
       </Collapse>
 
