@@ -214,6 +214,24 @@ const group = socket => {
   // 5 active
   // @globals socket.on
   function listeningSockets() {
+    socket.onAnyOutgoing( ( eventName, args ) => {
+      // triggered when the event is sent
+      const oneBool = isObject( core ) 
+        && core.hasOwnProperty( 'groups' ) 
+        && ( !core.groups[ nspName ] === undefined );
+
+      console.log( 'outGoing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+    } );
+
+    socket.onAny( ( eventName, args ) => {
+      // not triggered when the acknowledgement is received
+      const oneBool = isObject( core ) 
+        && core.hasOwnProperty( 'groups' ) 
+        && ( !core.groups[ nspName ] === undefined);
+
+      console.log( 'inComing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+    } );
+
     // in-file
     socket.on( 'group entered', onGroupEnter );
     // util 4th

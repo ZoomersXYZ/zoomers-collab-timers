@@ -50,7 +50,7 @@ const SharedAndUtil = function (
       socket.emit( msg, { room, ...data } );
     // just room, no data
     } else if( isEmpty( data ) && !isEmpty( room ) ) {
-        // l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
+      // l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       socket.to( `${ nspName }-${ room }` ).emit( msg, room );
       socket.emit( msg, room );
     // no room or data. plain.

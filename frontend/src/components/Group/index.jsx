@@ -175,7 +175,7 @@ const RoomsGroup = () => {
   // @TODO ugly. Should be refactored.
   ///
 
-  const [ users, setUsers ] = useState( [] );
+  const [ users, setUsers ] = useState( {} );
   // @TODO ugly, refactor
   const [ userEnabled, setUserEnabled ] = useState( false );
   useEffect( () => { 

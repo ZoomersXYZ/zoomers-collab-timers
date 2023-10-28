@@ -50,8 +50,9 @@ const User = function (
       email: seshie.email 
     };
 
-    core.users[nspName] ??= []
-    core.users[nspName].push( coreHashie );
+    console.log('core.users[nspName]', core.users[nspName]);
+    core.users[nspName] ??= {}
+    core.users[nspName][sockId] = coreHashie;
     // ++core.numUsers;
     
     simpMe.addedUser = true;

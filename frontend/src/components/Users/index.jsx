@@ -14,9 +14,9 @@ const Users = ( { data } ) => {
         Users online, occupying { gName }:
       </h3>
       <div id="socket-users">
-        { data.map( ( arrival, index ) => 
+        { Object.entries(data).map(([key, arrival]) => 
           <User
-            key={ `socket-users-${ index }` } 
+            key={ `socket-users-${ key }` } 
             name={ arrival.username ? arrival.username : '' } 
             email={ arrival.email ? arrival.email : '' } 
           />
@@ -27,7 +27,7 @@ const Users = ( { data } ) => {
 };
 
 Users.propTypes = {
-  data: PropTypes.array.isRequired, 
+  data: PropTypes.object.isRequired, 
 };
 
 export default Users;

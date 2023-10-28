@@ -186,9 +186,10 @@ const SocketCoreAndUtils = function (
 
       // modifyUsers( core, socket );
       // --core.numUsers;
-      core.users[nspName].splice( 
-        core.users[nspName].findIndex( arrival => arrival.id === socket.id ), 1 
-      );
+      // core.users[nspName].splice( 
+      //   core.users[nspName].findIndex( arrival => arrival.id === socket.id ), 1 
+      // );
+      delete core.users[nspName][socket.id];
       // core.userCount = core.users.length;
 
       // modifyUsers( gCore, socket );
