@@ -16,6 +16,7 @@ const useMoveInToMyRoom = (
     reap, 
     push, 
     events, 
+    sessionObj
     // pause 
  ) => { 
   const socket = useContext( SocketContext );
@@ -32,6 +33,31 @@ const useMoveInToMyRoom = (
       duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
       return { current, duration, ...rest };
     };
+
+    const firstTimer = e => {
+      const { 
+        room, 
+        current, 
+        duration, 
+        started, 
+        pause, 
+        goneBy, 
+        session
+    } = e;
+      if ( filterOutRoom( room ) ) { console.log('filtered out first'); return; };
+      if ( pause.flag ) {
+        setPauseTerm( 'unpause' );
+        console.log('unpause');
+      } else {
+        setPauseTerm( 'pause' );
+        console.log('pause');
+      };
+
+      console.log( 'sessionObj.state.schema', sessionObj.state ? sessionObj.state.schema : 'waa' );
+      console.log( 'session', session );
+      const forCurr = { current: current, duration: duration, goneBy: goneBy };
+      curry.set( setupCurr( forCurr ) );
+  };
 
     const updateTimer = e => {
       // const { pause, room } = e;
@@ -203,6 +229,7 @@ const useMoveInToMyRoom = (
     //   };
     // };
     
+    socket.on( 'timer first', firstTimer );
     socket.on( events.TIMER_UPDATED, updateTimer );
     socket.on( events.TIMER_PAUSED, timerPaused );
     socket.on( events.TIMER_RESUMED, timerResumed );

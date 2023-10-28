@@ -32,7 +32,7 @@ const Room = ( {
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
   const [ view, setView ] = useState( false );
 
-  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events );
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
 

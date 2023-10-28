@@ -67,12 +67,18 @@ const SocketCoreAndUtils = function (
     };
   };
   
+  function delay( milliseconds = 1000 ) { 
+    return new Promise( resolve => {
+      setTimeout( resolve, milliseconds );
+    } );
+  };
+  
   // Run at start
   // @param obj
   // @globals emitRoom()
   async function onRoomConnect( preciousHashie ) {
     // l.bbc.debug( `${ socket.id }: beg /inner/ onRoomConnect. emit`);
-    // await delay( 2500 );
+    await delay( 1 );
     const { duration, roomie, secondsLeft, session, started, pause, goneBy } = preciousHashie;
     // initialSession( roomie, session, pause.flag );
 
@@ -91,8 +97,9 @@ const SocketCoreAndUtils = function (
         goneBy, 
         session 
       };
-      const event = 'timer updated';
-      emitRoom( event, { room: roomie, ...hashish } );
+      const event = 'timer first';
+      socket.to( simpMe.sRoom ).emit( 'timer yo', { room: roomie, ...hashish } );
+      socket.emit( event, { room: roomie, ...hashish } );
       // l.bbc.debug( `${ socket.id }: fin /inner/ onRoomConnect. emit`, event );
     // };
   };
@@ -110,7 +117,7 @@ const SocketCoreAndUtils = function (
   // @globals sockJoin (socket.join)
   // @globals nspName
   // @anotherFile initNsp
-  module.roomEntered = async function( initialRoom ) {
+  module.roomEntered = async function( initialRoom ) {    
     const roomProp = sassy.hasOwnProperty( initialRoom );
     if ( 
       !roomProp || ( roomProp && isEmpty( sassy[ initialRoom ] ) ) 
@@ -122,8 +129,7 @@ const SocketCoreAndUtils = function (
     simpMe.sRoom = `${ nspName }-${ initialRoom }`;
     socket.join( simpMe.sRoom );
     simpMe.room = initialRoom;
-
-    // await onRoomConnect( sassy[ initialRoom ]);
+    await onRoomConnect( sassy[ initialRoom ]);
     // l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
