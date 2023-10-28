@@ -22,7 +22,11 @@ const TimerControl = ( {
   blockSize, 
 
   setShowTimer, 
-  push 
+  push, 
+
+  setSubmittingPauseResumeTimer, 
+  setSubmittingStopTimer, 
+  setSubmittingStopReap 
 } ) => {
 
   const socket = useContext( SocketContext );
@@ -64,6 +68,12 @@ const TimerControl = ( {
     const timerStarted = ( { room, duration } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
+
+      setSubmittingStopTimer( true );
+      setTimeout( () => setSubmittingStopTimer( false ), 2000 );
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 2000 );
+
       flags.set({
         started: true, 
         ended: null, 
@@ -90,6 +100,13 @@ const TimerControl = ( {
         triaged: null 
       });
 
+      setSubmittingStopTimer( true );
+      setTimeout( () => setSubmittingStopTimer( false ), 2000 );
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 2000 );
+      setSubmittingStopReap( true );
+      setTimeout( () => setSubmittingStopReap( false ), 2000 );
+
       push.set( prev => { 
         return {
           ...prev, 
@@ -104,6 +121,14 @@ const TimerControl = ( {
     const repeatCont = ( { room, duration } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
+
+      setSubmittingStopTimer( true );
+      setTimeout( () => setSubmittingStopTimer( false ), 2000 );
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 2000 );
+      setSubmittingStopReap( true );
+      setTimeout( () => setSubmittingStopReap( false ), 2000 );
+
       flags.set({
         started: true, 
         ended: null, 

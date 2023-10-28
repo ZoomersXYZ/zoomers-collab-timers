@@ -93,12 +93,12 @@ const Timer = function (
     // const curr = 
     const curr = sassy[ inRoom ];
 
-    endTime = new Date().getTime();
+    const endTime = new Date().getTime();
     if ( endTime - curr.flags.started <= 1000 ) {
       emitRoom( 'timer changed too recently' );
     };
 
-    pauseListLen = curr.pause.list.length
+    const pauseListLen = curr.pause.list.length
     if ( pauseListLen > 0 ) {
       if ( endTime - curr.pause.list[ pauseListLen - 1 ].started <= 1000 ) {
         emitRoom( 'timer paused too recently' );
@@ -109,7 +109,7 @@ const Timer = function (
       emitRoom( 'timer ALREADY paused' );
       return;
     };
-    
+    emitRoom( 'pausanabi' );
     curr.pause.flag = true;
     curr.pause.started = new Date().getTime();
 

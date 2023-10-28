@@ -32,7 +32,12 @@ const Room = ( {
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
   const [ view, setView ] = useState( false );
 
-  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session );
+  // States shown in Core
+  const [ submittingPauseResumeTimer, setSubmittingPauseResumeTimer ] = useState( false );
+  const [ submittingStopTimer, setSubmittingStopTimer ] = useState( false );
+  const [ submittingStopReap, setSubmittingStopReap ] = useState( false );
+
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
 
@@ -79,7 +84,7 @@ const Room = ( {
 
       <CSSTransition 
         in={ showTimer } 
-        timeout={ 2500 } 
+        timeout={ 3000 } 
         classNames="coretimer" 
         unmountOnExit 
       >
@@ -115,7 +120,14 @@ const Room = ( {
             reap, 
             events, 
 
-            setView
+            setView, 
+
+            submittingPauseResumeTimer, 
+            setSubmittingPauseResumeTimer, 
+            submittingStopReap, 
+            setSubmittingStopReap, 
+            submittingStopTimer, 
+            setSubmittingStopTimer, 
           } } 
         />
         </>
@@ -130,7 +142,11 @@ const Room = ( {
         started={flags.state.started}
         { ...{ 
           setShowTimer, 
-          push 
+          push, 
+
+          setSubmittingPauseResumeTimer, 
+          setSubmittingStopTimer, 
+          setSubmittingStopReap 
         } } 
       />
 

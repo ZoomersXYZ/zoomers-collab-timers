@@ -16,7 +16,11 @@ const useMoveInToMyRoom = (
     reap, 
     push, 
     events, 
-    sessionObj
+    sessionObj, 
+
+    setSubmittingPauseResumeTimer, 
+    setSubmittingStopTimer, 
+    setSubmittingStopReap 
     // pause 
  ) => { 
   const socket = useContext( SocketContext );
@@ -75,8 +79,8 @@ const useMoveInToMyRoom = (
       const { length, startTime, endTime, work, brake } = repeat;
       const DateObjEndTime = new Date( endTime );
       const DateObjStartTime = new Date( startTime );
-      if (repeat.on && !reap.state.on) {
-        reap.set({ 
+      if ( repeat.on && !reap.state.on ) {
+        reap.set( { 
           on: true, 
           length, 
           startTime, 
@@ -85,23 +89,39 @@ const useMoveInToMyRoom = (
           brake, 
           DateObjStartTime, 
           DateObjEndTime
-        });
+        } );
       };
     };
 
     const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
       setPauseTerm( 'unpause' );
+
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
     };
 
     const timerResumed = ( room ) => {
       if ( filterOutRoom( room ) ) { return; };
       setPauseTerm( 'pause' );
+
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
     };
 
-    const __endTimer = ( room ) => {
+    const __endTimer = ( room, reapOn = false ) => {
       if ( filterOutRoom( room ) ) { return false; };
-      setShowTimer( false );
+
+      setSubmittingPauseResumeTimer( true );
+      setTimeout( () => setSubmittingPauseResumeTimer( false ), 3000 );
+      setSubmittingStopTimer( true );
+      setTimeout( () => setSubmittingStopTimer( false ), 3000 );
+      if ( reapOn ) {
+        setSubmittingStopReap( true );
+        setTimeout( () => setSubmittingStopReap( false ), 3000 );
+      };
+
+      setTimeout( () => setShowTimer( false ), 2000 );
       curry.set( prev => setupCurr( { 
         ...prev, 
         current: null, 
@@ -120,7 +140,7 @@ const useMoveInToMyRoom = (
 
     const timerStopped = ( props ) => {
       const {room, reapOn} = props;
-      __endTimer( room );
+      __endTimer( room, reapOn );
       if (!reapOn) {
         push.set( prev => {
           return { 
@@ -150,7 +170,7 @@ const useMoveInToMyRoom = (
         } );
       };
 
-      __endTimer( room );
+      __endTimer( room, reapOn );
     };
 
     const timerAlreadyBegun = ( room ) => { 
@@ -175,7 +195,14 @@ const useMoveInToMyRoom = (
         DateObjStartTime, 
         DateObjEndTime
       } );
-      console.log('check reap on');
+      
+      // setSubmittingPauseResumeTimer( true );
+      // setTimeout( () => setSubmittingPauseResumeTimer( false ), 2000 );
+      // setSubmittingStopTimer( true );
+      // setTimeout( () => setSubmittingStopTimer( false ), 2000 );
+
+      setSubmittingStopReap( true );
+      setTimeout( () => setSubmittingStopReap( false ), 2000 );
     };
 
     const __endReap = ( room ) => {
@@ -188,7 +215,7 @@ const useMoveInToMyRoom = (
         work: 0, 
         brake: 0 
       } );
-      __endTimer( room );
+      __endTimer( room, true );
     };
 
     const reapTimerDone = ( room ) => {
