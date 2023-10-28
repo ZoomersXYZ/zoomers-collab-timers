@@ -58,7 +58,7 @@ const AddRoom = props => {
           );
 
           setStatus( { success: 'Successfully added new room' } );
-          setTimeout( resetForm, 2000 );
+          setTimeout( () => resetForm, 2000 );
           
         } else if ( result === false ) {
           setSubmitting( false );

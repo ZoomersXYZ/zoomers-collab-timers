@@ -118,7 +118,18 @@ div.pause-button-parent, div.session-button-parent {
   }
 }
 
+div.svg-parent button:disabled {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
 div.submit-button-parent {
+  div.pause-button-parent .casual-button {
+      background-color: #22bb72;
+      color: #e7e7e7;
+    }
+
   div.button-content {
     display: flex;
     flex: 1;

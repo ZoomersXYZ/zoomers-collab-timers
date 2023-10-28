@@ -25,7 +25,7 @@ const RoomCore = ( props ) => {
   const { curry, reap, push, events } = props;
   const aRoom = useContext( RoomContext );
 
-  const delay = 1500;
+  const delay = 1000;
 
   // States
 
@@ -38,14 +38,14 @@ const RoomCore = ( props ) => {
 
   const delayView = ( notCallback = null ) => {
     // notCallback( true )
-    // setTimeout( notCallback( false ), delay );
+    // setTimeout( () => notCallback( false ), delay );
     setView( true )
-    setTimeout( setView( false ), delay );
+    setTimeout( () => setView( false ), 1000 );
   };
 
   const handlePauseResumeTimer = ( e, pauseTerm ) => {
-    setSubmittingPauseResumeTimer( true )
-    setTimeout( setSubmittingPauseResumeTimer( false ), delay );
+    setSubmittingPauseResumeTimer( true );
+    setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
     // delayView( setSubmittingPauseResumeTimer );
     delayView();
 
@@ -62,7 +62,7 @@ const RoomCore = ( props ) => {
 
   const handleStopTimer = ( e ) => {
     setSubmittingStopTimer( true )
-    setTimeout( setSubmittingStopTimer( false ), delay );
+    setTimeout( () => setSubmittingStopTimer( false ), delay );
     delayView();
 
     aRoom.emitAll( events.STOP_TIMER );
@@ -70,7 +70,7 @@ const RoomCore = ( props ) => {
 
   const handleStopReap = ( e ) => {
     setSubmittingStopReap( true )
-    setTimeout( setSubmittingStopReap( false ), delay );
+    setTimeout( () => setSubmittingStopReap( false ), delay );
     delayView();
 
     aRoom.emitAll( events.STOP_REAP );

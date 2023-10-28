@@ -98,8 +98,9 @@ const Timer = function (
       emitRoom( 'timer changed too recently' );
     };
 
-    if ( curr.pause.list.length > 0 ) {
-      if ( endTime - curr.pause.list[ -1 ].started <= 1000 ) {
+    pauseListLen = curr.pause.list.length
+    if ( pauseListLen > 0 ) {
+      if ( endTime - curr.pause.list[ pauseListLen - 1 ].started <= 1000 ) {
         emitRoom( 'timer paused too recently' );
       };
     };
