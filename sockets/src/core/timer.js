@@ -64,7 +64,7 @@ const Timer = function (
     // curr.flags.triaged = false;
 
     updateTimer( inRoom, aUser );
-    goneByTimer( inRoom );
+    // goneByTimer( inRoom );
     
     curr.manager = { 
       username: aUser.nick, 
@@ -93,6 +93,17 @@ const Timer = function (
     // const curr = 
     const curr = sassy[ inRoom ];
 
+    endTime = new Date().getTime();
+    if ( endTime - curr.flags.started <= 1000 ) {
+      emitRoom( 'timer changed too recently' );
+    };
+
+    if ( curr.pause.list.length > 0 ) {
+      if ( endTime - curr.pause.list[ -1 ].started <= 1000 ) {
+        emitRoom( 'timer paused too recently' );
+      };
+    };
+
     if ( curr.pause.flag ) {
       emitRoom( 'timer ALREADY paused' );
       return;
@@ -101,8 +112,9 @@ const Timer = function (
     curr.pause.flag = true;
     curr.pause.started = new Date().getTime();
 
-    clearUpdateTimer( inRoom );
-    goneByTimer( inRoom );
+    // clearUpdateTimer( inRoom );
+    clearInterval( updateTimerInterval );
+    // goneByTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'paused' );
@@ -118,12 +130,17 @@ const Timer = function (
     const curr = sassy[ inRoom ];
     const { pause } = curr;
     
+    const ended = new Date().getTime();
+    if ( ended - curr.pause.started <= 500 ) {
+      emitRoom( 'can\'t resume. timer paused too recently' );
+    };
+
     if ( !pause.flag ) {
       emitRoom( 'timer ALREADY resumed', { room: inRoom } );
       return;
     };
 
-    const ended = new Date().getTime();
+    // const ended = new Date().getTime();
     curr.pause.list.push( {
       started: curr.pause.started, 
       ended: ended, 
@@ -133,7 +150,7 @@ const Timer = function (
     curr.pause.started = null;
 
     updateTimer( inRoom, aUser );
-    clearInterval( curr.intervals.onGoing );
+    // clearInterval( curr.intervals.onGoing );
     
     emitRoom( 'timer resumed', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'resumed' );
@@ -178,41 +195,41 @@ const Timer = function (
   // @internal updateTimer()
   // @internal-ish setInterval()
   // @internal-ish clearInterval()
-  goneByTimer = ( inRoom ) => {
-    const curr = sassy[ inRoom ];
-    const {
-      duration, 
-      started, 
-      pause, 
-      flags, 
-      goneBy, 
-      secondsLeft, 
-      intervals, 
-      repeat, 
-      session 
-    } = curr;
+  // goneByTimer = ( inRoom ) => {
+  //   const curr = sassy[ inRoom ];
+  //   const {
+  //     duration, 
+  //     started, 
+  //     pause, 
+  //     flags, 
+  //     goneBy, 
+  //     secondsLeft, 
+  //     intervals, 
+  //     repeat, 
+  //     session 
+  //   } = curr;
 
-    curr.intervals.onGoing = setInterval( () => {    
-      if ( 
-        pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
-      ) {
-        const hashish = updatingTimer( 
-          inRoom, 
-          secondsLeft, 
-          duration, 
-          started, 
-          pause, 
-          flags, 
-          goneBy, 
-          repeat, 
-          session 
-        );
-      } else {
-        clearInterval( curr.intervals.onGoing );
-        // clearInterval( intervals.goneBy );
-      };
-    }, 2000 );
-  };
+  //   curr.intervals.onGoing = setInterval( () => {    
+  //     if ( 
+  //       pause.flag && durationBool( duration ) && currentBool( secondsLeft ) 
+  //     ) {
+  //       const hashish = updatingTimer( 
+  //         inRoom, 
+  //         secondsLeft, 
+  //         duration, 
+  //         started, 
+  //         pause, 
+  //         flags, 
+  //         goneBy, 
+  //         repeat, 
+  //         session 
+  //       );
+  //     } else {
+  //       clearInterval( curr.intervals.onGoing );
+  //       // clearInterval( intervals.goneBy );
+  //     };
+  //   }, 2000 );
+  // };
 
   // @param inRoom: String
   // @internal wrappingUp()
@@ -245,10 +262,11 @@ const Timer = function (
   // @params inRoom: String
   // @global sassy
   // @internal-ish clearInterval()
-  clearUpdateTimer = ( inRoom ) => { 
-    const curr = sassy[ inRoom ];
-    clearInterval( curr.intervals.updateTimer );
-  };
+  // clearUpdateTimer = ( inRoom ) => { 
+  //   const curr = sassy[ inRoom ];
+  //   // clearInterval( curr.intervals.updateTimerInterval );
+  //   clearInterval( updateTimerInterval );
+  // };
 
   // @param inRoom: String
   // @globals sassy
@@ -269,7 +287,8 @@ const Timer = function (
     let { secondsLeft } = curr;
 
     // @TODO why not using intervals and secondsLeft direct. because of pointers?
-    curr.intervals.updateTimer = setInterval( () => {
+    // curr.intervals.updateTimer = setInterval( () => {
+    updateTimerInterval = setInterval( () => {
       --secondsLeft;
       curr.secondsLeft = secondsLeft;
 
@@ -295,8 +314,8 @@ const Timer = function (
         finishedTimer( inRoom, aUser );
         // what else is left? would this spot ever be touched?
       } else {
-        l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( curr.intervals.updateTimer )' );
-        clearInterval( curr.intervals.updateTimer );
+        l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
+        clearInterval( updateTimerInterval );
       };
     }, 1000 );
   };
@@ -369,8 +388,9 @@ const Timer = function (
       return false;
     };    
     const { repeat, session, intervals } = curr;
-    clearUpdateTimer( inRoom );
-    clearInterval( curr.intervals.onGoing );
+    // clearUpdateTimer( inRoom );
+    clearInterval( updateTimerInterval );
+    // clearInterval( curr.intervals.onGoing );
     // clearInterval( intervals.goneBy );
 
     emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
