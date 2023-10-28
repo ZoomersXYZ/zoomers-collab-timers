@@ -46,7 +46,8 @@ const useMoveInToMyRoom = (
         started, 
         pause, 
         goneBy, 
-        session
+        session, 
+        repeat 
     } = e;
       if ( filterOutRoom( room ) ) { console.log('filtered out first'); return; };
       if ( pause.flag ) {
@@ -57,8 +58,27 @@ const useMoveInToMyRoom = (
         console.log('pause');
       };
 
-      console.log( 'sessionObj.state.schema', sessionObj.state ? sessionObj.state.schema : 'waa' );
-      console.log( 'session', session );
+      if ( session != sessionObj.state.term ) {
+        console.log( 'first session', session );
+        sessionObj.set( session );
+      };
+
+      const { length, startTime, endTime, work, brake } = repeat;
+      const DateObjEndTime = new Date( endTime );
+      const DateObjStartTime = new Date( startTime );
+      if ( repeat.on ) {
+        reap.set( { 
+          on: true, 
+          length, 
+          startTime, 
+          endTime, 
+          work, 
+          brake, 
+          DateObjStartTime, 
+          DateObjEndTime 
+        } );
+      };
+
       const forCurr = { current: current, duration: duration, goneBy: goneBy };
       curry.set( setupCurr( forCurr ) );
   };

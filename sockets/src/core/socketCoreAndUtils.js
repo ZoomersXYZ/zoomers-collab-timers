@@ -79,7 +79,7 @@ const SocketCoreAndUtils = function (
   async function onRoomConnect( preciousHashie ) {
     // l.bbc.debug( `${ socket.id }: beg /inner/ onRoomConnect. emit`);
     await delay( 1 );
-    const { duration, roomie, secondsLeft, session, started, pause, goneBy } = preciousHashie;
+    const { duration, roomie, secondsLeft, session, started, pause, goneBy, repeat } = preciousHashie;
     // initialSession( roomie, session, pause.flag );
 
     // // If time[r] is paused, push time once to show the time.
@@ -95,10 +95,11 @@ const SocketCoreAndUtils = function (
         pause, 
 
         goneBy, 
-        session 
+        session, 
+        repeat
       };
       const event = 'timer first';
-      socket.to( simpMe.sRoom ).emit( 'timer yo', { room: roomie, ...hashish } );
+      // socket.to( simpMe.sRoom ).emit( 'timer yo', { room: roomie, ...hashish } );
       socket.emit( event, { room: roomie, ...hashish } );
       // l.bbc.debug( `${ socket.id }: fin /inner/ onRoomConnect. emit`, event );
     // };
