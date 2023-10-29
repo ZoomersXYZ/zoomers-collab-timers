@@ -31,7 +31,7 @@ const ForcedInput = props => {
               <h3 className="intro-header">Welcome!</h3>
             <div className="inner-form">
               <div className="intro-text">
-                <p>Only name is mandatory.</p>
+                {/* <p>Only name is mandatory.</p> */}
                 <p>Email syncs with <a className="lighter-links" href="https://gravatar.com" target="_blank" rel="noopener noreferrer">Wordpress's Gravatar</a> for avatar.</p>
               </div>
 

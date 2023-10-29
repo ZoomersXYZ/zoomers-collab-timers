@@ -60,17 +60,28 @@ const RoomsGroup = () => {
   // Regularly/User changing state
   const [ rooms, setRooms ] = useState( [] );
   // user handle
-  const [ nick, setNick ] = useState( null );
-  const [ email, setEmail ] = useState( null );
-  const [ aUser, setAUser ] = useState( { nick, email } );
+  const [ nickname, setNick ] = useState( null );
+  const [ mail, setEmail ] = useState( null );
+  const [ aUser, setAUser ] = useState( { nickname, mail } );
 
   ////
   // useEffect primarily. 
   ////
 
   useEffect( () => { 
-    setAUser( { nick, email } );
-  }, [ nick, email ] );
+    if ( !nickname || !mail ) {
+      return;
+    };
+    const ADD_USER = 'add user';
+    // if ( nick && email ) {
+      // setAUser( { nick, email } );
+      // emit( ADD_USER, nick, email );
+    // } else {
+      setAUser( { nickname, mail } );
+
+      emit( ADD_USER, nickname, mail );
+    // };
+  }, [ nickname, mail ] );
 
   const [ showForced, setForced ] = useState( false );
 
@@ -81,7 +92,15 @@ const RoomsGroup = () => {
     const ERROR = 'error';
     const LIST_USERS = 'list users';
     const USER_LEFT = 'user left';
-    const ADD_USER = 'add user'
+
+    let { nick, email } = getLocal();
+    if ( !nick || !email ) {
+      setForced( true );
+    } else {
+      setNick( nick );
+      setEmail( email );
+      setUserEnabled( true );
+    };
 
     const ownSocketInitial = ( name ) => {
       const handleNewUser = () => {
@@ -90,7 +109,10 @@ const RoomsGroup = () => {
           emit( 'confirm initial pong' );
           console.log( 'confirmInitialPing 2nd + 3rd' );
         };
-        emit( ADD_USER, nick, email );
+        // console.log('nick', nick);
+        // if ( nick && email ) {
+        //   emit( ADD_USER, nick, email );
+        // };
         socket.on( 'confirm initial ping', confirmInitialPing );
       };
 
@@ -104,7 +126,7 @@ const RoomsGroup = () => {
       };
 
       const onConnect = () => {
-        console.log('check')
+        // console.log('check')
         emit( 'group entered' );
         delay( 500 );
         handleNewUser();
@@ -132,15 +154,6 @@ const RoomsGroup = () => {
       socket.on( ERROR, onError );
       socket.on( LIST_USERS, listUsers );
       socket.on( USER_LEFT, userLeft );      
-    };
-
-    const { nick, email } = getLocal();
-    if ( !nick || !email ) {
-      setForced( true );
-    } else {
-      setNick( nick );
-      setEmail( email );
-      setUserEnabled( true );
     };
     fetchData( gName );
     ownSocketInitial( gName );
@@ -184,12 +197,12 @@ const RoomsGroup = () => {
       titleCase: false,
       gaOptions: {
         userId: socket.id, 
-        usernameId: nick, 
-        emailId: email 
+        usernameId: nickname, 
+        emailId: mail 
       }
     } );
     ReactGA.pageview( window.location.pathname );    
-  }, [ userEnabled, socket.id, nick, email ] );
+  }, [ userEnabled, socket.id, nickname, mail ] );
 
   const [ roomDeleted, setRoomDeleted ] = useState( false );
   useEffect( () => { 
