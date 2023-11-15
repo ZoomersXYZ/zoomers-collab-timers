@@ -214,22 +214,39 @@ const group = socket => {
   // 5 active
   // @globals socket.on
   function listeningSockets() {
+    
     socket.onAnyOutgoing( ( eventName, args ) => {
-      // triggered when the event is sent
       const oneBool = isObject( core ) 
         && core.hasOwnProperty( 'groups' ) 
-        && ( !core.groups[ nspName ] === undefined );
+        && ( !!core.groups[ nspName ] );
+      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
+      // triggered when the event is sent
+      if (eventName == 'timer updated') {
+        delete args.started;
+        delete args.goneBy;
+        if (!args.pause.flag) {
+          delete args.pause;
+        };
+        if (!args.repeat.on) {
+          delete args.repeat;
+        };
 
-      console.log( 'outGoing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+        if (args.current == args.duration || (args.current == args.duration - 2) || args.current == 5) {
+          console.log( 'outGoing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
+        };
+      } else {
+        console.log( 'outGoing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
+      };
     } );
 
     socket.onAny( ( eventName, args ) => {
       // not triggered when the acknowledgement is received
       const oneBool = isObject( core ) 
         && core.hasOwnProperty( 'groups' ) 
-        && ( !core.groups[ nspName ] === undefined);
+        && ( !!core.groups[ nspName ] );
+      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
 
-      console.log( 'inComing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+      console.log( 'inComing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
     } );
 
     // in-file

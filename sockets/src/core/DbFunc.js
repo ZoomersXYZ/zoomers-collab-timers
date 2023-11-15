@@ -117,6 +117,7 @@ const DbFuncs = function (
         // const res = await ref().doc().set( { ...hashie } );
         // @TODO some logs could maybe grab the last ref doc added ?
       } catch ( err ) {
+        console.log('hashie3', hashie)
         l.bbc.error( `${ sockId }: logIt set fail`, err );
       };
     };
