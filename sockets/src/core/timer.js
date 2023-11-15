@@ -182,7 +182,7 @@ const Timer = function (
       repeat, 
       session 
     };
-    emitRoom( 'timer updated', { room: inRoom, ...hashish } );
+    emitRoom( 'timer updated', { room: inRoom, ...hashish }, false );
     return hashish;
   };
   durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
@@ -235,7 +235,6 @@ const Timer = function (
   // @param inRoom: String
   // @internal wrappingUp()
   module.stopTimer = ( inRoom, aUser ) => {
-
     wrappingUp( 
       inRoom, 
       aUser, 
@@ -249,7 +248,8 @@ const Timer = function (
     inRoom, 
     aUser, 
     'timer finished', 
-    'finished' 
+    'finished', 
+    false
     );
   // @param inRoom: String
   // @internal wrappingUp()
@@ -337,7 +337,7 @@ const Timer = function (
     };    
 
     if ( pause.flag ) {
-      emitRoom( 'timer still running. Stop it first.', inRoom );
+      emitRoom( 'timer still running. Stop it `first`.', inRoom );
       return;
     };
 
@@ -380,7 +380,7 @@ const Timer = function (
   //
   // @internal clearUpdateTimer()
   // @internal-ish clearInterval()
-  wrappingUp = async ( inRoom, aUser, msg, activity ) => {
+  wrappingUp = async ( inRoom, aUser, msg, activity, callback = true ) => {
     const curr = sassy[ inRoom ];
     const { secondsLeft } = curr;
     
@@ -394,7 +394,7 @@ const Timer = function (
     // clearInterval( curr.intervals.onGoing );
     // clearInterval( intervals.goneBy );
 
-    emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
+    emitRoom( msg, { room: inRoom, 'reapOn': repeat.on }, callback );
     // if (repeat.on == false) {
     //   emitRoom( msg, { room: inRoom } );
     // } else {
