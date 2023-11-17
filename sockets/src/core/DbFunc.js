@@ -106,18 +106,20 @@ const DbFuncs = function (
         timestamp: new Date().getTime() 
       };
      
-      // l.bbc.debug( 'logIt hashie', JSON.stringify( hashie ) );
+      l.bbc.debug( 'logIt hashie', JSON.stringify( hashie ) );
 
       const reversedCached = seshie.loggy.reverse();
       // don't log
       if ( duplicateIsh( reversedCached, hashie ) ) return;
       seshie.loggy.push( hashie );
 
+      // console.log('hashie1', hashie)
       try {
+        // console.log('hashie2', hashie);
         // const res = await ref().doc().set( { ...hashie } );
         // @TODO some logs could maybe grab the last ref doc added ?
       } catch ( err ) {
-        console.log('hashie3', hashie)
+        // console.log('hashie3', hashie)
         l.bbc.error( `${ sockId }: logIt set fail`, err );
       };
     };

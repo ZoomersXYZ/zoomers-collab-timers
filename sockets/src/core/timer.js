@@ -65,7 +65,8 @@ const Timer = function (
     curr.flags.done = false;
     // curr.flags.triaged = false;
 
-    updateTimer( inRoom, aUser );
+    // @TODO 2023-11-17 0:14 | do socket.emit for this one!
+    updateTimer( inRoom, aUser, true );
     // goneByTimer( inRoom );
     
     curr.manager = { 
@@ -153,7 +154,7 @@ const Timer = function (
     curr.pause.flag = false;
     curr.pause.started = null;
 
-    updateTimer( inRoom, aUser );
+    updateTimer( inRoom, aUser, true );
     // clearInterval( curr.intervals.onGoing );
     
     emitRoom( 'timer resumed', { room: inRoom } );
@@ -174,7 +175,7 @@ const Timer = function (
   //   }, 1000 );
   // };
 
-  updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
+  updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session, callback = false ) => {
     const hashish = { 
       current, 
       duration, 
@@ -185,7 +186,7 @@ const Timer = function (
       repeat, 
       session 
     };
-    emitRoom( 'timer updated', { room: inRoom, ...hashish }, false );
+    emitRoom( 'timer updated', { room: inRoom, ...hashish }, callback );
     return hashish;
   };
   durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
@@ -277,7 +278,7 @@ const Timer = function (
   // @anotherFile emitRoom()
   // @internal finishedTimer()
   // @internal-ish clearInterval()
-  updateTimer = ( inRoom, aUser ) => {
+  updateTimer = ( inRoom, aUser, callback = false ) => {
     const curr = sassy[ inRoom ];
     const {
       duration, 

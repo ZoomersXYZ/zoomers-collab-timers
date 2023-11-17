@@ -47,29 +47,29 @@ const SharedAndUtil = function (
       // nspaceEmit( msg, { room, ...data } );
       // l.bbc.debug( `22 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       socket.to( `${ nspName }-${ room }` ).emit( msg, { room, ...data } );
-      if (callback) {
+      // if (callback) {
         socket.emit(msg, {room, ...data});
-      };
+      // };
     // just room, no data
     } else if( isEmpty( data ) && !isEmpty( room ) ) {
       // l.bbc.debug( `33 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       socket.to( `${ nspName }-${ room }` ).emit( msg, room );
-      if (callback) {
+      // if (callback) {
         socket.emit( msg, room );
-      };
+      // };
     // no room or data. plain.
     } else if ( isEmpty( room ) && !isEmpty(data) ) {
       // l.bbc.debug( `44 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       socket.to(nspName).emit(msg, data);
-      if (callback) {
+      // if (callback) {
         socket.emit(msg, data);
-      };
+      // };
     } else if ( isEmpty( room ) && isEmpty( data) ) {
       // l.bbc.debug( `55 nspName: ${ nspName }, room: ${ room }, msg: ${ msg }` );
       socket.to(nspName).emit(msg);
-      if (callback) {
+      // if (callback) {
         socket.emit(msg);
-      };
+      // };
     };
   };
 
