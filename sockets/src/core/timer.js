@@ -1,6 +1,7 @@
 const l = require( './../config/winston' );
 
 let updateTimerIntervalArr = {};
+let updateTimerInterval = null;
 
 const Timer = function ( 
   v, 
@@ -117,8 +118,10 @@ const Timer = function (
     curr.pause.started = new Date().getTime();
 
     // clearUpdateTimer( inRoom );
-    clearInterval( updateTimerIntervalArr[inRoom] );
-    updateTimerIntervalArr[inRoom] = null;
+    clearInterval( updateTimerInterval );
+    updateTimerInterval = null;
+    // clearInterval( updateTimerIntervalArr[inRoom] );
+    // updateTimerIntervalArr[inRoom] = null;
     // goneByTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
@@ -291,7 +294,8 @@ const Timer = function (
     } = curr;
     let { secondsLeft } = curr;
 
-    if (updateTimerIntervalArr[inRoom] != null) {
+    if (updateTimerInterval != null) {
+    // if (updateTimerIntervalArr[inRoom] != null) {
       console.log('whoops got here updateTimerInterval isnt null');
       l.parm.debug( 'updateTimerInterval isnt null' );
       return;
@@ -299,7 +303,8 @@ const Timer = function (
 
     // @TODO why not using intervals and secondsLeft direct. because of pointers?
     // curr.intervals.updateTimer = setInterval( () => {
-    updateTimerIntervalArr[inRoom] = setInterval( () => {
+    updateTimerInterval = setInterval( () => {
+    // updateTimerIntervalArr[inRoom] = setInterval( () => {
       --secondsLeft;
       curr.secondsLeft = secondsLeft;
 
@@ -326,8 +331,10 @@ const Timer = function (
         // what else is left? would this spot ever be touched?
       } else {
         l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
-        clearInterval( updateTimerIntervalArr[inRoom] );
-        updateTimerIntervalArr[inRoom] = null;
+        clearInterval( updateTimerInterval );
+        updateTimerInterval = null;
+        // clearInterval( updateTimerIntervalArr[inRoom] );
+        // updateTimerIntervalArr[inRoom] = null;
       };
     }, 1000 );
   };
@@ -401,8 +408,11 @@ const Timer = function (
     };    
     const { repeat, session, intervals } = curr;
     // clearUpdateTimer( inRoom );
-    clearInterval( updateTimerIntervalArr[inRoom] );
-    updateTimerIntervalArr[inRoom] = null;
+
+    clearInterval( updateTimerInterval );
+    updateTimerInterval = null;
+    // clearInterval( updateTimerIntervalArr[inRoom] );
+    // updateTimerIntervalArr[inRoom] = null;
     // clearInterval( curr.intervals.onGoing );
     // clearInterval( intervals.goneBy );
 
