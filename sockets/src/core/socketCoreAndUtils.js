@@ -134,8 +134,16 @@ const SocketCoreAndUtils = function (
     // l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
-  module.askForSession = async function(incoming) {    
-    if (sassy[ incoming.room ].flags.started) {
+  module.askForSession = async function(incoming) {
+    if (!incoming.hasOwnProperty(room)) {
+      console.log('maybe bad1')
+      return;
+    };
+    if (!sassy.hasOwnProperty(incoming.room)) {
+      console.log('maybe bad2')
+      return;
+    };
+    if (sassy[incoming.room].flags.started) {
       emitUser('timer already begun', {user: aUser, room: inRoom});
       return false;
     };
