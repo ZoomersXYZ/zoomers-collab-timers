@@ -218,18 +218,46 @@ const group = socket => {
       // triggered when the event is sent
       const oneBool = isObject( core ) 
         && core.hasOwnProperty( 'groups' ) 
-        && ( !core.groups[ nspName ] === undefined );
+        && ( !!core.groups[ nspName ] );
+      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
+      // triggered when the event is sent
+      if (eventName == 'timer updated') {
+        // if (args.hasOwnProperty('started')) {
+        //   delete args.started;
+        // };
+        // if (args.hasOwnProperty('goneBy')) {
+        //   delete args.goneBy;
+        // };
+        // if (args.hasOwnProperty('pause') && !args.pause.flag) {
+        //   delete args.pause;
+        // };
+        // if (args.hasOwnProperty('repeat') && !args.repeat.on) {
+        //   delete args.repeat;
+        // };
 
-      console.log( 'outGoing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+        let tmp = null;
+        if (args) {
+          tmp = { current: args.current, duration: args.duration, flags: args.flags, room: args.room, session: args.session, pause: args.pause.flag ? args.pause : '', repeat: args.repeat.on ? args.repeat : '' }
+        };
+        // current, duration, flags, room, session
+        // pause if pause.flag
+        // repeat if repeat.on
+        if (args.current == args.duration || (args.current == args.duration - 2) || args.current == 5) {
+          console.log( 'outGoing:', eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
+        };
+      } else {
+        console.log( 'outGoing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
+      };
     } );
 
     socket.onAny( ( eventName, args ) => {
       // not triggered when the acknowledgement is received
       const oneBool = isObject( core ) 
         && core.hasOwnProperty( 'groups' ) 
-        && ( !core.groups[ nspName ] === undefined);
+        && ( !!core.groups[ nspName ] );
+      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
 
-      console.log( 'inComing', eventName, args, oneBool ? core.users[ nspName ][ socket.id ] : `lame ${ socket.id }` );
+      console.log( 'inComing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
     } );
 
     // in-file

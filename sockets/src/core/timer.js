@@ -114,7 +114,9 @@ const Timer = function (
     curr.pause.started = new Date().getTime();
 
     // clearUpdateTimer( inRoom );
-    clearInterval( updateTimerInterval );
+    // clearInterval( updateTimerInterval );
+    clearInterval(curr.intervals.updateTimer)
+    curr.intervals.updateTimer = null;
     // goneByTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
@@ -287,9 +289,15 @@ const Timer = function (
     } = curr;
     let { secondsLeft } = curr;
 
+    if (curr.intervals.updateTimer != null) {
+      console.log('whoops got here updateTimerInterval isnt null');
+      l.parm.debug( 'updateTimerInterval isnt null' );
+      return;
+    };
+
     // @TODO why not using intervals and secondsLeft direct. because of pointers?
-    // curr.intervals.updateTimer = setInterval( () => {
-    updateTimerInterval = setInterval( () => {
+    curr.intervals.updateTimer = setInterval( () => {
+    // updateTimerInterval = setInterval( () => {
       --secondsLeft;
       curr.secondsLeft = secondsLeft;
 
@@ -306,7 +314,8 @@ const Timer = function (
           flags, 
           goneBy, 
           repeat, 
-          session 
+          session, 
+          // callback
         );
       } else if ( 
         // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
@@ -316,7 +325,9 @@ const Timer = function (
         // what else is left? would this spot ever be touched?
       } else {
         l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
-        clearInterval( updateTimerInterval );
+        // clearInterval( updateTimerInterval );
+        clearInterval(curr.intervals.updateTimer)
+        curr.intervals.updateTimer = null;
       };
     }, 1000 );
   };
@@ -390,7 +401,9 @@ const Timer = function (
     };    
     const { repeat, session, intervals } = curr;
     // clearUpdateTimer( inRoom );
-    clearInterval( updateTimerInterval );
+    // clearInterval( updateTimerInterval );
+    clearInterval(curr.intervals.updateTimer)
+    curr.intervals.updateTimer = null;
     // clearInterval( curr.intervals.onGoing );
     // clearInterval( intervals.goneBy );
 
