@@ -62,26 +62,28 @@ const User = function (
     socket.join(`group-${nspName}`);
     
     // Not sure confirmIdPong is needed, even as extra precaution. It sometimes doesn't work
-    const confirmId = setInterval( () => { 
-      const event = 'confirm initial ping';
-      socket.emit( event, sockId );
-      // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
-      // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
-      ++simpMe.confirmIdCount;
-      if ( simpMe.confirmIdPong > 0 ) {
-        l.parm.debug('confirmIdPong if worked. count:', {id: simpMe.confirmIdCount, ping: simpMe.confirmIdPong});
-        simpMe.confirmIdCount = 0;
-        simpMe.confirmIdPong = 0;
-        module.listUsers();
-        clearInterval( confirmId );
+    // const confirmId = setInterval( () => { 
+    //   const event = 'confirm initial ping';
+    //   socket.emit( event, sockId );
+    //   // MASS COMMENTING OF LOGS 2023-10-09 BUT CHECK THIS LATER :D
+    //   // l.parm.debug( `${ sockId }: confirmId count: ${ simpMe.confirmIdCount }. gEmit event`, event );
+    //   ++simpMe.confirmIdCount;
+    //   if ( simpMe.confirmIdPong > 0 ) {
+    //     l.parm.debug('confirmIdPong if worked. count:', {id: simpMe.confirmIdCount, ping: simpMe.confirmIdPong});
+    //     simpMe.confirmIdCount = 0;
+    //     simpMe.confirmIdPong = 0;
+    //     module.listUsers();
+    //     clearInterval( confirmId );
         
-      } else if ( simpMe.confirmIdCount > 3 ) {
-        l.parm.debug( 'confirmIdPong did not work' );
-        simpMe.confirmIdCount = 0;
-        module.listUsers();
-        clearInterval( confirmId );
-      };
-    }, 1000 );
+    //   } else if ( simpMe.confirmIdCount > 3 ) {
+    //     l.parm.debug( 'confirmIdPong did not work' );
+    //     simpMe.confirmIdCount = 0;
+    //     module.listUsers();
+    //     clearInterval( confirmId );
+    //   };
+    // }, 1000 );
+
+    setTimeout( () => module.listUsers(), 1500 );
 
     const event = 'joined group';
     const aUser = { nick: handle, email: emailAcct };

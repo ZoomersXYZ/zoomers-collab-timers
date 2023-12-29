@@ -103,18 +103,18 @@ const RoomsGroup = () => {
     };
 
     const ownSocketInitial = ( name ) => {
-      const handleNewUser = () => {
-        const confirmInitialPing = id => {
-          if ( isEmpty( id ) ) return false;
-          emit( 'confirm initial pong' );
-          console.log( 'confirmInitialPing 2nd + 3rd' );
-        };
-        // console.log('nick', nick);
-        // if ( nick && email ) {
-        //   emit( ADD_USER, nick, email );
-        // };
-        socket.on( 'confirm initial ping', confirmInitialPing );
-      };
+      // const handleNewUser = () => {
+      //   const confirmInitialPing = id => {
+      //     if ( isEmpty( id ) ) return false;
+      //     emit( 'confirm initial pong' );
+      //     console.log( 'confirmInitialPing 2nd + 3rd' );
+      //   };
+      //   // console.log('nick', nick);
+      //   // if ( nick && email ) {
+      //   //   emit( ADD_USER, nick, email );
+      //   // };
+      //   socket.on( 'confirm initial ping', confirmInitialPing );
+      // };
 
       const listUsers = ( e ) => {
         console.log('got user list');
@@ -129,7 +129,7 @@ const RoomsGroup = () => {
         // console.log('check')
         emit( 'group entered' );
         delay( 500 );
-        handleNewUser();
+        // handleNewUser();
       };
 
       const onError = err => {
