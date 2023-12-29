@@ -27,17 +27,19 @@ const group = socket => {
   ////
   nspace = socket.nsp;
   nspName = nspace.name.substring( 7 );
+  // console.log(socket.nsp.name.substring(7));
+  // console.log(nspName);
   const sockId = socket.id;
 
   function firstRun() {
     const oneBool = isObject( core ) 
-      && core.hasOwnProperty( 'groups' ) 
-      && (!core.groups[nspName] === undefined);
+      && core.hasOwnProperty( 'groups' )
+      && (core.groups[nspName] === undefined);
 
-
-    if ( nspName && ( isEmpty( core ) || oneBool ) ) {      
+    if ( nspName && ( isEmpty( core ) || oneBool ) ) {
       // MASS COMMENTING OF LOGS 2023-10-09
-      // l.struct.info( 'firstRun', sockId );
+      l.struct.info( 'firstRun', nspName, sockId );
+      console.log('firstRun', nspName, sockId);
 
       // Assigning
 
@@ -65,6 +67,45 @@ const group = socket => {
       // thisTimer = null;
     };
   };
+
+  // function firstRun() {
+  //   // const oneBool = isObject( core ) 
+  //   //   && core.hasOwnProperty( 'groups' ) ;
+  //     // && (!core.groups[nspName] === undefined);
+
+  //   if ( nspName && ( isEmpty( core ) ) ) {
+
+  //     // MASS COMMENTING OF LOGS 2023-10-09
+  //     l.struct.info( 'firstRun', nspName, sockId );
+  //     console.log('firstRun', nspName, sockId);
+
+  //     // Assigning
+
+  //     // overall ||= {};
+  //     // overall[nspName] ||= {
+  //     overall ||= {
+  //       timers: {}, 
+  //       sesh: null, 
+  //       core: InitNsp.gCore(nspName)
+  //     };
+
+  //     if ( isEmpty( core ) ) {
+  //       core ||= InitNsp.core();
+  //     };
+
+  //     if ( isEmpty( overall.sesh ) ) {
+  //       overall.sesh ||= InitNsp.seshie( nspName );
+  //     };
+
+  //     // Shortening
+  //     // glue ||= socket.client.server.glue;
+  //     // core ||= socket.client.server.glue.core;
+  //     sassy ||= overall.timers;
+  //     seshie ||= overall.sesh;
+  //     gCore ||= overall.core;
+  //     // thisTimer = null;
+  //   };
+  // };
   firstRun();
   
   function onGroupEnter() {    
@@ -180,7 +221,8 @@ const group = socket => {
     skipSession 
   } = require( './timer' )( 
     v, 
-    
+    socket, 
+    nspName, 
     sassy, 
     // thisTimer, 
     emitRoom, 
@@ -219,7 +261,8 @@ const group = socket => {
       const oneBool = isObject( core ) 
         && core.hasOwnProperty( 'groups' ) 
         && ( !!core.groups[ nspName ] );
-      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
+      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[nspName].hasOwnProperty(socket.id);
+      // console.log(core.users);
       // triggered when the event is sent
       if (eventName == 'timer updated') {
         // if (args.hasOwnProperty('started')) {
@@ -243,11 +286,13 @@ const group = socket => {
         // pause if pause.flag
         // repeat if repeat.on
         if (args.current == args.duration || (args.current == args.duration - 2) || args.current == 5) {
-          console.log( 'outGoing:', eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
+          console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
+          // console.log( 'outgoing', core.users[ nspName ] );
         };
       } else {
-        console.log( 'outGoing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
+        console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
       };
+      // console.log( 'outgoing', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
     } );
 
     socket.onAny( ( eventName, args ) => {
@@ -257,7 +302,8 @@ const group = socket => {
         && ( !!core.groups[ nspName ] );
       const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
 
-      console.log( 'inComing:', eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
+      console.log( 'inComing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
+      // console.log( 'incoming', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
     } );
 
     // in-file
