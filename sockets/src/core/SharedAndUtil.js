@@ -4,7 +4,7 @@ const { isEmpty } = require( '../utilities/general' );
 const SharedAndUtil = function ( 
   socket, 
   
-  nspace, 
+  // nspace, 
   nspName, 
   getGroupLog, 
 

@@ -145,7 +145,7 @@ const group = socket => {
   } = require( './SharedAndUtil' )( 
     socket, 
 
-    nspace, 
+    // nspace, 
     nspName, 
     getGroupLog, 
     

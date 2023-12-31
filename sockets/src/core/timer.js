@@ -218,7 +218,7 @@ const Timer = function (
         const hashish = { 
           current: curr.secondsLeft, 
           duration: curr.duration, 
-          started: curr.started, 
+          started: curr.started,  
           pause: curr.pause, 
           flags: curr.flags, 
           goneBy: curr.goneBy, 
@@ -406,7 +406,7 @@ const Timer = function (
         };
         msg = 'timer updated';
         socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
-        // socket.emit( msg, { room: inRoom, ...hashish } );
+        socket.emit( msg, { room: inRoom, ...hashish } );
         // emitRoom( 'timer updated', { room: inRoom, ...hashish } );
       } else if ( 
         // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
@@ -495,7 +495,7 @@ const Timer = function (
 
     // emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
     socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
-    // socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
+    socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
     // if (repeat.on == false) {
     //   emitRoom( msg, { room: inRoom } );
     // } else {

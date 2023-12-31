@@ -36,12 +36,17 @@ const User = function (
     // l.parm.debug( 'addUser()', 'beg' );
     if ( simpMe.addedUser ) {
       console.log('BROKE addedUser already added');
+      l.parm.debug('BROKE addedUser already added');
       return;
     };
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.parm.debug( `${ sockId }: addUser() past if`, 'addedUser' );
+    if (!seshie) {
+      console.log('BROKE this shouldnt happen. seshie hasnt been initialized yet.');
+      l.parm.debug('BROKE this shouldnt happen. seshie hasnt been initialized yet.');
+    };
     seshie.username = handle;
-    seshie.email = emailAcct;    
+    seshie.email = emailAcct;
     const coreHashie = { 
       id: sockId, 
 
