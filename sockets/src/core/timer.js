@@ -83,44 +83,7 @@ const Timer = function (
       await logItWrapper( inRoom, aUser, 'repeating started' );
     };
 
-    updateTimer( socket, curr, inRoom, aUser );
-    // finishedTimer( inRoom, aUser );
-    // if (curr.intervals.updateTimer != null) {
-    //   console.log('whoops got here updateTimerInterval isnt null');
-    //   l.parm.debug( 'updateTimerInterval isnt null' );
-    //   return;
-    // }
-    
-    // curr.intervals.updateTimer = setInterval( () => {
-    //   --curr.secondsLeft;
-
-    //   if ( 
-    //     // if not paused, has duration greater than 0, and has secondsLeft greater than 0
-    //     !curr.pause.flag && durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
-    //   ) {
-    //     const hashish = { 
-    //       current: curr.secondsLeft, 
-    //       duration: curr.duration, 
-    //       started: curr.started, 
-    //       pause: curr.pause, 
-    //       flags: curr.flags, 
-    //       goneBy: curr.goneBy, 
-    //       repeat: curr.repeat, 
-    //       session: curr.session 
-    //     };
-    //     emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-    //   } else if ( 
-    //     // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
-    //     noTimeLeftBool( curr.secondsLeft ) && ( commonTimerVarsExistBool( !curr.pause.flag, curr.duration ) ) 
-    //   ) {
-    //     finishedTimer( inRoom, aUser );
-    //     // what else is left? would this spot ever be touched?
-    //   } else {
-    //     l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
-    //     clearInterval(curr.intervals.updateTimer);
-    //     curr.intervals.updateTimer = null;
-    //   };
-    // }, 1000 );
+    updateTimer( curr, inRoom, aUser, 'timer started' );
     // goneByTimer( inRoom );
   };
 
@@ -154,13 +117,8 @@ const Timer = function (
     curr.pause.flag = true;
     curr.pause.started = new Date().getTime();
 
-    // clearUpdateTimer( inRoom );
-    // clearInterval( updateTimerInterval );
     clearInterval(curr.intervals.updateTimer);
     curr.intervals.updateTimer = null;
-    // clearInterval(curr.intervals.updateTimer);
-    // curr.intervals.updateTimer = null;
-    // goneByTimer( inRoom );
 
     emitRoom( 'timer paused', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'paused' );
@@ -195,55 +153,16 @@ const Timer = function (
     curr.pause.flag = false;
     curr.pause.started = null;
 
-    // updateTimer( inRoom, aUser );
+    updateTimer( curr, inRoom, aUser, 'timer resumed' );
     // clearInterval( curr.intervals.onGoing );
     
-    emitRoom( 'timer resumed', { room: inRoom } );
+    // emitRoom( 'timer resumed', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'resumed' );
-
-    if (curr.intervals.updateTimer != null) {
-      console.log('whoops got here updateTimerInterval isnt null');
-      l.parm.debug( 'updateTimerInterval isnt null' );
-      return;
-    }
-
-    // @TODO why not using intervals and secondsLeft direct. because of pointers?
-    curr.intervals.updateTimer = setInterval( () => {
-      --curr.secondsLeft;
-
-      if ( 
-        // if not paused, has duration greater than 0, and has secondsLeft greater than 0
-        !curr.pause.flag && durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
-      ) {
-        const hashish = { 
-          current: curr.secondsLeft, 
-          duration: curr.duration, 
-          started: curr.started,  
-          pause: curr.pause, 
-          flags: curr.flags, 
-          goneBy: curr.goneBy, 
-          repeat: curr.repeat, 
-          session: curr.session 
-        };
-        emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-      } else if ( 
-        // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
-        noTimeLeftBool( curr.secondsLeft ) && ( commonTimerVarsExistBool( !curr.pause.flag, curr.duration ) ) 
-      ) {
-        finishedTimer( inRoom, aUser );
-        // what else is left? would this spot ever be touched?
-      } else {
-        l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
-        clearInterval(curr.intervals.updateTimer);
-        curr.intervals.updateTimer = null;
-      };
-    }, 1000 );
   };
 
   // @param inRoom: String
   // @globals sassy
   // @internal-ish setInterval()
-
   // this was never used. it is dupe name
   // goneByTimer = ( inRoom ) => {
   //   console.log('1st');
@@ -254,20 +173,20 @@ const Timer = function (
   //   }, 1000 );
   // };
 
-  updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
-    const hashish = { 
-      current, 
-      duration, 
-      started, 
-      pause, 
-      flags, 
-      goneBy, 
-      repeat, 
-      session 
-    };
-    emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-    return hashish;
-  };
+  // updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
+  //   const hashish = { 
+  //     current, 
+  //     duration, 
+  //     started, 
+  //     pause, 
+  //     flags, 
+  //     goneBy, 
+  //     repeat, 
+  //     session 
+  //   };
+  //   emitRoom( 'timer updated', { room: inRoom, ...hashish } );
+  //   return hashish;
+  // };
   durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
   currentBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft > -1;
   noTimeLeftBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft < 1;
@@ -319,8 +238,6 @@ const Timer = function (
   // @internal wrappingUp()
   module.stopTimer = ( inRoom, aUser ) => {
     const msg = 'timer stopped'
-    // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': sassy[inRoom].repeat.on, first: 'first' } );
-    // socket.emit( msg, { room: inRoom, 'reapOn': sassy[inRoom].repeat.on, second: 'second' } );
     wrappingUp( 
       socket, 
       inRoom, 
@@ -334,7 +251,6 @@ const Timer = function (
   finishedTimer = ( inRoom, aUser ) => {
     const msg = 'timer finished';
     // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': sassy[inRoom].repeat.on, first: 'first' } );
-    // socket.emit( msg, { room: inRoom, 'reapOn': sassy[inRoom].repeat.on, second: 'second' } );
     wrappingUp( 
     socket, 
     inRoom, 
@@ -367,59 +283,58 @@ const Timer = function (
   // @anotherFile emitRoom()
   // @internal finishedTimer()
   // @internal-ish clearInterval()
-  updateTimer = ( socket, curr, inRoom, aUser ) => {
+  updateTimer = ( curr, inRoom, aUser, msg ) => {
     // const curr = sassy[ inRoom ];
-    // const {
-    //   duration, 
-    //   started, 
-    //   pause, 
-    //   flags, 
-    //   goneBy, 
-    //   repeat, 
-    //   session 
-    // } = curr;
-    // let { secondsLeft } = curr;
+    const {
+      duration, 
+      started, 
+      pause, 
+      flags, 
+      goneBy, 
+      repeat, 
+      session 
+    } = curr;
+    let {secondsLeft} = curr;
 
     if (curr.intervals.updateTimer != null) {
       console.log('whoops got here updateTimerInterval isnt null');
       l.parm.debug( 'updateTimerInterval isnt null' );
       return;
-    }
+    };
 
-    // @TODO why not using intervals and secondsLeft direct. because of pointers?
-    curr.intervals.updateTimer = setInterval( () => {
+    // if not paused, has duration greater than 0, and has secondsLeft greater than 0
+    if ( 
+      // !curr.pause.flag && durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
+      durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
+    ) {
+      const hashish = { 
+        current: secondsLeft, 
+        duration: duration, 
+        started: started, 
+        pause: pause, 
+        flags: flags, 
+        goneBy: goneBy, 
+        repeat: repeat, 
+        session: session 
+      };
+      
+      // msg = 'timer updated';
+      socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
+      socket.emit( msg, { room: inRoom, ...hashish } );
+      // emitRoom( 'timer updated', { room: inRoom, ...hashish } );
+    } else {
+      console.log('duration secondsLeft null-y');
+      l.parm.debug( 'duration secondsLeft null-y' );
+      return;
+    };
+
+    curr.intervals.updateTimer = setInterval(() => {
       --curr.secondsLeft;
 
-      if ( 
-        // if not paused, has duration greater than 0, and has secondsLeft greater than 0
-        !curr.pause.flag && durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
-      ) {
-        const hashish = { 
-          current: curr.secondsLeft, 
-          duration: curr.duration, 
-          started: curr.started, 
-          pause: curr.pause, 
-          flags: curr.flags, 
-          goneBy: curr.goneBy, 
-          repeat: curr.repeat, 
-          session: curr.session 
-        };
-        msg = 'timer updated';
-        socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
-        socket.emit( msg, { room: inRoom, ...hashish } );
-        // emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-      } else if ( 
-        // check if no time left in secondsLeft and if either it's not paused or duration is more than 0/non-falsey
-        noTimeLeftBool( curr.secondsLeft ) && ( commonTimerVarsExistBool( !curr.pause.flag, curr.duration ) ) 
-      ) {
+      if (!currentBool(curr.secondsLeft)) {
         finishedTimer( inRoom, aUser );
-        // what else is left? would this spot ever be touched?
-      } else {
-        l.parm.debug( 'WHOA got to the else in updateTimer. clearInterval( updateTimerInterval )' );
-        clearInterval(curr.intervals.updateTimer);
-        curr.intervals.updateTimer = null;
       };
-    }, 1000 );
+    }, 1000);
   };
 
 
@@ -489,13 +404,20 @@ const Timer = function (
       emitRoom( `${ msg } already done`, { room: inRoom } );
       return false;
     };    
-    const { repeat, session, intervals } = curr;
+    const { repeat, session } = curr;
     clearInterval(curr.intervals.updateTimer);
     curr.intervals.updateTimer = null;
 
-    // emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
-    socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
-    socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
+    // finished is happening from server to client
+    if (activity == 'finished') {
+      socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
+      // stopped means a client started the process
+    } else if (activity == 'stopped') {
+      // emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
+      socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
+      socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
+    };
+
     // if (repeat.on == false) {
     //   emitRoom( msg, { room: inRoom } );
     // } else {
