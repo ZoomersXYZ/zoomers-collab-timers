@@ -27,6 +27,28 @@ const Room = ( {
       curry, flags, reap, session, push, events 
   } = useRoomHooks();
 
+  const setupCurr = ( e ) => {
+    let { current, duration, ...rest } = e;
+    current = ( !current || isNaN( current ) ) ? 0 : current;
+    duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
+    return { current, duration, ...rest };
+  };
+
+  const updateTheTimer = (current) => {
+    // const forCurr = {current: current, duration: duration, goneBy: goneBy};
+    curry.interval = setInterval(() => {
+      --current;
+      curry.set(prev => setupCurr( { 
+        ...prev, 
+        current: current 
+      } ) );
+      if (curry.current < 0) {
+        clearInterval(curry.interval);
+        curry.interval = null;;
+      };
+    }, 1000);
+  };
+
   // States
   const [ showTimer, setShowTimer ] = useState( false );
   const [ pauseTerm, setPauseTerm ] = useState( 'pause' );
@@ -37,7 +59,7 @@ const Room = ( {
   const [ submittingStopTimer, setSubmittingStopTimer ] = useState( false );
   const [ submittingStopReap, setSubmittingStopReap ] = useState( false );
 
-  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap );
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap, setupCurr, updateTheTimer );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
 
@@ -135,11 +157,13 @@ const Room = ( {
       </CSSTransition>
 
       <TimerControl 
+        curry={ curry } 
+        updateTheTimer={ updateTheTimer } 
         inlineSize={ inlineSize / 2 } 
         blockSize={ blockSize / 2 } 
         sessionObj={ session } 
         flags={ flags } 
-        started={flags.state.started}
+        started={ flags.state.started } 
         { ...{ 
           setShowTimer, 
           push, 

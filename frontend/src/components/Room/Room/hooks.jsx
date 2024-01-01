@@ -14,7 +14,8 @@ const useRoomHooks = () => {
     formatted: '00:00', 
     duration: 0,     
     paused: false, 
-    goneBy: 0 
+    goneBy: 0, 
+    interval: null 
   } );
 
   const [flags, setFlags] = useState( { 

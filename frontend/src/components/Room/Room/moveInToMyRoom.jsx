@@ -6,6 +6,7 @@ import {
   RoomContext 
 } from './../../Contexts';
 
+updateTimer = null;
 const useMoveInToMyRoom = ( 
     // pauseTerm, 
     setPauseTerm, 
@@ -20,7 +21,10 @@ const useMoveInToMyRoom = (
 
     setSubmittingPauseResumeTimer, 
     setSubmittingStopTimer, 
-    setSubmittingStopReap 
+    setSubmittingStopReap, 
+    
+    setupCurr, 
+    updateTheTimer 
     // pause 
  ) => { 
   const socket = useContext( SocketContext );
@@ -31,13 +35,6 @@ const useMoveInToMyRoom = (
   };
 
   useEffect( () => { 
-    const setupCurr = ( e ) => {
-      let { current, duration, ...rest } = e;
-      current = ( !current || isNaN( current ) ) ? 0 : current;
-      duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
-      return { current, duration, ...rest };
-    };
-
     const firstTimer = e => {
       const { 
         room, 
@@ -78,9 +75,10 @@ const useMoveInToMyRoom = (
           DateObjEndTime 
         } );
       };
-
+      
       const forCurr = { current: current, duration: duration, goneBy: goneBy };
-      curry.set( setupCurr( forCurr ) );
+      curry.set(setupCurr(forCurr));
+      updateTheTimer(forCurr.current);
   };
 
     const updateTimer = e => {
@@ -93,8 +91,8 @@ const useMoveInToMyRoom = (
       // } else {
       //   setPauseTerm( 'pause' );
       // };
-      const forCurr = { current: e.current, duration: e.duration, goneBy: e.goneBy };
-      curry.set( setupCurr( forCurr ) );
+      // const forCurr = { current: e.current, duration: e.duration, goneBy: e.goneBy };
+      // curry.set( setupCurr( forCurr ) );
 
       const { length, startTime, endTime, work, brake } = repeat;
       const DateObjEndTime = new Date( endTime );
@@ -119,6 +117,9 @@ const useMoveInToMyRoom = (
 
       setSubmittingPauseResumeTimer( true );
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
+
+      clearInterval(curry.interval);
+      curry.interval = null;
     };
 
     const timerResumed = ( room ) => {
@@ -127,6 +128,8 @@ const useMoveInToMyRoom = (
 
       setSubmittingPauseResumeTimer( true );
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
+
+      updateTheTimer(curry.state.current);
     };
 
     const __endTimer = ( room, reapOn = false ) => {
@@ -153,6 +156,9 @@ const useMoveInToMyRoom = (
         ended: false, 
         triaged: false 
       });
+
+      clearInterval(curry.interval);
+      curry.interval = null;
 
       // reset pause
       setPauseTerm( 'pause' );

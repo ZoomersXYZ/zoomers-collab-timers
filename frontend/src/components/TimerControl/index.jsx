@@ -13,6 +13,9 @@ import './styles.scss';
 // import useRoomHooks from './../Room/Room/hooks';
 
 const TimerControl = ( { 
+  curry, 
+  setupCurr, 
+  updateTheTimer, 
   sessionObj, 
 
   flags, 
@@ -65,13 +68,19 @@ const TimerControl = ( {
   const ASK_SESSION = 'ask for session'
 
   useEffect( () => {
-    const timerStarted = ( { room, duration } ) => {
+    const start = (curr) => {
+      const forCurr = {current: curr.current, duration: curr.duration, goneBy: curr.goneBy};
+      curry.set(setupCurr(forCurr));
+      updateTheTimer(forCurr.current);
+    };
+
+    const timerStarted = ( { room, curr } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
 
       setSubmittingStopTimer( true );
       setTimeout( () => setSubmittingStopTimer( false ), 2000 );
-      setSubmittingPauseResumeTimer( true );
+      setSubmittingPauseResumeTimer( true ); 
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 2000 );
 
       flags.set({
@@ -89,9 +98,14 @@ const TimerControl = ( {
           body: 'Let\'s go!' 
         };
       } );
+
+      start(forCurr.current);
+      // const forCurr = { current: curr.current, duration: curr.duration, goneBy: curr.goneBy };
+      // curry.set(setupCurr(forCurr));
+      // updateTheTimer(forCurr.content);
     };
 
-    const repeatStarted = ( { room, duration } ) => {
+    const repeatStarted = ( { room, curr } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
       flags.set({
@@ -116,9 +130,11 @@ const TimerControl = ( {
           body: 'Let\'s go!' 
         };
       } );
+
+      start(curr.current);
     };
 
-    const repeatCont = ( { room, duration } ) => {
+    const repeatCont = ( { room, curr } ) => {
       if ( filterOutRoom( room ) ) { return; };
       setShowTimer( true );
 
@@ -144,6 +160,8 @@ const TimerControl = ( {
           body: 'Let\'s go!' 
         };
       } );
+
+      start(curr.current);
     };
 
     const skipSession = ( { room, session } ) => {

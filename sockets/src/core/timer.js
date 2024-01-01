@@ -77,13 +77,13 @@ const Timer = function (
     };
     
     if (!repeatFlag) {
-      emitRoom( 'timer started', { room: inRoom, duration: timeInMin } );
+      emitRoom( 'timer started', { room: inRoom, curr } );
       await logItWrapper( inRoom, aUser, 'started' );
     } else if (repeatFlag == 'repeating continued') {
-      emitRoom( 'repeating continued', { room: inRoom, duration: timeInMin } );
+      emitRoom( 'repeating continued', { room: inRoom, curr } );
       await logItWrapper( inRoom, aUser, 'repeating continued' );
     } else if (repeatFlag == 'repeating started') {
-      emitRoom( 'repeating started', { room: inRoom, duration: timeInMin } );
+      emitRoom( 'repeating started', { room: inRoom, curr } );
       await logItWrapper( inRoom, aUser, 'repeating started' );
     };
 
