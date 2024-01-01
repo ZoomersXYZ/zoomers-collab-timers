@@ -242,8 +242,8 @@ const Timer = function (
       };
       
       // msg = 'timer updated';
-      socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
-      socket.emit( msg, { room: inRoom, ...hashish } );
+      // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
+      // socket.emit( msg, { room: inRoom, ...hashish } );
       // emitRoom( 'timer updated', { room: inRoom, ...hashish } );
     } else {
       console.log('duration secondsLeft null-y');

@@ -6,7 +6,7 @@ import {
   RoomContext 
 } from './../../Contexts';
 
-updateTimer = null;
+let updateTimer = null;
 const useMoveInToMyRoom = ( 
     // pauseTerm, 
     setPauseTerm, 
@@ -47,6 +47,10 @@ const useMoveInToMyRoom = (
         repeat 
     } = e;
       if ( filterOutRoom( room ) ) { console.log('filtered out first'); return; };
+      if ( current <= 0 || duration <= 0 ) {
+        return;
+      };
+      
       if ( pause.flag ) {
         setPauseTerm( 'unpause' );
         console.log('unpause');
@@ -81,35 +85,35 @@ const useMoveInToMyRoom = (
       updateTheTimer(forCurr.current);
   };
 
-    const updateTimer = e => {
-      // const { pause, room } = e;
-      const { room, session, repeat, flags, pause } = e;
-      if ( filterOutRoom( room ) ) { return; };
-      // @TODO 2022-11-18 16:27 | this is deprecated and should be removed
-      // if ( pause.flag ) {
-      //   setPauseTerm( 'unpause' );
-      // } else {
-      //   setPauseTerm( 'pause' );
-      // };
-      // const forCurr = { current: e.current, duration: e.duration, goneBy: e.goneBy };
-      // curry.set( setupCurr( forCurr ) );
+    // const updateTimer = e => {
+    //   // const { pause, room } = e;
+    //   const { room, session, repeat, flags, pause } = e;
+    //   if ( filterOutRoom( room ) ) { return; };
+    //   // @TODO 2022-11-18 16:27 | this is deprecated and should be removed
+    //   // if ( pause.flag ) {
+    //   //   setPauseTerm( 'unpause' );
+    //   // } else {
+    //   //   setPauseTerm( 'pause' );
+    //   // };
+    //   // const forCurr = { current: e.current, duration: e.duration, goneBy: e.goneBy };
+    //   // curry.set( setupCurr( forCurr ) );
 
-      const { length, startTime, endTime, work, brake } = repeat;
-      const DateObjEndTime = new Date( endTime );
-      const DateObjStartTime = new Date( startTime );
-      if ( repeat.on && !reap.state.on ) {
-        reap.set( { 
-          on: true, 
-          length, 
-          startTime, 
-          endTime, 
-          work, 
-          brake, 
-          DateObjStartTime, 
-          DateObjEndTime
-        } );
-      };
-    };
+    //   const { length, startTime, endTime, work, brake } = repeat;
+    //   const DateObjEndTime = new Date( endTime );
+    //   const DateObjStartTime = new Date( startTime );
+    //   if ( repeat.on && !reap.state.on ) {
+    //     reap.set( { 
+    //       on: true, 
+    //       length, 
+    //       startTime, 
+    //       endTime, 
+    //       work, 
+    //       brake, 
+    //       DateObjStartTime, 
+    //       DateObjEndTime
+    //     } );
+    //   };
+    // };
 
     const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
@@ -118,8 +122,8 @@ const useMoveInToMyRoom = (
       setSubmittingPauseResumeTimer( true );
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
 
-      clearInterval(curry.interval);
-      curry.interval = null;
+      clearInterval(curry.state.interval);
+      curry.state.interval = null;
     };
 
     const timerResumed = ( room ) => {
@@ -157,8 +161,8 @@ const useMoveInToMyRoom = (
         triaged: false 
       });
 
-      clearInterval(curry.interval);
-      curry.interval = null;
+      clearInterval(curry.state.interval);
+      curry.state.interval = null;
 
       // reset pause
       setPauseTerm( 'pause' );
@@ -283,7 +287,7 @@ const useMoveInToMyRoom = (
     // };
     
     socket.on( 'timer first', firstTimer );
-    socket.on( events.TIMER_UPDATED, updateTimer );
+    // socket.on( events.TIMER_UPDATED, updateTimer );
     socket.on( events.TIMER_PAUSED, timerPaused );
     socket.on( events.TIMER_RESUMED, timerResumed );
     socket.on( events.TIMER_STOPPED, timerStopped );

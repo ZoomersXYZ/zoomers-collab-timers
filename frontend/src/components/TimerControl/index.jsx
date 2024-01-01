@@ -76,7 +76,9 @@ const TimerControl = ( {
 
     const timerStarted = ( { room, curr } ) => {
       if ( filterOutRoom( room ) ) { return; };
+      if ( !curr ) { return; };
       setShowTimer( true );
+      console.log('curr', curr);
 
       setSubmittingStopTimer( true );
       setTimeout( () => setSubmittingStopTimer( false ), 2000 );
@@ -94,12 +96,12 @@ const TimerControl = ( {
           ...prev, 
           event: 'start', 
           onOff: prev.onOff + 1, 
-          title: `${ __room.name } ${ sessionObj.state.scheme } timer for ${ duration } has begun`, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } timer for ${ curr.duration } has begun`, 
           body: 'Let\'s go!' 
         };
       } );
 
-      start(forCurr.current);
+      start(curr);
       // const forCurr = { current: curr.current, duration: curr.duration, goneBy: curr.goneBy };
       // curry.set(setupCurr(forCurr));
       // updateTheTimer(forCurr.content);
@@ -126,12 +128,12 @@ const TimerControl = ( {
           ...prev, 
           event: 'repeat', 
           onOff: prev.onOff + 1, 
-          title: `${ __room.name } ${ sessionObj.state.scheme } 1st repeating timer for ${ duration } has begun`, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } 1st repeating timer for ${ curr.duration } has begun`, 
           body: 'Let\'s go!' 
         };
       } );
 
-      start(curr.current);
+      start(curr);
     };
 
     const repeatCont = ( { room, curr } ) => {
@@ -156,12 +158,12 @@ const TimerControl = ( {
           ...prev, 
           event: 'continuing', 
           onOff: prev.onOff + 1, 
-          title: `${ __room.name } ${ sessionObj.state.scheme } next repeating timer for ${ duration } is continuing`, 
+          title: `${ __room.name } ${ sessionObj.state.scheme } next repeating timer for ${ curr.duration } is continuing`, 
           body: 'Let\'s go!' 
         };
       } );
 
-      start(curr.current);
+      start(curr);
     };
 
     const skipSession = ( { room, session } ) => {

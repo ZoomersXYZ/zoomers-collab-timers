@@ -36,15 +36,17 @@ const Room = ( {
 
   const updateTheTimer = (current) => {
     // const forCurr = {current: current, duration: duration, goneBy: goneBy};
-    curry.interval = setInterval(() => {
+    console.log('current', current);
+    curry.state.interval = setInterval(() => {
       --current;
+      console.log('current1', current);
       curry.set(prev => setupCurr( { 
         ...prev, 
         current: current 
       } ) );
-      if (curry.current < 0) {
-        clearInterval(curry.interval);
-        curry.interval = null;;
+      if (current < 0) {
+        clearInterval(curry.state.interval);
+        curry.state.interval = null;;
       };
     }, 1000);
   };
@@ -158,6 +160,7 @@ const Room = ( {
 
       <TimerControl 
         curry={ curry } 
+        setupCurr={ setupCurr } 
         updateTheTimer={ updateTheTimer } 
         inlineSize={ inlineSize / 2 } 
         blockSize={ blockSize / 2 } 
