@@ -15,7 +15,7 @@ const Timer = function (
   const module = {};
 
   durationBool = ( duration ) => !isNaN( duration ) && duration > -1;
-  currentBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft > -1;
+  timeBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft > -1;
   noTimeLeftBool = ( secondsLeft ) => !isNaN( secondsLeft ) && secondsLeft < 1;
   commonTimerVarsExistBool = ( pauseFlag, duration ) => pauseFlag || duration;
 
@@ -87,7 +87,7 @@ const Timer = function (
       await logItWrapper( inRoom, aUser, 'repeating started' );
     };
 
-    updateTimer( curr, inRoom, aUser, 'timer started' );
+    updateTimer( curr, inRoom, aUser );
     // goneByTimer( inRoom );
   };
 
@@ -157,10 +157,10 @@ const Timer = function (
     curr.pause.flag = false;
     curr.pause.started = null;
 
-    updateTimer( curr, inRoom, aUser, 'timer resumed' );
+    updateTimer( curr, inRoom, aUser );
     // clearInterval( curr.intervals.onGoing );
     
-    // emitRoom( 'timer resumed', { room: inRoom } );
+    emitRoom( 'timer resumed', { room: inRoom } );
     await logItWrapper( inRoom, aUser, 'resumed' );
   };
 
@@ -182,7 +182,6 @@ const Timer = function (
   // @internal wrappingUp()
   finishedTimer = ( inRoom, aUser ) => {
     const msg = 'timer finished';
-    // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': sassy[inRoom].repeat.on, first: 'first' } );
     wrappingUp( 
     socket, 
     inRoom, 
@@ -206,55 +205,17 @@ const Timer = function (
   // @anotherFile emitRoom()
   // @internal finishedTimer()
   // @internal-ish clearInterval()
-  updateTimer = ( curr, inRoom, aUser, msg ) => {
-    // const curr = sassy[ inRoom ];
-    const {
-      duration, 
-      started, 
-      pause, 
-      flags, 
-      goneBy, 
-      repeat, 
-      session 
-    } = curr;
-    let {secondsLeft} = curr;
-
+  updateTimer = ( curr, inRoom, aUser ) => {
     if (curr.intervals.updateTimer != null) {
       console.log('whoops got here updateTimerInterval isnt null');
       l.parm.debug( 'updateTimerInterval isnt null' );
       return;
     };
 
-    // if not paused, has duration greater than 0, and has secondsLeft greater than 0
-    if ( 
-      // !curr.pause.flag && durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
-      durationBool( curr.duration ) && currentBool( curr.secondsLeft ) 
-    ) {
-      const hashish = { 
-        current: secondsLeft, 
-        duration: duration, 
-        started: started, 
-        pause: pause, 
-        flags: flags, 
-        goneBy: goneBy, 
-        repeat: repeat, 
-        session: session 
-      };
-      
-      // msg = 'timer updated';
-      // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, ...hashish } );
-      // socket.emit( msg, { room: inRoom, ...hashish } );
-      // emitRoom( 'timer updated', { room: inRoom, ...hashish } );
-    } else {
-      console.log('duration secondsLeft null-y');
-      l.parm.debug( 'duration secondsLeft null-y' );
-      return;
-    };
-
     curr.intervals.updateTimer = setInterval(() => {
       --curr.secondsLeft;
 
-      if (!currentBool(curr.secondsLeft)) {
+      if (!timeBool(curr.secondsLeft)) {
         finishedTimer( inRoom, aUser );
       };
     }, 1000);
@@ -335,10 +296,13 @@ const Timer = function (
     if (activity == 'finished') {
       socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
       // stopped means a client started the process
-    } else if (activity == 'stopped') {
-      // emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
-      socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
-      socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
+    } else if (activity == 'force stopped') {
+      emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
+      // socket.to( `${ nspName }-${ inRoom }` ).emit( msg, { room: inRoom, 'reapOn': repeat.on, third: 'third' } );
+      // socket.emit( msg, { room: inRoom, 'reapOn': repeat.on, fourth: 'fourth' } );
+    } else if (activity == 'reset') {
+      // @TODO -- re-do the interval and stuff to original duration
+      emitRoom( msg, { room: inRoom, 'reapOn': repeat.on } );
     };
 
     // if (repeat.on == false) {

@@ -34,11 +34,16 @@ const useMoveInToMyRoom = (
     if ( aRoom.name !== room ) return true;
   };
 
+  const curryStateRef = useRef(curryState);
+  useEffect(() => {
+    curryStateRef.current = curryState;
+  }, [curryState]);
+
   useEffect( () => { 
     const firstTimer = e => {
       const { 
         room, 
-        current, 
+        secondsLeft, 
         duration, 
         started, 
         pause, 
@@ -47,7 +52,7 @@ const useMoveInToMyRoom = (
         repeat 
     } = e;
       if ( filterOutRoom( room ) ) { console.log('filtered out first'); return; };
-      if ( current <= 0 || duration <= 0 ) {
+      if ( secondsLeft <= 0 || duration <= 0 ) {
         return;
       };
       
@@ -151,7 +156,7 @@ const useMoveInToMyRoom = (
       setTimeout( () => setShowTimer( false ), 2000 );
       curry.set( prev => setupCurr( { 
         ...prev, 
-        current: null, 
+        secondsLeft: null, 
         formatted: null, 
         duration: null 
       } ) );

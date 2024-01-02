@@ -28,10 +28,10 @@ const Room = ( {
   } = useRoomHooks();
 
   const setupCurr = ( e ) => {
-    let { current, duration, ...rest } = e;
-    current = ( !current || isNaN( current ) ) ? 0 : current;
+    let { secondsLeft, duration, ...rest } = e;
+    secondsLeft = ( !secondsLeft || isNaN( secondsLeft ) ) ? 0 : secondsLeft;
     duration = ( !duration || isNaN( duration ) ) ? 0 : duration;
-    return { current, duration, ...rest };
+    return { secondsLeft, duration, ...rest };
   };
 
   const updateTheTimer = (current) => {
@@ -42,11 +42,12 @@ const Room = ( {
       console.log('current1', current);
       curry.set(prev => setupCurr( { 
         ...prev, 
-        current: current 
+        secondsLeft: secondsLeft 
       } ) );
-      if (current < 0) {
-        clearInterval(curry.state.interval);
-        curry.state.interval = null;;
+
+      if (secondsLeft <= 0) {
+        clearInterval(curry.interval);
+        curry.interval = null;;
       };
     }, 1000);
   };
@@ -74,7 +75,7 @@ const Room = ( {
   useEffect( () => { 
     if ( showTimer && !curry.state.current ) {
       setShowTimer( false );
-    } else if ( !showTimer && curry.state.current ) {
+    } else if ( !showTimer && curry.secondsLeft ) {
       setShowTimer( true );
     };
   }, [ curry.state, showTimer ] );
@@ -82,7 +83,7 @@ const Room = ( {
   // DELETE soon 2023-10-10 16:29 | 
   // useEffect( () => { 
   //   console.log( 'curry.session running', aptRoom, session.state.term );
-  //   // session.set( curry.state.term );
+  //   // session.set( curry.term );
   // }, [ session.state.term ] );
 
   const [ efficiency, setEfficiency ] = useState( 0 );

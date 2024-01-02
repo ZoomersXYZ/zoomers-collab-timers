@@ -79,15 +79,15 @@ const SocketCoreAndUtils = function (
   async function onRoomConnect( preciousHashie ) {
     // l.bbc.debug( `${ socket.id }: beg /inner/ onRoomConnect. emit`);
     await delay( 1 );
-    const { duration, roomie, secondsLeft, session, started, pause, goneBy, repeat } = preciousHashie;
+    const { duration, roomie, secondsLeft, session, started, pause, goneBy, repeat, flags } = preciousHashie;
     // initialSession( roomie, session, pause.flag );
 
     // // If time[r] is paused, push time once to show the time.
     const durationBool = !isNaN( duration ) && duration > -1;
-    const currentBool = !isNaN( secondsLeft ) && secondsLeft > -1;
-    // if ( pause.started && !pause.flag && currentBool && durationBool ) {
+    const timeBool = !isNaN( secondsLeft ) && secondsLeft > -1;
+    // if ( pause.started && !pause.flag && timeBool && durationBool ) {
       const hashish = { 
-        current: secondsLeft, 
+        secondsLeft, 
 
         duration, 
         started, 
@@ -96,7 +96,9 @@ const SocketCoreAndUtils = function (
 
         goneBy, 
         session, 
-        repeat
+        repeat, 
+
+        flags 
       };
       const event = 'timer first';
       // socket.to( simpMe.sRoom ).emit( 'timer yo', { room: roomie, ...hashish } );
@@ -144,10 +146,10 @@ const SocketCoreAndUtils = function (
       return;
     };
     if (sassy[incoming.room].flags.started) {
-      emitUser('timer already begun', {user: aUser, room: inRoom});
+      module.emitUser('timer already begun', {room: incoming.room});
       return false;
     };
-    sassy[ incoming.room ].session = incoming.session;
+    sassy[incoming.room].session = incoming.session;
     // console.log('askForSession', sassy[ incoming.room ].session, incoming.session);
   };
 

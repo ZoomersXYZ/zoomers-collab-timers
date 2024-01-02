@@ -103,9 +103,9 @@ const RoomCore = ( props ) => {
     <div className={ `svg-parent ${ sessionScheme }` }>      
       <Svg 
         className={ circleClass } 
-        secondsLeft={ curry.state.current } 
         duration={ curry.state.duration } 
         goneBy={ curry.state.goneBy } 
+        secondsLeft={ curryState.secondsLeft } 
         { ...{ 
           inlineSize, 
           blockSize 

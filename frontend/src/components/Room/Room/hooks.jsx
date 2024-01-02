@@ -10,7 +10,7 @@ const useRoomHooks = () => {
   } );
 
   const [ curr, setCurr ] = useState( { 
-    current: 0, 
+    secondsLeft: 0, 
     formatted: '00:00', 
     duration: 0,     
     paused: false, 

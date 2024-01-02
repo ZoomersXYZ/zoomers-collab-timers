@@ -15,9 +15,9 @@
   //   }, 1000 );
   // };
 
-  // updatingTimer = ( inRoom, current, duration, started, pause, flags, goneBy, repeat, session ) => {
+  // updatingTimer = ( inRoom, secondsLeft, duration, started, pause, flags, goneBy, repeat, session ) => {
   //   const hashish = {
-  //     current,
+  //     secondsLeft,
   //     duration,
   //     started,
   //     pause,
@@ -52,7 +52,7 @@
 
   //   curr.intervals.onGoing = setInterval( () => {
   //     if (
-  //       pause.flag && durationBool( duration ) && currentBool( secondsLeft )
+  //       pause.flag && durationBool( duration ) && timeBool( secondsLeft )
   //     ) {
   //       const hashish = updatingTimer(
   //         inRoom,

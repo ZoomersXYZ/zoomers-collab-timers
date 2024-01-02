@@ -280,12 +280,12 @@ const group = socket => {
 
         let tmp = null;
         if (args) {
-          tmp = { current: args.current, duration: args.duration, flags: args.flags, room: args.room, session: args.session, pause: args.pause.flag ? args.pause : '', repeat: args.repeat.on ? args.repeat : '' }
+          tmp = { secondsLeft: args.secondsLeft, duration: args.duration, flags: args.flags, room: args.room, session: args.session, pause: args.pause.flag ? args.pause : '', repeat: args.repeat.on ? args.repeat : '' }
         };
-        // current, duration, flags, room, session
+        // secondsLeft, duration, flags, room, session
         // pause if pause.flag
         // repeat if repeat.on
-        if (args.current == args.duration || (args.current == args.duration - 2) || args.current == 5) {
+        if (args.secondsLeft == args.duration || (args.secondsLeft == args.duration - 2) || args.secondsLeft == 5) {
           console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
           // console.log( 'outgoing', core.users[ nspName ] );
         };
