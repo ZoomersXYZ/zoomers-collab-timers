@@ -13,9 +13,6 @@ import './styles.scss';
 // import useRoomHooks from './../Room/Room/hooks';
 
 const TimerControl = ( { 
-  curry, 
-  setupCurr, 
-  updateTheTimer, 
   sessionObj, 
 
   flags, 
@@ -29,7 +26,9 @@ const TimerControl = ( {
 
   setSubmittingPauseResumeTimer, 
   setSubmittingStopTimer, 
-  setSubmittingStopReap 
+  setSubmittingStopReap, 
+  
+  startMethod 
 } ) => {
 
   const socket = useContext( SocketContext );
@@ -68,12 +67,6 @@ const TimerControl = ( {
   const ASK_SESSION = 'ask for session'
 
   useEffect( () => {
-    const start = (curr) => {
-      const forCurr = {current: curr.current, duration: curr.duration, goneBy: curr.goneBy};
-      curry.set(setupCurr(forCurr));
-      updateTheTimer(forCurr.current);
-    };
-
     const timerStarted = ( { room, curr } ) => {
       if ( filterOutRoom( room ) ) { return; };
       if ( !curr ) { return; };
@@ -101,10 +94,7 @@ const TimerControl = ( {
         };
       } );
 
-      start(curr);
-      // const forCurr = { current: curr.current, duration: curr.duration, goneBy: curr.goneBy };
-      // curry.set(setupCurr(forCurr));
-      // updateTheTimer(forCurr.content);
+      startMethod(curr);
     };
 
     const repeatStarted = ( { room, curr } ) => {
@@ -133,7 +123,7 @@ const TimerControl = ( {
         };
       } );
 
-      start(curr);
+      startMethod(curr);
     };
 
     const repeatCont = ( { room, curr } ) => {
@@ -163,7 +153,7 @@ const TimerControl = ( {
         };
       } );
 
-      start(curr);
+      startMethod(curr);
     };
 
     const skipSession = ( { room, session } ) => {

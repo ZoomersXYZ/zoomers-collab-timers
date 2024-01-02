@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
@@ -6,13 +6,13 @@ import {
   RoomContext 
 } from './../../Contexts';
 
-let updateTimer = null;
 const useMoveInToMyRoom = ( 
     // pauseTerm, 
     setPauseTerm, 
     setShowTimer, 
     
-    curry, 
+    curryState, 
+    currySet, 
     flags, 
     reap, 
     push, 
@@ -85,20 +85,22 @@ const useMoveInToMyRoom = (
         } );
       };
       
-      const forCurr = { current: current, duration: duration, goneBy: goneBy };
-      curry.set(setupCurr(forCurr));
-      updateTheTimer(forCurr.current);
+      const forCurr = { secondsLeft: secondsLeft, duration: duration, goneBy: goneBy };
+      currySet(setupCurr(forCurr));
+      updateTheTimer(e, forCurr.secondsLeft);
   };
 
     const timerPaused = ( room ) => { 
       if ( filterOutRoom( room ) ) { return; };
+      // console.log('pausedabi1', curryStateRef.current);
+
       setPauseTerm( 'unpause' );
 
       setSubmittingPauseResumeTimer( true );
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
 
-      clearInterval(curry.state.interval);
-      curry.state.interval = null;
+      clearInterval(curryState.interval);
+      curryState.interval = null;
     };
 
     const timerResumed = ( room ) => {
@@ -108,7 +110,8 @@ const useMoveInToMyRoom = (
       setSubmittingPauseResumeTimer( true );
       setTimeout( () => setSubmittingPauseResumeTimer( false ), 1000 );
 
-      updateTheTimer(curry.state.current);
+      // console.log('abii1', curryStateRef.current);
+      updateTheTimer(curryStateRef.current, curryStateRef.current.secondsLeft);
     };
 
     const __endTimer = ( room, reapOn = false ) => {
@@ -124,7 +127,7 @@ const useMoveInToMyRoom = (
       };
 
       setTimeout( () => setShowTimer( false ), 2000 );
-      curry.set( prev => setupCurr( { 
+      currySet( prev => setupCurr( { 
         ...prev, 
         secondsLeft: null, 
         formatted: null, 
@@ -136,8 +139,8 @@ const useMoveInToMyRoom = (
         triaged: false 
       });
 
-      clearInterval(curry.state.interval);
-      curry.state.interval = null;
+      clearInterval(curryState.interval);
+      curryState.interval = null;
 
       // reset pause
       setPauseTerm( 'pause' );

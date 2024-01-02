@@ -24,8 +24,27 @@ const Room = ( {
   const aptRoom = aRoom.name;
 
   const {
-      curry, flags, reap, session, push, events 
+      // curry, flags, reap, session, push, events 
+      flags, reap, session, push, events 
   } = useRoomHooks();
+
+  const [curry, setCurry] = useState( { 
+    secondsLeft: 0, 
+    formatted: '00:00', 
+    duration: 0,     
+    paused: false, 
+    goneBy: 0, 
+    interval: null 
+  } );
+
+  const startMethod = (curr) => {      
+    const forCurr = {secondsLeft: curr.secondsLeft, duration: curr.duration, goneBy: curr.goneBy};
+    setCurry(prev => setupCurr({ 
+      ...prev, 
+      ...forCurr 
+    }));
+    updateTheTimer(curr, forCurr.secondsLeft);
+  };
 
   const setupCurr = ( e ) => {
     let { secondsLeft, duration, ...rest } = e;
@@ -34,13 +53,12 @@ const Room = ( {
     return { secondsLeft, duration, ...rest };
   };
 
-  const updateTheTimer = (current) => {
-    // const forCurr = {current: current, duration: duration, goneBy: goneBy};
-    console.log('current', current);
-    curry.state.interval = setInterval(() => {
-      --current;
-      console.log('current1', current);
-      curry.set(prev => setupCurr( { 
+  const updateTheTimer = (curr, secondsLeft) => {
+    // const forCurr = {secondsLeft: secondsLeft, duration: duration, goneBy: goneBy};
+    curry.interval = setInterval(() => {
+      --secondsLeft;
+
+      setCurry(prev => setupCurr( { 
         ...prev, 
         secondsLeft: secondsLeft 
       } ) );
@@ -62,7 +80,7 @@ const Room = ( {
   const [ submittingStopTimer, setSubmittingStopTimer ] = useState( false );
   const [ submittingStopReap, setSubmittingStopReap ] = useState( false );
 
-  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap, setupCurr, updateTheTimer );
+  useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, setCurry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap, setupCurr, updateTheTimer );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
 
@@ -73,12 +91,16 @@ const Room = ( {
   }, [] );
 
   useEffect( () => { 
-    if ( showTimer && !curry.state.current ) {
+    console.log('useE1', curry);
+  }, [ curry ] );
+
+  useEffect( () => { 
+    if ( showTimer && !curry.secondsLeft ) {
       setShowTimer( false );
     } else if ( !showTimer && curry.secondsLeft ) {
       setShowTimer( true );
     };
-  }, [ curry.state, showTimer ] );
+  }, [ curry, showTimer ] );
 
   // DELETE soon 2023-10-10 16:29 | 
   // useEffect( () => { 
@@ -135,12 +157,12 @@ const Room = ( {
         <Core 
           sessionScheme={ session.state.scheme } 
           repeat={reap.state.on}
+          curryState={ curry } 
           { ...{ 
             pauseTerm, 
             inlineSize, 
             blockSize, 
-
-            curry, 
+            
             push, 
             reap, 
             events, 
@@ -160,9 +182,6 @@ const Room = ( {
       </CSSTransition>
 
       <TimerControl 
-        curry={ curry } 
-        setupCurr={ setupCurr } 
-        updateTheTimer={ updateTheTimer } 
         inlineSize={ inlineSize / 2 } 
         blockSize={ blockSize / 2 } 
         sessionObj={ session } 
@@ -176,6 +195,7 @@ const Room = ( {
           setSubmittingStopTimer, 
           setSubmittingStopReap 
         } } 
+        startMethod={ startMethod } 
       />
 
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Svg from './../TimerSvgs';
@@ -29,10 +29,14 @@ const RoomCore = ( props ) => {
     submittingStopTimer, 
     setSubmittingStopTimer, 
   } = props;
-  const { curry, reap, push, events } = props;
+  const { curryState, reap, push, events } = props;
   const aRoom = useContext( RoomContext );
 
   const delay = 1000;
+
+  // useEffect( () => { 
+  //   console.log('useE2', curryState);
+  // }, [ curryState ] );
 
   // States
 
@@ -103,9 +107,9 @@ const RoomCore = ( props ) => {
     <div className={ `svg-parent ${ sessionScheme }` }>      
       <Svg 
         className={ circleClass } 
-        duration={ curry.state.duration } 
-        goneBy={ curry.state.goneBy } 
         secondsLeft={ curryState.secondsLeft } 
+        duration={ curryState.duration } 
+        goneBy={ curryState.goneBy } 
         { ...{ 
           inlineSize, 
           blockSize 
