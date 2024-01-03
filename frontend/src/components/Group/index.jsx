@@ -1,7 +1,7 @@
 // Core React
 import React, { useEffect, useState, useContext } from 'react';
 
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 // Own components
 import { GroupContext, UserContext } from '../Contexts';
@@ -193,7 +193,7 @@ const RoomsGroup = () => {
   const [ userEnabled, setUserEnabled ] = useState( false );
   useEffect( () => { 
     ReactGA.initialize( 'G-MZDK05NDHT', {
-      debug: false,
+      debug: true,
       titleCase: false,
       gaOptions: {
         userId: socket.id, 
@@ -201,7 +201,7 @@ const RoomsGroup = () => {
         emailId: mail 
       }
     } );
-    ReactGA.pageview( window.location.pathname );    
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname, title: "First Hit" });
   }, [ userEnabled, socket.id, nickname, mail ] );
 
   const [ roomDeleted, setRoomDeleted ] = useState( false );
