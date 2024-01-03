@@ -80,6 +80,8 @@ const Room = ( {
   const [ submittingStopTimer, setSubmittingStopTimer ] = useState( false );
   const [ submittingStopReap, setSubmittingStopReap ] = useState( false );
 
+  const [ isResetDisabled, setIsResetDisabled ] = useState( false );
+
   useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, setCurry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap, setupCurr, updateTheTimer );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
@@ -90,6 +92,18 @@ const Room = ( {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
+  const handleResetTimer = () => {
+    setIsResetDisabled( true );
+    // Logic
+    clearInterval(curry.interval);
+    curry.interval = null;
+
+    aRoom.emitAll( events.RUN_FIRST_RUN );
+
+    setTimeout(() => {
+      setIsResetDisabled( false );
+    }, 2000);
+  };
 
   useEffect( () => { 
     if ( showTimer && !curry.secondsLeft ) {
@@ -133,6 +147,13 @@ const Room = ( {
         unmountOnExit 
       >
         <>
+        <span>
+          <a id="resetClick" onClick={ handleResetTimer } className={ isResetDisabled ? 'disabled-link' : '' }>
+            Reset timer
+          </a>
+        </span>
+
+
         { reap.state.on && 
           <div className="repeat-timer-headers">
             <h4>

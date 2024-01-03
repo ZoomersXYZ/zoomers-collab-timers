@@ -179,8 +179,9 @@ const group = socket => {
   const { 
     emitUser, 
     roomEntered, 
+    runFirstRun, 
     disconnect, 
-    askForSession 
+    askForSession, 
   } = require( './socketCoreAndUtils' )( 
     socket, 
     sassy, 
@@ -325,6 +326,8 @@ const group = socket => {
   // @globals socket.on
   function respondingSockets() {
     // socketCoreAndUtils 2nd
+    socket.on( 'run first run', runFirstRun );
+
     socket.on( 'room entered', roomEntered );
     // timer 2nd
     socket.on( 'timer created', timerCreated );

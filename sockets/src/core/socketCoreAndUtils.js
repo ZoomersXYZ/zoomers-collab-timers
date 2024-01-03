@@ -136,6 +136,12 @@ const SocketCoreAndUtils = function (
     // l.bbc.debug( `${ socket.id }: fin roomEntered. socket join`, initialRoom );
   };
 
+  module.runFirstRun = async function( room, aUser ) {
+    console.log('runfirstrun', room, aUser );
+    await onRoomConnect( sassy[ room ]);
+    l.bbc.debug( `${ socket.id }: run First Run.`, room );
+  };
+
   module.askForSession = async function(incoming) {
     if (!incoming.hasOwnProperty('room')) {
       console.log('maybe bad1')

@@ -1,3 +1,16 @@
+.disabled-link {
+  pointer-events: none;
+  color: grey;
+}
+
+a#resetClick {
+  color: blue;
+}
+
+a#resetClick:hover {
+  cursor: pointer;  
+}
+
 div.svg-parent {
   display: flex;
 }
