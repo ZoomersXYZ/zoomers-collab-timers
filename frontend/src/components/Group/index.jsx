@@ -1,5 +1,5 @@
 // Core React
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useReducer } from 'react';
 
 import ReactGA from 'react-ga4';
 
@@ -50,6 +50,26 @@ const RoomsGroup = () => {
   };
 
   const [socket] = useSocket(ioUrl + urlPath);
+
+  // 
+  const forceUpdate = useReducer(x => x + 1, 0)[1]
+  const [ isResetDisabled, setIsResetDisabled ] = useState( false );
+
+  const handleResetTimer = () => {
+    setIsResetDisabled( true );
+    // Logic
+    // clearInterval(curry.interval);
+    // curry.interval = null;
+
+    // reload the page
+    window.location.reload(true);
+    // Try to do React reset but this is not re-doing socket here
+    // forceUpdate();
+
+    setTimeout(() => {
+      setIsResetDisabled( false );
+    }, 2000);
+  };
     
   // Group 1b
   const emit = ( ...restoros ) => socket.emit( ...restoros );
@@ -261,6 +281,12 @@ const RoomsGroup = () => {
           { ...{ setRooms, resetErrors } } 
         />
       </div>
+
+      <span>
+        <a id="resetClick" onClick={ handleResetTimer } className={ isResetDisabled ? 'disabled-link' : '' }>
+          Reset Timers/Page
+        </a>
+      </span>
 
       <hr className="rooms-borderbottom" />
 
