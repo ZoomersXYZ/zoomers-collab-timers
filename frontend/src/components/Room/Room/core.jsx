@@ -103,7 +103,7 @@ const RoomCore = ( props ) => {
     setHourglass( 'start' );
   };
 
-  return (    
+  return (
     <div className={ `svg-parent ${ sessionScheme }` }>      
       <Svg 
         className={ circleClass } 

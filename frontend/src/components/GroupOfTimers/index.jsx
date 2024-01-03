@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { 
+  AnalyticsContext, 
   SocketContext, 
   RoomContext, 
   UserContext 
@@ -14,7 +15,8 @@ const GroupOfTimers = ( {
   check, 
   socket, 
   rooms, 
-  userEnabled 
+  userEnabled, 
+  sendEvent 
 } ) => {
   const aUser = useContext( UserContext );
   const roomValue = ( aRoom ) => { 
@@ -29,6 +31,7 @@ const GroupOfTimers = ( {
     };
   };
   return( 
+  <AnalyticsContext.Provider value={ sendEvent }>
   <SocketContext.Provider value={ socket }>
     { check && 
       <div id="all-timers">
@@ -47,6 +50,7 @@ const GroupOfTimers = ( {
       </div>
     }
   </SocketContext.Provider>
+  </AnalyticsContext.Provider>
 ) };
 
 GroupOfTimers.propTypes = {

@@ -212,13 +212,13 @@ const RoomsGroup = () => {
   // @TODO ugly, refactor
   const [ userEnabled, setUserEnabled ] = useState( false );
   useEffect( () => { 
-    ReactGA.initialize( 'G-MZDK05NDHT', {
-      debug: true,
-      titleCase: false,
+    ReactGA.initialize( import.meta.env.VITE_GA_ID, {
+      debug: true, 
+      titleCase: false, 
       gaOptions: {
-        userId: socket.id, 
-        usernameId: nickname, 
-        emailId: mail 
+        socketId: socket.id, 
+        handle: nickname, 
+        email: mail 
       }
     } );
     ReactGA.send({ hitType: "pageview", page: window.location.pathname, title: "First Hit" });
@@ -300,6 +300,7 @@ const RoomsGroup = () => {
       
       <GroupOfTimers 
         check={ roomsCheck } 
+        sendEvent={ ReactGA.event }
         { ...{ 
           socket, 
           rooms, 

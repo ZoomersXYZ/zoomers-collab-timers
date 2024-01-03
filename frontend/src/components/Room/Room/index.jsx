@@ -11,7 +11,7 @@ import useRoomHooks from './hooks';
 import useMoveInToMyRoom from './moveInToMyRoom';
 import Core from './core';
 
-import { RoomContext } from './../../Contexts';
+import { AnalyticsContext, RoomContext } from './../../Contexts';
 import RoomOverlay from './roomOverlay';
 import Notice from './notice';
 
@@ -22,6 +22,7 @@ const Room = ( {
 } ) => { 
   const aRoom = useContext( RoomContext );
   const aptRoom = aRoom.name;
+  const sendEvent = useContext( AnalyticsContext );  
 
   const {
       // curry, flags, reap, session, push, events 
@@ -85,6 +86,14 @@ const Room = ( {
   useMoveInToMyRoom( setPauseTerm, setShowTimer, curry, setCurry, flags, reap, push, events, session, setSubmittingPauseResumeTimer, setSubmittingStopTimer, setSubmittingStopReap, setupCurr, updateTheTimer );
   useEffect( () => { 
     aRoom.emitAll( events.ROOM_ENTERED );
+    
+    sendEvent( {
+      category: "timer", 
+      action: "entered", 
+      label: aptRoom, // optional
+      // value: 99, // optional, must be a number
+      nonInteraction: false, // optional
+    } );
 
     return () => {
       aRoom.emitAll( events.LEAVE_DOWN );
