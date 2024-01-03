@@ -65,7 +65,7 @@ const Room = ( {
 
       if (secondsLeft <= 0) {
         clearInterval(curry.interval);
-        curry.interval = null;;
+        curry.interval = null;
       };
     }, 1000);
   };
@@ -90,9 +90,6 @@ const Room = ( {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
-  useEffect( () => { 
-    console.log('useE1', curry);
-  }, [ curry ] );
 
   useEffect( () => { 
     if ( showTimer && !curry.secondsLeft ) {
@@ -145,7 +142,8 @@ const Room = ( {
               Repeat, Pomo timers end at { reap.state.DateObjEndTime.toLocaleString( 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true } ) } 
             </h4>
           </div>
-        }
+        }        
+
         { !reap.state.on && flags.state.started && 
           <div>
             Efficiency: { efficiency }

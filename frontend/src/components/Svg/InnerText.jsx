@@ -6,6 +6,8 @@ const InnerText = ( props ) => {
   const [ timer, setTimer ] = useState( null );
 
   useEffect( () => { 
+    if (secondsLeft <= 0) { return; };
+
     // @param number
     // @param number*
     const timeFormatted = function( remaining, divideBy = 1 ) {

@@ -51,7 +51,7 @@ const useMoveInToMyRoom = (
         session, 
         repeat 
     } = e;
-      if ( filterOutRoom( room ) ) { console.log('filtered out first'); return; };
+      if ( filterOutRoom( room ) ) { console.log('filtered out first timer', room); return; };
       if ( secondsLeft <= 0 || duration <= 0 ) {
         return;
       };
