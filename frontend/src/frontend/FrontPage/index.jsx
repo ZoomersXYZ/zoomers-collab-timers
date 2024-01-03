@@ -11,10 +11,9 @@ const FrontPage = () => {
     ReactGA.initialize( 'G-MZDK05NDHT', {
       debug: true,
       titleCase: false,
-      gaOptions: {
-        userId: socket.id, 
-        usernameId: nickname, 
-        emailId: mail 
+      gaOptions: { 
+        usernameId: localStorage.getItem('nick') ? localStorage.getItem('nick') : '', 
+        emailId: localStorage.getItem('email') ? localStorage.getItem('email') : '' 
       }
     } );
     ReactGA.send({ hitType: "pageview", page: window.location.pathname, title: "First Hit" });
