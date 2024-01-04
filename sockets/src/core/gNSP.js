@@ -257,55 +257,59 @@ const group = socket => {
   // 5 active
   // @globals socket.on
   function listeningSockets() {
-    socket.onAnyOutgoing( ( eventName, args ) => {
-      // triggered when the event is sent
-      const oneBool = isObject( core ) 
-        && core.hasOwnProperty( 'groups' ) 
-        && ( !!core.groups[ nspName ] );
-      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[nspName].hasOwnProperty(socket.id);
-      // console.log(core.users);
-      // triggered when the event is sent
-      if (eventName == 'timer updated') {
-        // if (args.hasOwnProperty('started')) {
-        //   delete args.started;
-        // };
-        // if (args.hasOwnProperty('goneBy')) {
-        //   delete args.goneBy;
-        // };
-        // if (args.hasOwnProperty('pause') && !args.pause.flag) {
-        //   delete args.pause;
-        // };
-        // if (args.hasOwnProperty('repeat') && !args.repeat.on) {
-        //   delete args.repeat;
-        // };
+    if (process.env.NODE_ENV === 'development') {
+      socket.onAnyOutgoing( ( eventName, args ) => {
+        if (process.env.NODE_ENV !== 'development') { return; };
+        // triggered when the event is sent
+        const oneBool = isObject( core ) 
+          && core.hasOwnProperty( 'groups' ) 
+          && ( !!core.groups[ nspName ] );
+        const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[nspName].hasOwnProperty(socket.id);
+        // console.log(core.users);
+        // triggered when the event is sent
+        if (eventName == 'timer updated') {
+          // if (args.hasOwnProperty('started')) {
+          //   delete args.started;
+          // };
+          // if (args.hasOwnProperty('goneBy')) {
+          //   delete args.goneBy;
+          // };
+          // if (args.hasOwnProperty('pause') && !args.pause.flag) {
+          //   delete args.pause;
+          // };
+          // if (args.hasOwnProperty('repeat') && !args.repeat.on) {
+          //   delete args.repeat;
+          // };
 
-        let tmp = null;
-        if (args) {
-          tmp = { secondsLeft: args.secondsLeft, duration: args.duration, flags: args.flags, room: args.room, session: args.session, pause: args.pause.flag ? args.pause : '', repeat: args.repeat.on ? args.repeat : '' }
+          let tmp = null;
+          if (args) {
+            tmp = { secondsLeft: args.secondsLeft, duration: args.duration, flags: args.flags, room: args.room, session: args.session, pause: args.pause.flag ? args.pause : '', repeat: args.repeat.on ? args.repeat : '' }
+          };
+          // secondsLeft, duration, flags, room, session
+          // pause if pause.flag
+          // repeat if repeat.on
+          if (args.secondsLeft == args.duration || (args.secondsLeft == args.duration - 2) || args.secondsLeft == 5) {
+            console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
+            // console.log( 'outgoing', core.users[ nspName ] );
+          };
+        } else {
+          console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
         };
-        // secondsLeft, duration, flags, room, session
-        // pause if pause.flag
-        // repeat if repeat.on
-        if (args.secondsLeft == args.duration || (args.secondsLeft == args.duration - 2) || args.secondsLeft == 5) {
-          console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
-          // console.log( 'outgoing', core.users[ nspName ] );
-        };
-      } else {
-        console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
-      };
-      // console.log( 'outgoing', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
-    } );
+        // console.log( 'outgoing', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
+      } );
 
-    socket.onAny( ( eventName, args ) => {
-      // not triggered when the acknowledgement is received
-      const oneBool = isObject( core ) 
-        && core.hasOwnProperty( 'groups' ) 
-        && ( !!core.groups[ nspName ] );
-      const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
+      socket.onAny( ( eventName, args ) => {
+        if (process.env.NODE_ENV !== 'development') { return; };
+        // not triggered when the acknowledgement is received
+        const oneBool = isObject( core ) 
+          && core.hasOwnProperty( 'groups' ) 
+          && ( !!core.groups[ nspName ] );
+        const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
 
-      console.log( 'inComing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
-      // console.log( 'incoming', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
-    } );
+        console.log( 'inComing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
+        // console.log( 'incoming', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
+      } );
+    };
 
     // in-file
     socket.on( 'group entered', onGroupEnter );
