@@ -114,7 +114,7 @@ const DbFuncs = function (
       seshie.loggy.push( hashie );
 
       try {
-        // const res = await ref().doc().set( { ...hashie } );
+        const res = await ref().doc().set( { ...hashie } );
         // @TODO some logs could maybe grab the last ref doc added ?
       } catch ( err ) {
         l.bbc.error( `${ sockId }: logIt set fail`, err );
