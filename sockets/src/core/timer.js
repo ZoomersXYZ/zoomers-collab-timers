@@ -45,34 +45,35 @@ const Timer = function (
   // @internal goneByTimer()
   module.startTimer = async ( inRoom, aUser, timeInMin, repeatFlag = false ) => {
     const curr = sassy[ inRoom ];
+    console.log('start Timer aUser', aUser );
     // console.log( 'start timer', thisTimer );
     // Why are two conditions here
-    // if ( curr.flags.started && !curr.flags.triaged ) {
-    if (!curr && !curr.flags) {
-      console.log('currWTF', curr);
+    // if ( sassy[ inRoom ].flags.started && !sassy[ inRoom ].flags.triaged ) {
+    if (!sassy[ inRoom ] && !sassy[ inRoom ].flags) {
+      console.log('currWTF', sassy[ inRoom ]);
     };
-    if ( curr.flags.started ) {
+    if ( sassy[ inRoom ].flags.started ) {
       emitUser( 'timer already begun', { user: aUser, room: inRoom } );
       return false;
     };
 
     v.MIN_IN_HR ??= 60;
-    curr.duration = timeInMin * v.MIN_IN_HR;
+    sassy[ inRoom ].duration = timeInMin * v.MIN_IN_HR;
     // Make up for the 1 second async await delay for wrappingUpRepeating
     if ( repeatFlag == 'repeating continued' ) {
-      curr.duration = curr.duration - 1;
+      sassy[ inRoom ].duration = sassy[ inRoom ].duration - 1;
     };
-    curr.secondsLeft = curr.duration;
+    sassy[ inRoom ].secondsLeft = sassy[ inRoom ].duration;
     // @TODO refact: can this be done:
     // curr.secondsLeft = curr.duration = timeInMin * v.MIN_IN_HR;
 
-    curr.pause.flag = false;
-    curr.flags.started = new Date().getTime();
-    curr.flags.done = false;
+    sassy[ inRoom ].pause.flag = false;
+    sassy[ inRoom ].flags.started = new Date().getTime();
+    sassy[ inRoom ].flags.done = false;
     // curr.flags.triaged = false;
 
-    curr.manager = { 
-      username: aUser.nick, 
+    sassy[ inRoom ].manager = { 
+      username: aUser.nickname, 
       email: aUser.email 
     };
     
@@ -87,7 +88,8 @@ const Timer = function (
       await logItWrapper( inRoom, aUser, 'repeating started' );
     };
 
-    updateTimer( curr, inRoom, aUser );
+    updateTimer( sassy[ inRoom ], inRoom, aUser );
+    console.log('start Timer end', sassy[inRoom] );
     // goneByTimer( inRoom );
   };
 

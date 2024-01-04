@@ -31,8 +31,8 @@ const RepeatingTimers = function (
     };
 
     curr.manager = { 
-      username: aUser.nick, 
-      email: aUser.email 
+      username: aUser.nickname, 
+      email: aUser.mail 
     };
 
     const theTime = new Date().getTime();

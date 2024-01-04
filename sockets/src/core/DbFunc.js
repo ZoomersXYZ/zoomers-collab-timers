@@ -84,8 +84,8 @@ const DbFuncs = function (
     // @globals seshie
     module.logIt = async ( inRoom, aUser, activity, desc = null, meta = null, repeatAuto = false ) => {
       const { group } = seshie;
-      console.log( 'aUser', aUser );
-      const { nick, email } = aUser;
+      console.log('aUser', aUser);
+      const { nickname, mail } = aUser;
       let manager = null;
       if ( isEmpty( inRoom ) ) {
         inRoom = null;
@@ -95,9 +95,9 @@ const DbFuncs = function (
       
       const hashie = {
         group, 
-        username: nick ? nick : '', 
-        email: email ? email : '', 
-        manager, 
+        username: nickname, 
+        email: mail, 
+        manager,   
         timer: inRoom, 
 
         repeat: repeatAuto, 

@@ -248,7 +248,7 @@ const SocketCoreAndUtils = function (
   // module.disconnecting = async function() {
   disconnecting = async function() {
     const event = 'left room';
-    const aUser = { nick: seshie.username, email: seshie.email };
+    const aUser = { nickname: seshie.username, email: seshie.email };
     await logItWrapper( null, aUser, event );
     // @TODO why isn't seshie, et al being wiped? Will the seshie/socket.id disappear after this?
     // l.bbc.debug( `${ socket.id }: fin disconnecting. logItWrapper()`, event );

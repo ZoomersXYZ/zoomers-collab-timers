@@ -91,7 +91,7 @@ const User = function (
     setTimeout( () => module.listUsers(), 1500 );
 
     const event = 'joined group';
-    const aUser = { nick: handle, email: emailAcct };
+    const aUser = { nickname: handle, email: emailAcct };
     await logItWrapper( null, aUser, event );
     // MASS COMMENTING OF LOGS 2023-10-09
     // l.bbc.debug( `${ sockId }: fin addUser logItWrapper()`, event );
