@@ -21,11 +21,15 @@ const PrivacyPolicy = () => {
     <>
       <Header title="Privacy Policy" />
       <div id="content">
+        <p>To be honest. I'm not collecting anything besides Google Analytics. For Google Analytics, I can't track a user long term even if I wanted to. The open source code base shows that. There's no cookies or anything. The handle and email are saved in local browser storage and possibly at some point in Firestore, but if that was done, no personally idenitfying info would be kept beyond 30 days.</p>
+
+        <p>Below is stuff I found online to copy paste into places like this</p>
+
         <p>We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about our policy, or our practices with regards to your personal information, please contact us.</p>
 
         <p>This Privacy Policy governs the privacy policies and practices of our Website, located at PrivacyPolicies.com. Please read our Privacy Policy carefully as it will help you make informed decisions about sharing your personal information with us.</p>
 
-        <p>Last updated privacy policy on November 2019.</p>
+        <p>Last updated privacy policy on January 2024.</p>
 
         <h3>Information We Collect</h3>
         <p>As a Visitor, you can browse our Website to find out more about our Website. You are not required to provide us with any personal information as a Visitor.</p>

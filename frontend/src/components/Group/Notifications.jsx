@@ -92,7 +92,7 @@ const GroupNotifications = ( props ) => {
   return (
     <>
     <div className="log-collapse">
-      <h3 className="h-outer-container">All Notifications Control</h3>
+      <h3 className="h-outer-container">{ gName } Notifications Control</h3>
       <Collapse isOpened={ open }>
         <ParentNotifications
           onChange={ handleCheckbox } 

@@ -131,9 +131,9 @@ const Room = ( {
   const [ efficiency, setEfficiency ] = useState( 0 );
 
   return (
-    <div className="content">
+    <div className="a-timer">
       <h2 className="theh">
-        { aptRoom }
+        { aptRoom } Timer
       </h2>
 
       <Notice 

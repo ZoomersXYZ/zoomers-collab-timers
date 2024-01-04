@@ -119,7 +119,7 @@ const ActivityLog = ( { userEnabled } ) => {
     <div id="parent-activity-log" className={ `${ timer ? 'timer' : 'main-overall' }` }>
       <div id="activity-log-header">
         <h3>
-          Activity Log
+          { gName } Activity Log
         </h3>
         <div className="log-collapse">
           <button className="casual-button" onClick={ handleCollapse }>

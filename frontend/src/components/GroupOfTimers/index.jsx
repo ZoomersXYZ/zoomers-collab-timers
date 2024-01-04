@@ -31,26 +31,29 @@ const GroupOfTimers = ( {
     };
   };
   return( 
-  <AnalyticsContext.Provider value={ sendEvent }>
-  <SocketContext.Provider value={ socket }>
-    { check && 
-      <div id="all-timers">
-      { rooms.map( ( aRoom, index ) => 
-          <RoomContext.Provider 
-            key={ `aRoom-Provider-${ index }` } 
-            value={ roomValue( aRoom ) } 
-          >
-            <Room 
-              key={ `aRoom-${ aRoom.name }` } 
-              { ...{ userEnabled } } 
-            />
-          </RoomContext.Provider>
-        )
+  <>
+    <h2>ALL TIMERS</h2>
+    <AnalyticsContext.Provider value={ sendEvent }>
+    <SocketContext.Provider value={ socket }>
+      { check && 
+        <div id="all-timers">
+        { rooms.map( ( aRoom, index ) => 
+            <RoomContext.Provider 
+              key={ `aRoom-Provider-${ index }` } 
+              value={ roomValue( aRoom ) } 
+            >
+              <Room 
+                key={ `aRoom-${ aRoom.name }` } 
+                { ...{ userEnabled } } 
+              />
+            </RoomContext.Provider>
+          )
+        }
+        </div>
       }
-      </div>
-    }
-  </SocketContext.Provider>
-  </AnalyticsContext.Provider>
+    </SocketContext.Provider>
+    </AnalyticsContext.Provider>
+  </>
 ) };
 
 GroupOfTimers.propTypes = {

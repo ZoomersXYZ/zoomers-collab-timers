@@ -107,7 +107,7 @@ const SwoleAddRoom = props => {
 
       { !isSubmitting && !showForm && 
         <p>
-          <button className="add casual-button link-underline-fade" onClick={ onHandleShowingForm }>Add a room <i className="icon-pad-left far fa-door-closed"></i></button>
+          <button className="add casual-button link-underline-fade" onClick={ onHandleShowingForm }>Add a timer <i className="icon-pad-left far fa-door-closed"></i></button>
         </p>
       }
       
