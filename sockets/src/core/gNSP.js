@@ -289,11 +289,11 @@ const group = socket => {
           // pause if pause.flag
           // repeat if repeat.on
           if (args.secondsLeft == args.duration || (args.secondsLeft == args.duration - 2) || args.secondsLeft == 5) {
-            console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
+            // console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? tmp : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, i ${ socket.id }` );
             // console.log( 'outgoing', core.users[ nspName ] );
           };
         } else {
-          console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
+          // console.log( 'outGoing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, j ${ socket.id }` );
         };
         // console.log( 'outgoing', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
       } );
@@ -306,7 +306,7 @@ const group = socket => {
           && ( !!core.groups[ nspName ] );
         const twoBool = oneBool && core.users.hasOwnProperty(nspName) && core.users[ nspName ].hasOwnProperty(socket.id)
 
-        console.log( 'inComing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
+        // console.log( 'inComing:', socket.nsp.name.substring(7), eventName, args ? args : ', N/A', twoBool ? core.users[ nspName ][ socket.id ].username : `, k ${ socket.id }` );
         // console.log( 'incoming', socket.nsp.name.substring(7), eventName, core.users[ nspName ] );
       } );
     };

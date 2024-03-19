@@ -28,7 +28,7 @@
     "debugWS": "NODE_ENV=development DEBUG=engine.io-client:polling,engine.io-client:socket,socket.io-client:socket* nodemon src/server.js"
   },
   "engines": {
-    "node": "16.17.0"
+    "node": "20.11.0"
   },
   "name": "zoomers-collab-timers_socket.io-backend",
   "version": "0.9.0",

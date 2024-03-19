@@ -71,7 +71,7 @@ const RoomsGroup = () => {
     }, 2000);
   };
     
-  // Group 1b
+  // Group 1
   const emit = ( ...restoros ) => socket.emit( ...restoros );
 
   // Global, Contexts

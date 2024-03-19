@@ -9,7 +9,7 @@ import { isEmpty } from './../../ancillary/helpers/general';
 
 const validationSchema = Yup.object().shape( {
   nick: Yup.string().required( 'Name is required' ), 
-  email: Yup.string().email().required( 'Email is required' ) 
+  email: Yup.string().email() 
 } );
 
 const ForcedInput = props => {
